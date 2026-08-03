@@ -1,0 +1,66 @@
+/* ── SKILLS ── */
+.skills-section {
+  margin-top: 14px;
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+}
+.subsection-title {
+  font-family: 'Cinzel', serif;
+  color: var(--red);
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.skills-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 18px;
+}
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(122, 92, 46, 0.15);
+}
+.skill-item input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.skill-bonus {
+  font-weight: 600;
+  min-width: 22px;
+  font-size: 15px;
+  color: var(--red);
+}
+.skill-name {
+  flex: 1;
+}
+.skill-note {
+  width: 52px;
+  padding: 3px 4px;
+  border: 1px solid rgba(122, 92, 46, 0.4);
+  border-radius: 2px;
+  background: var(--parch-dark);
+  color: var(--ink);
+  font-family: inherit;
+  /* 16px keeps iOS from zooming the page when this field takes focus */
+  font-size: 16px;
+  text-align: center;
+}
+.skill-note::placeholder {
+  color: var(--gold);
+  opacity: 0.75;
+}
+.skill-stat {
+  font-size: 15px;
+  color: var(--gold);
+  font-style: italic;
+}
+

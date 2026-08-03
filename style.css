@@ -1,0 +1,44 @@
+/*
+ * Entry point of the stylesheet: nothing but imports, in cascade order.
+ *
+ * Later files override earlier ones at equal specificity, so the order matters:
+ * tokens and themes first, then the shared shell, then one file per area of the
+ * sheet, and every breakpoint override last in `responsive.css`.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+/* palette and themes */
+@import './styles/tokens.css';
+@import './styles/themes.css';
+
+/* shell */
+@import './styles/base.css';
+@import './styles/toolbar.css';
+@import './styles/sheet.css';
+@import './styles/nav.css';
+@import './styles/layout.css';
+@import './styles/buttons.css';
+@import './styles/fields.css';
+@import './styles/tables.css';
+
+/* panels, in the order they appear on the sheet */
+@import './styles/header.css';
+@import './styles/hp.css';
+@import './styles/death-saves.css';
+@import './styles/rest.css';
+@import './styles/combat.css';
+@import './styles/abilities.css';
+@import './styles/inspiration.css';
+@import './styles/skills.css';
+@import './styles/class-features.css';
+@import './styles/spells.css';
+@import './styles/gear.css';
+@import './styles/quests.css';
+
+/* interactive bits */
+@import './styles/dice.css';
+@import './styles/controls.css';
+@import './styles/footer.css';
+
+/* breakpoints — must stay last */
+@import './styles/responsive.css';

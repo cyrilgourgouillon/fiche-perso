@@ -1,0 +1,48 @@
+/* ── QUÊTES ── */
+.quest-list {
+  display: grid;
+  gap: 10px;
+}
+.quest-card {
+  background: var(--parch-mid);
+  border: 1px solid var(--border);
+  /* the accent recalls the quest status at a glance */
+  border-left: 4px solid var(--gold);
+  border-radius: 3px;
+  padding: 10px 12px;
+}
+.quest-card[data-statut='terminee'] {
+  border-left-color: var(--success);
+}
+.quest-card[data-statut='echouee'] {
+  border-left-color: var(--failure);
+}
+.quest-card[data-statut='abandonnee'] {
+  border-left-color: var(--border);
+}
+.quest-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px auto;
+  gap: 8px;
+  align-items: end;
+}
+.quest-card.folded .quest-head {
+  /* nothing follows, so no gap below the head */
+  margin-bottom: -2px;
+}
+.quest-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.quest-card .meta-label {
+  margin-top: 8px;
+}
+.quest-card textarea.ef.short {
+  min-height: 52px;
+}
+select.ef {
+  cursor: pointer;
+  height: 30px;
+}
+

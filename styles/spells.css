@@ -1,0 +1,76 @@
+/* ── SORTS ── */
+.spell-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* computed suggestion shown while a field is empty: readable, but lighter than a typed value */
+.ef.derived::placeholder,
+.prof-input::placeholder {
+  color: inherit;
+  opacity: 0.72;
+}
+.spell-flags {
+  white-space: nowrap;
+}
+.spell-flags label {
+  font-size: 12px;
+}
+.spell-flags input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 15px;
+  height: 15px;
+  margin: 0 2px;
+}
+
+/* ── SORTS EMPLACEMENTS ── */
+.spell-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.spell-slots-help {
+  margin: -4px 0 8px;
+  font-size: 15px;
+  color: var(--ink-light);
+}
+.slot-row {
+  background: var(--parch-dark);
+  border: 1px solid rgba(122, 92, 46, 0.4);
+  border-radius: 2px;
+  padding: 4px 6px;
+}
+.slot-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.slot-label span {
+  font-family: Georgia, serif;
+  letter-spacing: 0;
+  color: var(--ink-light);
+}
+.slot-boxes {
+  display: flex;
+  gap: 3px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+/* the most-clicked boxes on the sheet: worth the extra pixels */
+.slot-boxes input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 18px;
+  height: 18px;
+}
+.slot-none {
+  color: var(--ink-light);
+  font-size: 12px;
+  line-height: 12px;
+}
+

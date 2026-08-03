@@ -1,0 +1,25 @@
+/* ── TABLE ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+th {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding: 3px 4px;
+  text-align: left;
+}
+td {
+  padding: 3px 4px;
+  border-bottom: 1px solid rgba(122, 92, 46, 0.15);
+  vertical-align: middle;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+

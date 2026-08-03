@@ -1,0 +1,35 @@
+/* ── DEATH SAVES ── */
+.death-row {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.death-group {
+  text-align: center;
+}
+.death-label {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.death-label.success {
+  color: var(--success);
+}
+.death-label.failure {
+  color: var(--failure);
+}
+.death-boxes {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.death-boxes input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 18px;
+  height: 18px;
+}
+

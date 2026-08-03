@@ -1,0 +1,74 @@
+/* Appearance over coins on one side, equipment alone on the other */
+.gear-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.appearance-panel {
+  flex: 1;
+}
+
+/* both notes fill their panel, however tall the column next to them turns out */
+.appearance-panel,
+.equipment-panel {
+  display: flex;
+  flex-direction: column;
+}
+.appearance-panel textarea.ef,
+.equipment-panel textarea.ef {
+  flex: 1;
+  /* the height is driven by the panel now, so the drag handle would do nothing */
+  resize: none;
+}
+.magic-items {
+  flex-shrink: 0;
+}
+
+/* ── EQUIPMENT & PROFICIENCIES ── */
+.magic-items {
+  margin-top: 8px;
+}
+.magic-items .ef + .ef {
+  margin-top: 4px;
+}
+.proficiency-item {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+}
+.proficiency-item input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── MONEY ── */
+.money-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  text-align: center;
+}
+.coin-block {
+  background: var(--parch-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 6px 4px;
+}
+.coin-label {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+.coin-block .ef {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  color: var(--red);
+}
+

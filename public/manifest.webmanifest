@@ -1,0 +1,16 @@
+{
+  "name": "Fiche de Personnage D&D",
+  "short_name": "Fiche Perso",
+  "description": "Fiche de personnage D&D 5e, utilisable hors ligne.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#2c1a0a",
+  "theme_color": "#1a0d05",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

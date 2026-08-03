@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* the section links glide instead of teleporting, unless that is unwelcome */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: #2c1a0a;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #3d2410 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #1a0d05 0%, transparent 60%);
+  min-height: 100vh;
+  font-family: 'Crimson Pro', serif;
+  color: var(--ink);
+  padding: 20px;
+}

@@ -1,0 +1,619 @@
+/* ── DICE ──
+   Every colour below comes from a theme variable, so the dice follow the
+   selected class theme without a single hard-coded value. */
+.dice-modes {
+  display: flex;
+  gap: 6px;
+}
+.dice-mode {
+  flex: 1;
+  padding: 5px 8px;
+  background: var(--parch-mid);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--ink-light);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.dice-mode:hover {
+  color: var(--red);
+  border-color: var(--gold);
+}
+.dice-mode.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--parch);
+  font-weight: 700;
+}
+/* same colour language as the roll buttons */
+.dice-mode.active[data-mode='avantage'] {
+  background: var(--success);
+  border-color: var(--success);
+}
+.dice-mode.active[data-mode='desavantage'] {
+  background: var(--failure);
+  border-color: var(--failure);
+}
+.dice-mode:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.dice-help {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-light);
+}
+
+.dice-tray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.die {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  background: linear-gradient(160deg, var(--red-light), var(--red));
+  color: var(--parch);
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.die:hover {
+  transform: translateY(-2px) rotate(-4deg);
+}
+.die:active {
+  transform: scale(0.94) rotate(6deg);
+}
+.die:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+/* the numeral sits low in a triangle and centred everywhere else */
+.die-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.die-d4 {
+  clip-path: polygon(50% 4%, 100% 100%, 0 100%);
+}
+.die-d4 .die-label {
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+.die-d6 {
+  border-radius: 8px;
+}
+.die-d8 {
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+.die-d10 {
+  clip-path: polygon(50% 0, 100% 38%, 78% 100%, 22% 100%, 0 38%);
+}
+.die-d12 {
+  clip-path: polygon(50% 0, 95% 32%, 78% 100%, 22% 100%, 5% 32%);
+}
+.die-d20 {
+  clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+.die-d100 {
+  border-radius: 50%;
+}
+
+.dice-expression {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.dice-expression .ef {
+  flex: 1;
+}
+.dice-expression .dice-submit {
+  flex: 0 0 auto;
+}
+
+/* ── ROLL RESULTS ── */
+.roll {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--parch-dark);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 3px;
+}
+.roll-label {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--red);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.roll-detail {
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+  color: var(--ink-light);
+  font-size: 13px;
+}
+.roll-die {
+  min-width: 18px;
+  padding: 0 3px;
+  background: var(--parch);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  text-align: center;
+}
+.roll-die.dropped {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+.roll-total {
+  min-width: 34px;
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: right;
+  color: var(--ink);
+}
+.roll[data-critique='reussite'] {
+  border-left-color: var(--yellow);
+}
+.roll[data-critique='reussite'] .roll-total {
+  color: var(--red-light);
+}
+.roll[data-critique='echec'] {
+  border-left-color: var(--ink-light);
+}
+.roll[data-critique='echec'] .roll-total {
+  color: var(--ink-light);
+}
+.roll-compact {
+  padding: 3px 8px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(122, 92, 46, 0.15);
+  border-radius: 0;
+}
+.roll-compact .roll-total {
+  font-size: 16px;
+}
+.dice-log {
+  margin-top: 10px;
+}
+
+/* ── ROLL TOAST ──
+   The latest roll, thrown in the middle of the screen with the total in evidence. */
+.dice-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.32) 45%,
+    rgba(0, 0, 0, 0) 78%
+  );
+  animation: dice-backdrop 4s ease-out forwards;
+}
+/* a natural 20 washes the whole screen warm */
+.dice-backdrop[data-critique='reussite'] {
+  animation:
+    dice-backdrop 4s ease-out forwards,
+    crit-wash 1s ease-out;
+}
+@keyframes dice-backdrop {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  87% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes crit-wash {
+  0%,
+  100% {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.32) 45%,
+      rgba(0, 0, 0, 0) 78%
+    );
+  }
+  25% {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(184, 134, 11, 0.45),
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0) 80%
+    );
+  }
+}
+.dice-flash {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: min(260px, calc(100vw - 40px));
+  padding: 18px 28px 16px;
+  background: var(--parch);
+  background-image: radial-gradient(ellipse at 50% 0, var(--parch-mid), var(--parch) 70%);
+  border: 3px solid var(--gold);
+  border-radius: 6px;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: dice-flash 4s ease-out forwards;
+}
+.dice-flash-label {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red);
+  text-align: center;
+}
+.dice-flash-total {
+  font-family: 'Cinzel', serif;
+  font-size: 68px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ink);
+}
+
+/* while the die is still bouncing: the number flickers and the dice stay hidden */
+.dice-flash.tumbling .dice-flash-total {
+  color: var(--ink-light);
+  opacity: 0.75;
+  animation: tumble 90ms ease-in-out infinite alternate;
+}
+.dice-flash.tumbling .roll-detail,
+.dice-flash.tumbling .dice-flash-tag {
+  visibility: hidden;
+}
+/* `:not(.tumbling)` starts matching the moment the die settles, which is what
+   kicks these reveal animations off */
+.dice-flash:not(.tumbling) .roll-detail,
+.dice-flash:not(.tumbling) .dice-flash-tag {
+  animation: settle-in 260ms ease-out;
+}
+.dice-flash:not(.tumbling) .dice-flash-total {
+  animation: settle-pop 240ms ease-out;
+}
+@keyframes settle-pop {
+  from {
+    transform: scale(1.22);
+    opacity: 0.65;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes tumble {
+  from {
+    transform: translateY(-3px) rotate(-2.5deg) scale(0.94);
+  }
+  to {
+    transform: translateY(3px) rotate(2.5deg) scale(1.02);
+  }
+}
+@keyframes settle-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.dice-flash .roll-detail {
+  font-size: 15px;
+}
+.dice-flash-tag {
+  margin-top: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+/* quick to arrive, a long hold to read it, then a soft exit */
+@keyframes dice-flash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  6% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  87% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -58%) scale(0.98);
+  }
+}
+
+/* a natural 20 pops and glows, a natural 1 shudders */
+.dice-flash[data-critique='reussite'] {
+  border-color: var(--yellow);
+}
+.dice-flash[data-critique='reussite'] .dice-flash-total,
+.dice-flash[data-critique='reussite'] .dice-flash-tag {
+  color: var(--red-light);
+}
+.dice-flash[data-critique='reussite'] .dice-flash-total {
+  position: relative;
+  animation:
+    crit-pop 1100ms cubic-bezier(0.2, 1.6, 0.35, 1),
+    crit-glow 1800ms ease-out;
+}
+/* a ring of impact blows out from behind the number */
+.dice-flash[data-critique='reussite'] .dice-flash-total::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90px;
+  height: 90px;
+  margin: -45px 0 0 -45px;
+  border: 4px solid var(--yellow);
+  border-radius: 50%;
+  animation: crit-ring 900ms ease-out forwards;
+}
+.dice-flash[data-critique='echec'] {
+  border-color: var(--ink-light);
+}
+.dice-flash[data-critique='echec'] .dice-flash-total,
+.dice-flash[data-critique='echec'] .dice-flash-tag {
+  color: var(--ink-light);
+}
+.dice-flash[data-critique='echec'] .dice-flash-total {
+  animation: crit-shake 950ms ease-out;
+}
+/* the verdict lands with its own beat */
+.dice-flash[data-critique] .dice-flash-tag {
+  font-size: 13px;
+  animation:
+    settle-in 260ms ease-out,
+    tag-beat 900ms ease-out 200ms;
+}
+@keyframes tag-beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.18);
+  }
+  55% {
+    transform: scale(0.97);
+  }
+  75% {
+    transform: scale(1.06);
+  }
+}
+@keyframes crit-pop {
+  0% {
+    transform: scale(0.2) rotate(-20deg);
+    opacity: 0;
+  }
+  32% {
+    transform: scale(2) rotate(9deg);
+    opacity: 1;
+  }
+  52% {
+    transform: scale(0.78) rotate(-6deg);
+  }
+  68% {
+    transform: scale(1.3) rotate(4deg);
+  }
+  84% {
+    transform: scale(0.92) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes crit-glow {
+  0%,
+  100% {
+    text-shadow: none;
+  }
+  18% {
+    text-shadow:
+      0 0 10px var(--yellow),
+      0 0 32px var(--yellow),
+      0 0 64px var(--yellow);
+  }
+  45% {
+    text-shadow:
+      0 0 6px var(--yellow),
+      0 0 16px var(--yellow);
+  }
+  68% {
+    text-shadow:
+      0 0 12px var(--yellow),
+      0 0 38px var(--yellow);
+  }
+}
+@keyframes crit-ring {
+  0% {
+    transform: scale(0.25);
+    opacity: 0.95;
+    border-width: 6px;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+@keyframes crit-shake {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  9% {
+    transform: translate(-13px, 3px) rotate(-7deg) scale(1.08);
+  }
+  21% {
+    transform: translate(13px, -3px) rotate(7deg) scale(1.08);
+  }
+  33% {
+    transform: translate(-11px, 4px) rotate(-6deg);
+  }
+  45% {
+    transform: translate(10px, -2px) rotate(5deg);
+  }
+  57% {
+    transform: translate(-7px, 3px) rotate(-4deg);
+  }
+  69% {
+    transform: translate(5px, -1px) rotate(3deg);
+  }
+  81% {
+    transform: translate(-3px, 2px) rotate(-2deg);
+  }
+  92% {
+    transform: translate(2px, 0) rotate(1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .die:hover,
+  .die:active {
+    transform: none;
+  }
+  /* the hook skips the tumble too, so the toast simply appears with its result */
+  .dice-flash .dice-flash-total,
+  .dice-flash .roll-detail,
+  .dice-flash .dice-flash-tag {
+    animation: none;
+  }
+  .dice-flash[data-critique='reussite'] .dice-flash-total::before {
+    display: none;
+  }
+  .dice-backdrop,
+  .dice-backdrop[data-critique='reussite'] {
+    animation: dice-flash-still 4s steps(1) forwards;
+  }
+  .dice-flash {
+    animation: dice-flash-still 4s steps(1) forwards;
+  }
+  @keyframes dice-flash-still {
+    0%,
+    93% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
+
+/*
+ * The "roll this" button that sits next to a computed bonus. A monochrome die
+ * glyph rather than an emoji, so it can take the colour of the current mode.
+ */
+.roll-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 2px 3px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  line-height: 1;
+  color: var(--ink-light);
+  opacity: 0.8;
+  cursor: pointer;
+  transition:
+    opacity 0.15s,
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+.roll-button:hover {
+  opacity: 1;
+  background: var(--parch-dark);
+  border-color: var(--gold);
+  transform: rotate(-12deg) scale(1.15);
+}
+.roll-button:active {
+  transform: rotate(12deg) scale(0.95);
+}
+.roll-button:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+/* the mode you are about to throw in, at a glance */
+.roll-button[data-mode='avantage'] {
+  color: var(--success);
+  opacity: 1;
+}
+.roll-button[data-mode='desavantage'] {
+  color: var(--failure);
+  opacity: 1;
+}
+.die-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+/* the same die, sitting inline in a sentence */
+.die-icon.inline {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  vertical-align: -3px;
+  color: var(--red);
+}

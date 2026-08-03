@@ -1,0 +1,128 @@
+/* ── FOLD ONE ENTRY ── */
+.fold-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.fold-button:hover {
+  background: var(--parch-dark);
+  border-color: rgba(122, 92, 46, 0.4);
+}
+.fold-button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+.fold-button .fold-caret {
+  position: static;
+  margin: 0;
+  opacity: 0.85;
+}
+.quest-card.folded .fold-caret {
+  transform: rotate(-90deg);
+}
+
+/* ── REMOVE ROW ── */
+.remove-row {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: var(--ink-light);
+  font-family: 'Crimson Pro', serif;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  /* hover is the only thing that used to make this legible, and touch has none */
+  opacity: 0.75;
+  transition:
+    opacity 0.2s,
+    background 0.2s,
+    color 0.2s;
+}
+.remove-row:hover {
+  opacity: 1;
+  color: var(--red);
+  border-color: rgba(122, 92, 46, 0.4);
+}
+.remove-row:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+/* second click of a row that holds data */
+.remove-row.armed {
+  opacity: 1;
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--parch);
+  font-weight: 700;
+}
+td.row-actions,
+th.row-actions {
+  width: 28px;
+  padding: 3px 0;
+  text-align: center;
+}
+
+.magic-item-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.magic-item-row + .magic-item-row {
+  margin-top: 4px;
+}
+
+/* ── ADD ROW ── */
+.add-row {
+  display: block;
+  margin: 8px auto 0;
+  padding: 4px 14px;
+  background: var(--parch-mid);
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  color: var(--red);
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+.add-row:hover {
+  background: var(--parch-dark);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.add-row:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.ornament {
+  text-align: center;
+  color: var(--gold);
+  font-size: 18px;
+  margin: 2px 0;
+  letter-spacing: 8px;
+  opacity: 0.5;
+}
+

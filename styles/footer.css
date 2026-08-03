@@ -1,0 +1,29 @@
+/* ── FOOTER ── */
+/* sits on the page background rather than on parchment, so it takes its colour
+   from the light end of the palette instead of the ink end */
+.sheet-footer {
+  margin: 2px 0 6px;
+  text-align: center;
+  color: var(--parch);
+  font-size: 14px;
+  opacity: 0.75;
+}
+.footer-heart {
+  /* an emoji carries its own colours — nothing to theme here */
+  font-size: 13px;
+  vertical-align: -1px;
+}
+.sheet-footer a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  transition: opacity 0.2s;
+}
+.sheet-footer:hover {
+  opacity: 1;
+}
+.sheet-footer a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}

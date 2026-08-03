@@ -1,0 +1,18 @@
+/* ── REST ── */
+.rest-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+/* the look comes from .sheet-button — this is just the two-up row */
+.rest-button {
+  flex: 1;
+}
+/* first click of a rest: waiting for the confirmation */
+.rest-button.armed,
+.rest-button.armed:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--parch);
+}
+

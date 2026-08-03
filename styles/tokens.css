@@ -1,0 +1,28 @@
+:root {
+  --ink: #1a1208;
+  --ink-light: #5c4a32;
+
+  /* Livre / parchemin commun */
+  --parch: #f5ead6;
+  --parch-dark: #e8d9bc;
+  --parch-mid: #efe3c8;
+  --section-bg: rgba(232, 217, 188, 0.75);
+
+  --red: #8b1a1a;
+  --red-light: #c0392b;
+  --gold: #755607;
+  --yellow: #ffe600;
+  --gold-light: #533e08;
+  --border: #7a5c2e;
+
+  --shadow: rgba(26, 18, 8, 0.25);
+  --dark: #222;
+
+  /* good and bad news: death saves, quest outcomes, advantage and disadvantage */
+  --success: rgb(57, 117, 76);
+  --failure: rgb(139, 45, 45);
+
+  --toolbar-start: #1a0d05;
+  --toolbar-end: #2c1a0a;
+  --toolbar-hover: rgba(184, 134, 11, 0.2);
+}

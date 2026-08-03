@@ -1,0 +1,135 @@
+/* ── ABILITIES ── */
+.abilities-layout {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+.ability-controls {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+}
+.inspiration-control,
+.proficiency-box {
+  background: var(--parch-mid);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.inspiration-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 5px;
+}
+.control-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+}
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+}
+.proficiency-box {
+  color: var(--parch);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--red);
+  text-align: center;
+}
+.proficiency-box .val {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.proficiency-box .lbl {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  text-align: center;
+}
+.prof-val {
+  color: var(--yellow);
+}
+
+.stat-card {
+  background: var(--parch-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 7px 8px 5px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 50px;
+  grid-template-areas: 'name mod' 'save score';
+  column-gap: 5px;
+  align-items: center;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.35);
+}
+.stat-name {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 1px;
+  font-weight: 700;
+  grid-area: name;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-mod {
+  grid-area: mod;
+  font-family: 'Cinzel', serif;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ink);
+  text-align: right;
+}
+.stat-val {
+  grid-area: score;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold);
+  margin-top: 1px;
+}
+.saves-list {
+  grid-area: save;
+  margin-top: 4px;
+}
+.save-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 12px;
+  padding: 1px 0;
+  white-space: nowrap;
+}
+.save-item input[type='checkbox'] {
+  accent-color: var(--red);
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+.save-val {
+  font-weight: 600;
+  margin-right: 2px;
+  min-width: 18px;
+  font-size: 12px;
+}
+

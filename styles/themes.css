@@ -1,0 +1,276 @@
+/* ==========================
+   D&D CLASS THEMES
+   ========================== */
+
+/* GUERRIER */
+body[data-theme='fighter'] {
+  --ink: #1a1208;
+  --red: #8b1a1a;
+  --red-light: #c0392b;
+  --gold: #755607;
+  --yellow: #ffe600;
+  --gold-light: #533e08;
+  --border: #7a5c2e;
+  --shadow: rgba(26, 18, 8, 0.25);
+
+  --toolbar-start: #1a0d05;
+  --toolbar-end: #2c1a0a;
+  --toolbar-hover: rgba(184, 134, 11, 0.2);
+
+  background-color: #2c1a0a;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #3d2410 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #1a0d05 0%, transparent 60%);
+}
+
+/* ROUblard */
+body[data-theme='rogue'] {
+  --ink: #121018;
+  --red: #3b235f;
+  --red-light: #6e3fa3;
+  --gold: #706040;
+  --yellow: #d4b85a;
+  --gold-light: #40351f;
+  --border: #55406f;
+  --shadow: rgba(0, 0, 0, 0.7);
+
+  --toolbar-start: #050508;
+  --toolbar-end: #151021;
+  --toolbar-hover: rgba(110, 63, 163, 0.25);
+
+  background-color: #050508;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #211433 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #08070c 0%, transparent 60%);
+}
+
+/* MAGICIEN */
+body[data-theme='wizard'] {
+  --ink: #0d1c32;
+  --red: #1f5a94;
+  --red-light: #3f8ed1;
+  --gold: #29628a;
+  --yellow: #f4d35e;
+  --gold-light: #183f60;
+  --border: #4e7e9f;
+  --shadow: rgba(8, 30, 55, 0.3);
+
+  --toolbar-start: #091b30;
+  --toolbar-end: #143a62;
+  --toolbar-hover: rgba(63, 142, 209, 0.25);
+
+  background-color: #091b30;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #143a62 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #06101f 0%, transparent 60%);
+}
+
+/* DRUIDE */
+body[data-theme='druid'] {
+  --ink: #172316;
+  --red: #3f6b35;
+  --red-light: #6c9d4f;
+  --gold: #60712d;
+  --yellow: #f1d968;
+  --gold-light: #405020;
+  --border: #74834b;
+  --shadow: rgba(19, 39, 18, 0.3);
+
+  --toolbar-start: #102412;
+  --toolbar-end: #28502a;
+  --toolbar-hover: rgba(108, 157, 79, 0.25);
+
+  background-color: #102412;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #28502a 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #071207 0%, transparent 60%);
+}
+
+/* PALADIN */
+body[data-theme="paladin"] {
+  --ink: #241f14;
+  --red: #9b7414;
+  --red-light: #d4a72c;
+
+  --gold: #c99700;
+  --yellow: #ffe27a;
+  --gold-light: #806000;
+
+  --border: #c8a951;
+  --shadow: rgba(80,65,20,0.25);
+
+  --parch: #faf8f0;
+  --parch-dark: #ece7d8;
+  --parch-mid: #f4f1e7;
+  --section-bg: rgba(236,231,216,0.8);
+
+  --toolbar-start: #241b08;
+  --toolbar-end: #6b4f0b;
+  --toolbar-hover: rgba(212,167,44,0.35);
+
+  /* Fond extérieur doré sombre */
+  background-color: #2a210d;
+  background-image:
+    radial-gradient(
+      ellipse at 20% 20%,
+      #5c4612 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at 80% 80%,
+      #171105 0%,
+      transparent 65%
+    ),
+    linear-gradient(
+      135deg,
+      #3b2c0b,
+      #171105
+    );
+}
+
+/* NECROMANCIEN */
+body[data-theme='necromancer'] {
+  --ink: #15191c;
+  --red: #265b63;
+  --red-light: #3c9aa5;
+  --gold: #968344;
+  --yellow: #d8d27a;
+  --gold-light: #5d5129;
+  --border: #496066;
+  --shadow: rgba(0, 0, 0, 0.55);
+
+  --toolbar-start: #070909;
+  --toolbar-end: #10282b;
+  --toolbar-hover: rgba(60, 154, 165, 0.25);
+
+  background-color: #070909;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #16353a 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #020303 0%, transparent 60%);
+}
+
+/* BARBARE */
+body[data-theme='barbarian'] {
+  --ink: #26130b;
+  --red: #a23e1a;
+  --red-light: #e85d04;
+  --gold: #9c661f;
+  --yellow: #ffba08;
+  --gold-light: #69430f;
+  --border: #855b2b;
+  --shadow: rgba(38, 19, 11, 0.35);
+
+  --toolbar-start: #1c0d05;
+  --toolbar-end: #4a1c08;
+  --toolbar-hover: rgba(232, 93, 4, 0.3);
+
+  background-color: #1c0d05;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #5b250b 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #110704 0%, transparent 60%);
+}
+
+/* ASSASSIN */
+body[data-theme='assassin'] {
+  --ink: #151515;
+  --red: #600000;
+  --red-light: #a00000;
+  --gold: #555555;
+  --yellow: #cccc66;
+  --gold-light: #333333;
+  --border: #555555;
+  --shadow: rgba(0, 0, 0, 0.45);
+
+  --toolbar-start: #090909;
+  --toolbar-end: #222222;
+  --toolbar-hover: rgba(160, 0, 0, 0.3);
+
+  background-color: #090909;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #252525 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #000000 0%, transparent 60%);
+}
+
+/* BARDE */
+body[data-theme='bard'] {
+  --ink: #28140f;
+  --red: #7b1e2b;
+  --red-light: #b83b4d;
+  --gold: #b8860b;
+  --yellow: #f6d365;
+  --gold-light: #745400;
+  --border: #9b7430;
+  --shadow: rgba(40, 20, 15, 0.35);
+
+  --toolbar-start: #210b0d;
+  --toolbar-end: #4a1c20;
+  --toolbar-hover: rgba(184, 134, 11, 0.25);
+
+  background-color: #210b0d;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #63252c 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #100405 0%, transparent 60%);
+}
+
+/* MOINE */
+body[data-theme='monk'] {
+  --ink: #222222;
+  --red: #b33a3a;
+  --red-light: #d65a5a;
+  --gold: #8c7853;
+  --yellow: #e5c07b;
+  --gold-light: #665638;
+  --border: #99947d;
+  --shadow: rgba(0, 0, 0, 0.25);
+
+  --toolbar-start: #111111;
+  --toolbar-end: #333333;
+  --toolbar-hover: rgba(214, 90, 90, 0.2);
+
+  background-color: #111111;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #383838 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #080808 0%, transparent 60%);
+}
+
+/* OCCULTISTE / WARLOCK */
+body[data-theme='warlock'] {
+  --ink: #211326;
+  --red: #5b1a75;
+  --red-light: #9b3fc2;
+  --gold: #8a6a2f;
+  --yellow: #e8c75a;
+  --gold-light: #59421f;
+  --border: #72548a;
+  --shadow: rgba(33, 19, 38, 0.45);
+
+  --toolbar-start: #100816;
+  --toolbar-end: #321341;
+  --toolbar-hover: rgba(155, 63, 194, 0.35);
+
+  background-color: #100816;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #401552 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #08040d 0%, transparent 60%);
+}
+
+/* RÔDEUR / RANGER */
+body[data-theme='ranger'] {
+  --ink: #151c14;
+  --red: #476b24;
+  --red-light: #719b35;
+  --gold: #8a7028;
+  --yellow: #d8c56a;
+  --gold-light: #5a4718;
+  --border: #75633b;
+  --shadow: rgba(15, 25, 12, 0.4);
+
+  --toolbar-start: #0b100a;
+  --toolbar-end: #1d3518;
+  --toolbar-hover: rgba(112, 145, 55, 0.3);
+
+  background-color: #0b100a;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #263d1c 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #080c07 0%, transparent 60%);
+}

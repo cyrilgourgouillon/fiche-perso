@@ -1,0 +1,344 @@
+/* ── TABLETS ── */
+@media (max-width: 900px) {
+  /* three ability cards per row leave no room for "Constitution" */
+  .stats-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    padding: 12px 10px;
+  }
+  /* sticky instead of fixed: the toolbar can grow to two rows without
+     overlapping the sheet, so no magic top margin is needed below it */
+  #toolbar {
+    position: sticky;
+    margin: -12px -10px 12px;
+    padding: 8px 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'title title status'
+      'theme load save';
+    gap: 8px 10px;
+  }
+  #toolbar h1 {
+    grid-area: title;
+    font-size: 13px;
+    letter-spacing: 2px;
+    flex: none;
+  }
+  #save-status {
+    grid-area: status;
+    text-align: right;
+  }
+  .theme-picker {
+    grid-area: theme;
+    min-width: 0;
+  }
+  .theme-picker select {
+    flex: 1;
+    min-width: 0;
+    padding-right: 8px;
+  }
+  #btn-load {
+    grid-area: load;
+  }
+  #btn-save {
+    grid-area: save;
+  }
+  #toolbar button {
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+  .sheet {
+    margin-top: 0;
+  }
+  /*
+   * Thirteen links wrap into five rows at this width — 290px of nav before the
+   * sheet even starts. One swipeable row instead, with the fold controls below it.
+   */
+  .sheet-nav {
+    flex-direction: column;
+    /* wrapping a column would let each row keep its max-content width */
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .nav-links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+  /* one row is not enough for thirteen links here: this opens the whole list */
+  .sheet-nav .nav-more {
+    display: flex;
+    flex-shrink: 0;
+  }
+  .sheet-nav.expanded .nav-links {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  /* beside the first row of links rather than floating in the middle of the block */
+  .sheet-nav.expanded .nav-more {
+    align-self: flex-start;
+  }
+  .nav-link {
+    padding: 7px 9px;
+    white-space: nowrap;
+  }
+  .nav-folds {
+    flex: none;
+  }
+  .nav-fold {
+    flex: 1;
+  }
+  textarea.ef.tall {
+    min-height: 200px;
+  }
+  textarea.ef.notes-textarea {
+    min-height: 260px;
+  }
+  .quest-meta {
+    grid-template-columns: 1fr;
+  }
+  /* title and fold button share the first row, the status gets its own */
+  .quest-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .quest-head > .fold-button {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .quest-head > *:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+  button.section-title {
+    /* comfortable fold target on touch screens */
+    padding: 9px 20px;
+  }
+  /*
+   * Touch targets. A mouse can hit an 11px box; a thumb cannot, and WCAG asks for
+   * 24px minimum. Each rule below overrides a specific desktop size, because the
+   * class selectors that set them beat a blanket `input[type='checkbox']`.
+   */
+  .skill-item input[type='checkbox'],
+  .proficiency-item input[type='checkbox'],
+  .slot-boxes input[type='checkbox'] {
+    width: 24px;
+    height: 24px;
+  }
+  .death-boxes input[type='checkbox'] {
+    width: 26px;
+    height: 26px;
+  }
+  .save-item input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+  }
+  .spell-flags input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+  }
+  .remove-row {
+    width: 28px;
+    height: 28px;
+    opacity: 0.85;
+  }
+  td.row-actions,
+  th.row-actions {
+    width: 32px;
+  }
+  /* grow the roll targets vertically only, so the dense skill rows do not move */
+  .roll-button {
+    padding: 7px 5px;
+    margin-top: -6px;
+    margin-bottom: -6px;
+    opacity: 0.85;
+  }
+  .die-icon {
+    width: 22px;
+    height: 22px;
+  }
+  .abilities-layout {
+    grid-template-columns: 1fr;
+  }
+  .ability-controls {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .inspiration-control,
+  .proficiency-box {
+    min-height: 94px;
+  }
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .skills-cols {
+    grid-template-columns: 1fr;
+  }
+  .combat-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .two-col,
+  .three-col {
+    grid-template-columns: 1fr;
+  }
+  .header-panel {
+    grid-template-columns: 1fr;
+  }
+  .spell-slots {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── PHONES ── */
+@media (max-width: 480px) {
+  body {
+    padding: 10px 8px;
+  }
+  #toolbar {
+    margin: -10px -8px 10px;
+    padding: 8px;
+    gap: 6px 8px;
+  }
+  #toolbar h1 {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+  }
+  #save-status {
+    font-size: 11px;
+  }
+  #toolbar button {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+  .theme-picker span {
+    /* the select already reads as a theme control at this size */
+    display: none;
+  }
+  .slot-label {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    flex-wrap: wrap;
+  }
+  .panel {
+    padding: 12px 10px;
+  }
+  .section-title {
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+  .char-name {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+  .ef.big {
+    font-size: 30px;
+  }
+  .combat-block .lbl {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  /* one ability per row: the name, its die and the modifier need the width */
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+  /* full-width cards leave room for a proper save box */
+  .save-item input[type='checkbox'] {
+    width: 24px;
+    height: 24px;
+  }
+  .stat-card {
+    grid-template-columns: minmax(0, 1fr) 44px;
+    padding: 7px 6px 5px;
+  }
+  .stat-name {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+  }
+  .stat-mod {
+    font-size: 22px;
+  }
+  .money-grid {
+    gap: 4px;
+  }
+  .coin-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  /* tables: fixed layout so the columns share the available width instead of
+     pushing the whole sheet past the viewport */
+  table {
+    table-layout: fixed;
+    font-size: 11px;
+  }
+  th {
+    font-size: 10px;
+    letter-spacing: 0;
+    padding: 3px 2px;
+  }
+  td {
+    padding: 3px 2px;
+  }
+  .weapons-table th:first-child {
+    width: 30%;
+  }
+  .weapons-table th:nth-child(2) {
+    width: 17%;
+  }
+  .spells-table th:first-child {
+    width: 30px;
+  }
+  .spells-table th:nth-child(3),
+  .spells-table th:nth-child(4) {
+    width: 14%;
+  }
+  .spells-table th:nth-child(5) {
+    width: 62px;
+  }
+  .spells-table th:nth-child(6) {
+    width: 20%;
+  }
+  .spell-flags label {
+    font-size: 10px;
+  }
+  .spell-flags input[type='checkbox'] {
+    /* the flags column is tight here, so it keeps the smallest size on the sheet */
+    width: 17px;
+    height: 17px;
+    margin: 0 1px 0 0;
+  }
+  .spell-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .add-row {
+    /* full width for a comfortable tap target */
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+}
+
+/* ── NARROW PHONES (iPhone SE and friends) ── */
+@media (max-width: 360px) {
+  /* two ability cards per row no longer leave room for "Constitution" */
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+  th {
+    font-size: 9px;
+  }
+  /* give the spell name back the room the notes column was taking */
+  .spells-table th:nth-child(6) {
+    width: 16%;
+  }
+}

@@ -1,0 +1,187 @@
+.sheet {
+  max-width: 960px;
+  margin: 60px auto 0;
+  display: grid;
+  /* an implicit `auto` column would grow to fit its widest child — a scrolling
+     strip or a wide table would then drag the whole sheet past the viewport */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+/*
+ * Grouped panels are invisible to the layout until there is room for two columns:
+ * `display: contents` hands their children straight to the sheet grid, so the
+ * single-column stack is byte-for-byte what it was before the wrappers existed.
+ */
+.panel-pair,
+.panel-columns {
+  display: contents;
+}
+
+@media (min-width: 1200px) {
+  .sheet {
+    max-width: 1180px;
+  }
+
+  .panel-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    /* stretch, not start: the shorter panel's parchment reaches the bottom of the
+       row, so a long dice history can no longer punch a hole in the page beside
+       it. The panel then hands that slack to its own content. */
+    align-items: stretch;
+  }
+  .panel-pair > .panel {
+    display: flex;
+    flex-direction: column;
+  }
+  /* a folded panel is a title and nothing else — stretching it to its neighbour
+     would turn it into a tall empty card */
+  .panel-pair > .panel.collapsed,
+  .panel-columns > .panel.collapsed {
+    align-self: start;
+  }
+  /* six combat cards do not fit in half a sheet — same reflow as a tablet */
+  .panel-pair .combat-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 1;
+    /* the cards take the slack a long dice history leaves — up to a point, past
+       which they stop growing and the block simply sits centred in the panel */
+    grid-auto-rows: minmax(auto, 150px);
+    align-content: center;
+  }
+  .panel-pair .combat-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /*
+   * Three panels, two columns: maîtrises above notes on the left, the quest
+   * journal down the right. Quêtes is by far the tallest of the three, so giving
+   * it a full-height column and letting Notes absorb the rest leaves no gap —
+   * the DOM order stays maîtrises → quêtes → notes for the stacked layout.
+   */
+  .panel-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+  .panel-columns > :nth-child(1) {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+  .panel-columns > :nth-child(2) {
+    grid-area: 1 / 2 / 3 / 3;
+  }
+  .panel-columns > :nth-child(3) {
+    grid-area: 2 / 1 / 3 / 2;
+  }
+  /* the notes fill the column, however tall the quest journal turns out to be */
+  .panel-columns > .notes-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-columns > .notes-panel textarea.ef {
+    /* grows past its min-height to fill the column, but keeps that floor: with the
+       quest journal folded there is no tall neighbour left to size it */
+    flex: 1;
+    /* the height is driven by the column now, so the drag handle would do nothing */
+    resize: none;
+  }
+}
+
+/* ── Parchment panel ── */
+.panel {
+  background: var(--parch);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  box-shadow:
+    0 2px 12px var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  padding: 14px 16px;
+  position: relative;
+}
+/* jumped-to panels stop below the toolbar instead of behind it */
+.panel[id] {
+  scroll-margin-top: 74px;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(122, 92, 46, 0.2);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* the heading is only a semantic wrapper — the caption look lives on .section-title */
+.section-heading {
+  font: inherit;
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* a foldable section title: a button that keeps looking like the caption it replaces */
+button.section-title {
+  display: block;
+  width: 100%;
+  position: relative;
+  padding: 0 18px 4px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+button.section-title:hover {
+  color: var(--gold);
+}
+button.section-title:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+/* triangle drawn with borders: crisp at any size, and no font to depend on */
+.fold-caret {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  /* the caption reserves 4px below the baseline, so nudge back up to look centred */
+  margin-top: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid currentColor;
+  color: var(--red);
+  opacity: 0.75;
+  transition:
+    transform 0.2s,
+    color 0.2s,
+    opacity 0.2s;
+}
+.collapsed button.section-title .fold-caret {
+  transform: rotate(-90deg);
+}
+button.section-title:hover .fold-caret {
+  color: var(--gold);
+  opacity: 1;
+}
+/* nothing below the title when folded, so drop the caption's bottom gap */
+.collapsed button.section-title {
+  margin-bottom: 0;
+}
+
