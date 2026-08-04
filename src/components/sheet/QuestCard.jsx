@@ -1,5 +1,6 @@
 import FoldButton from '../fields/FoldButton.jsx';
 import LabeledField from '../fields/LabeledField.jsx';
+import RemoveRowButton from '../fields/RemoveRowButton.jsx';
 import SelectField from '../fields/SelectField.jsx';
 import TextAreaField from '../fields/TextAreaField.jsx';
 import { QUESTS } from '../../data/sheetLists.js';
@@ -10,7 +11,7 @@ import { useSheetField, useSheetFlag } from '../../context/SheetContext.js';
  * One quest. Finished quests are folded rather than deleted — the title, the
  * status and every note stay in the sheet, just out of the way.
  */
-export default function QuestCard({ index }) {
+export default function QuestCard({ index, removable, isRowEmpty, removeRow }) {
   const field = (name) => QUESTS.field(index, name);
   const [status] = useSheetField(field('statut'));
   const [folded, setFolded] = useSheetFlag(field('replie'));
@@ -20,6 +21,13 @@ export default function QuestCard({ index }) {
       className={folded ? 'quest-card folded' : 'quest-card'}
       data-statut={status || undefined}
     >
+      {removable && (
+        <RemoveRowButton
+          label={`Supprimer la quête ${index + 1}`}
+          confirm={!isRowEmpty(index)}
+          onClick={() => removeRow(index)}
+        />
+      )}
       <div className="quest-head">
         <LabeledField label="📜 Titre" name={field('titre')} placeholder={`Quête ${index + 1}`} />
         <div>

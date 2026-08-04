@@ -16,6 +16,8 @@ export default function App() {
     notify,
   });
 
+  console.log('App render', data );
+
   return (
     <SheetProvider data={data} update={update} apply={apply}>
       <DiceProvider>

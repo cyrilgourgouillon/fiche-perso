@@ -27,6 +27,8 @@ export const WEAPONS = multiFieldList('armes', 6, 'arme', ['nom', 'bonus', 'dega
 
 export const CLASS_FEATURES = singleFieldList('capacites', 8, 'capacite');
 
+export const CLASS_FEATURES_USED = singleFieldList('capacites_utilisees', 8, 'capacite_utilisee');
+
 export const SPELLS = multiFieldList('sorts', 8, 'sort', [
   'niveau',
   'nom',
