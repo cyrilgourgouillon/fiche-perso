@@ -38,8 +38,8 @@
 .quest-card .meta-label {
   margin-top: 8px;
 }
-.quest-card textarea.ef.short {
-  min-height: 52px;
+.quest-card .markdown-field {
+  min-height: 300px;
 }
 select.ef {
   cursor: pointer;

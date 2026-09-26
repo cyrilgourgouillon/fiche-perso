@@ -83,11 +83,13 @@
     display: flex;
     flex-direction: column;
   }
-  .panel-columns > .notes-panel textarea.ef {
+  .panel-columns > .notes-panel .markdown-field {
     /* grows past its min-height to fill the column, but keeps that floor: with the
        quest journal folded there is no tall neighbour left to size it */
     flex: 1;
     /* the height is driven by the column now, so the drag handle would do nothing */
+  }
+  .panel-columns > .notes-panel .markdown-field > textarea.ef {
     resize: none;
   }
 }

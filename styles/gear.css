@@ -14,9 +14,12 @@
   display: flex;
   flex-direction: column;
 }
+.appearance-panel .markdown-field,
+.equipment-panel .markdown-field {
+  flex: 1;
+}
 .appearance-panel textarea.ef,
 .equipment-panel textarea.ef {
-  flex: 1;
   /* the height is driven by the panel now, so the drag handle would do nothing */
   resize: none;
 }

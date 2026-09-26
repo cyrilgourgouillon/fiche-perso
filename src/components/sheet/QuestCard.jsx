@@ -51,13 +51,13 @@ export default function QuestCard({ index, removable, isRowEmpty, removeRow }) {
           <div className="meta-label">📖 Description</div>
           <TextAreaField
             name={field('description')}
-            className="ef short"
+            className="ef"
             placeholder="Ce que le PNJ demande…"
           />
           <div className="meta-label">🖊️ Notes</div>
           <TextAreaField
             name={field('notes')}
-            className="ef short"
+            className="ef"
             placeholder="Indices, PNJ rencontrés, pistes…"
           />
         </>

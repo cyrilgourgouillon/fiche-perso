@@ -56,6 +56,31 @@
   letter-spacing: 0;
   color: var(--ink-light);
 }
+.slot-override {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+  color: var(--ink-light);
+  font-size: 12px;
+}
+.slot-override input {
+  width: 42px;
+  padding: 1px 3px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--ink);
+  background: var(--parch);
+  font: inherit;
+}
+.slot-override button {
+  border: 0;
+  color: var(--red);
+  background: transparent;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
 .slot-boxes {
   display: flex;
   gap: 3px;

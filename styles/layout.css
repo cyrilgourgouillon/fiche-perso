@@ -9,4 +9,11 @@
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
 }
+.proficiencies-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+}
+.proficiencies-grid > * {
+  min-width: 0;
+}
 

@@ -98,10 +98,12 @@
   .nav-fold {
     flex: 1;
   }
-  textarea.ef.tall {
+  textarea.ef.tall,
+  .markdown-field.tall {
     min-height: 200px;
   }
-  textarea.ef.notes-textarea {
+  textarea.ef.notes-textarea,
+  .markdown-field.notes-textarea {
     min-height: 260px;
   }
   .quest-meta {

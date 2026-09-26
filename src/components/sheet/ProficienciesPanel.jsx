@@ -12,7 +12,7 @@ const ARMOR_PROFICIENCIES = [
 export default function ProficienciesPanel() {
   return (
     <Panel id="maitrises" title="Entraînements & Maîtrises">
-      <div className="three-col">
+      <div className="three-col proficiencies-grid">
         <div>
           <div className="meta-label">🛡️ Armures</div>
           {ARMOR_PROFICIENCIES.map(({ name, label }) => (
