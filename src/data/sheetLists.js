@@ -25,7 +25,20 @@ const multiFieldList = (key, defaultRows, prefix, fields) => ({
 
 export const WEAPONS = multiFieldList('armes', 6, 'arme', ['nom', 'bonus', 'degats', 'notes']);
 
-export const CLASS_FEATURES = singleFieldList('capacites', 8, 'capacite');
+// Keep the original `capaciteN` and `capacite_utiliseeN` keys so old sheets
+// retain their titles and used state. New fields simply default to blank/false.
+export const CLASS_FEATURES = {
+  key: 'capacites',
+  defaultRows: 8,
+  field: (row, name = 'titre') => name === 'titre' ? `capacite${row + 1}` : `capacite${row + 1}_${name}`,
+  rowFields: (row) => [
+    `capacite${row + 1}`,
+    `capacite${row + 1}_description`,
+    `capacite${row + 1}_repos_court`,
+    `capacite${row + 1}_repos_long`,
+    `capacite_utilisee${row + 1}`,
+  ],
+};
 
 export const CLASS_FEATURES_USED = singleFieldList('capacites_utilisees', 8, 'capacite_utilisee');
 

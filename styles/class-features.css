@@ -27,3 +27,37 @@
   font-size: 16px;
   flex: 1;
 }
+.capacite-list li {
+  align-items: flex-start;
+}
+.capacite-content {
+  min-width: 0;
+  flex: 1;
+}
+.capacite-content > input.ef {
+  width: 100%;
+  margin-bottom: 4px;
+}
+.capacite-content .markdown-field {
+  margin-bottom: 5px;
+}
+.capacite-content textarea.ef {
+  width: 100%;
+  min-height: 54px;
+  resize: vertical;
+}
+.capacite-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  font-size: 13px;
+}
+.capacite-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.capacite-options .capacite-used {
+  font-weight: 600;
+}

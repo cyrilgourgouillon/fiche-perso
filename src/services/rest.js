@@ -14,16 +14,20 @@ const deathSaveFields = DEATH_SAVE_GROUPS.flatMap((group) =>
 );
 
 const spellSlotFields = (data) => Object.keys(data).filter((field) => /^emplacement_sort_\d+_\d+$/.test(field));
+const classFeatureUsedFields = (data, rest) =>
+  Object.keys(data)
+    .filter((field) => /^capacite\d+_repos_(court|long)$/.test(field) && field.endsWith(rest) && data[field] === 'true')
+    .map((field) => field.replace(/^capacite(\d+)_repos_(?:court|long)$/, 'capacite_utilisee$1'));
 
 /**
  * Short rest: the character is back on their feet. Hit dice spending and any
  * class recovery (Arcane Recovery, a warlock's slots…) stay manual, because 5e
  * gives no automatic short-rest recovery that applies to every character.
  */
-export const afterShortRest = (data) => clearFields(data, deathSaveFields);
+export const afterShortRest = (data) => clearFields(data, [...deathSaveFields, ...classFeatureUsedFields(data, 'court')]);
 
 /** Long rest: full hit points, no temporary ones left, every spell slot back. */
 export const afterLongRest = (data) => ({
-  ...clearFields(data, [...deathSaveFields, ...spellSlotFields(data), 'points_vie_temp']),
+  ...clearFields(data, [...deathSaveFields, ...spellSlotFields(data), ...classFeatureUsedFields(data, 'long'), 'points_vie_temp']),
   points_vie_actuel: data.points_vie_max || '',
 });
