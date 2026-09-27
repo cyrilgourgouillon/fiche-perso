@@ -23,6 +23,9 @@ French.
   Caractéristiques always stay open.
 - **Rests** — a short or long rest restores hit points and spell slots and clears death saves. Both
   ask for confirmation first, since they overwrite tracked values.
+- **One-page combat summary** — switch to a compact encounter view and print it as a landscape
+  A4 sheet. Filled weapons and spells are included by default; use their checkboxes and the class
+  feature checkboxes to choose what appears.
 
 **Dice**
 

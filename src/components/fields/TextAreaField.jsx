@@ -9,16 +9,6 @@ export default function TextAreaField({ name, className = 'ef', ...props }) {
 
   return (
     <div className={`markdown-field ${fieldVariants}`}>
-      <div className="markdown-field-toolbar">
-        <button
-          type="button"
-          className="markdown-toggle"
-          aria-pressed={preview}
-          onClick={() => setPreview((current) => !current)}
-        >
-          {preview ? 'Modifier' : 'Aperçu'}
-        </button>
-      </div>
       {preview ? (
         <div className={`ef ${fieldVariants} markdown-preview`}>
           {value ? <ReactMarkdown>{value}</ReactMarkdown> : <span className="markdown-placeholder">{props.placeholder}</span>}
@@ -31,6 +21,26 @@ export default function TextAreaField({ name, className = 'ef', ...props }) {
           {...props}
         />
       )}
+      <button
+        type="button"
+        className="markdown-toggle"
+        aria-label={preview ? 'Modifier le texte' : 'Afficher l’aperçu Markdown'}
+        aria-pressed={preview}
+        title={preview ? 'Modifier' : 'Aperçu Markdown'}
+        onClick={() => setPreview((current) => !current)}
+      >
+        {preview ? (
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+          </svg>
+        ) : (
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        )}
+      </button>
     </div>
   );
 }

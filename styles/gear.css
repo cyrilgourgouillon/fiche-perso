@@ -1,4 +1,4 @@
-/* Appearance over coins on one side, equipment alone on the other */
+/* Appearance and equipment fields stretch to fill their panels. */
 .gear-column {
   display: flex;
   flex-direction: column;

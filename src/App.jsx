@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react';
 import CharacterSheet from './components/sheet/CharacterSheet.jsx';
+import CombatSummary from './components/sheet/CombatSummary.jsx';
+import DiceTray from './components/dice/DiceTray.jsx';
 import DiceFlash from './components/dice/DiceFlash.jsx';
 import DiceProvider from './context/DiceProvider.jsx';
 import SheetProvider from './context/SheetProvider.jsx';
@@ -8,6 +11,7 @@ import { useSheetFile } from './hooks/useSheetFile.js';
 import { useStatusMessage } from './hooks/useStatusMessage.js';
 
 export default function App() {
+  const [showCombatSummary, setShowCombatSummary] = useState(false);
   const [status, notify] = useStatusMessage();
   const { data, update, apply, theme, setTheme, replace } = useCharacterSheet({ notify });
   const { inputRef, openPicker, importFile, exportFile } = useSheetFile({
@@ -16,20 +20,25 @@ export default function App() {
     notify,
   });
 
-  console.log('App render', data );
+  useEffect(() => {
+    if (showCombatSummary) window.scrollTo(0, 0);
+  }, [showCombatSummary]);
 
   return (
     <SheetProvider data={data} update={update} apply={apply}>
       <DiceProvider>
-        <main data-theme={theme}>
+        <main data-theme={theme} data-view={showCombatSummary ? 'combat-summary' : 'sheet'}>
           <Toolbar
             status={status}
             theme={theme}
             onThemeChange={setTheme}
             onLoad={openPicker}
             onSave={exportFile}
+            onToggleCombatSummary={() => setShowCombatSummary((current) => !current)}
+            combatSummaryOpen={showCombatSummary}
           />
-          <CharacterSheet />
+          {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet />}
+          <DiceTray />
           <DiceFlash />
           <input ref={inputRef} type="file" accept=".json" hidden onChange={importFile} />
         </main>

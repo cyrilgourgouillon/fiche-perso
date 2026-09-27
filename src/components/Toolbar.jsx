@@ -1,9 +1,15 @@
 import { THEMES } from '../data/themes.js';
 
-export default function Toolbar({ status, theme, onThemeChange, onLoad, onSave }) {
+export default function Toolbar({ status, theme, onThemeChange, onLoad, onSave, onToggleCombatSummary, combatSummaryOpen }) {
   return (
-    <div id="toolbar">
-      <h1>⚔ Fiche de Personnage</h1>
+    <header id="toolbar">
+      <div className="brand-lockup">
+        <span className="brand-mark" aria-hidden="true">✦</span>
+        <h1>
+          <span>Chroniques</span>
+          Fiche de personnage
+        </h1>
+      </div>
       <span id="save-status" className={status ? 'show' : undefined} role="status">
         {status}
       </span>
@@ -17,12 +23,16 @@ export default function Toolbar({ status, theme, onThemeChange, onLoad, onSave }
           ))}
         </select>
       </label>
-      <button id="btn-load" onClick={onLoad}>
-        📂 Charger
+      <button id="btn-combat" type="button" onClick={onToggleCombatSummary}>
+        <span aria-hidden="true">{combatSummaryOpen ? '↩' : '⚔'}</span>
+        {combatSummaryOpen ? 'Fiche' : 'Résumé'}
       </button>
-      <button id="btn-save" onClick={onSave}>
-        💾 Sauvegarder
+      <button id="btn-load" type="button" onClick={onLoad}>
+        <span aria-hidden="true">↥</span> Charger
       </button>
-    </div>
+      <button id="btn-save" type="button" onClick={onSave}>
+        <span aria-hidden="true">↓</span> Sauvegarder
+      </button>
+    </header>
   );
 }

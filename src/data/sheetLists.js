@@ -23,7 +23,7 @@ const multiFieldList = (key, defaultRows, prefix, fields) => ({
   rowFields: (row) => fields.map((name) => `${prefix}${row + 1}_${name}`),
 });
 
-export const WEAPONS = multiFieldList('armes', 6, 'arme', ['nom', 'bonus', 'degats', 'notes']);
+export const WEAPONS = multiFieldList('armes', 6, 'arme', ['nom', 'bonus', 'degats', 'notes', 'combat']);
 
 // Keep the original `capaciteN` and `capacite_utiliseeN` keys so old sheets
 // retain their titles and used state. New fields simply default to blank/false.
@@ -37,6 +37,7 @@ export const CLASS_FEATURES = {
     `capacite${row + 1}_repos_court`,
     `capacite${row + 1}_repos_long`,
     `capacite_utilisee${row + 1}`,
+    `capacite${row + 1}_combat`,
   ],
 };
 
@@ -51,6 +52,7 @@ export const SPELLS = multiFieldList('sorts', 8, 'sort', [
   'rituel',
   'materiel',
   'notes',
+  'combat',
 ]);
 
 export const MAGIC_ITEMS = singleFieldList('liens_magiques', 3, 'lien_magique');

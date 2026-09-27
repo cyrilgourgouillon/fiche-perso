@@ -53,11 +53,14 @@ textarea.ef {
 
 .markdown-field {
   box-sizing: border-box;
+  position: relative;
   min-width: 0;
   min-height: 100px;
   width: 100%;
   display: flex;
   flex-direction: column;
+  resize: vertical;
+  overflow: hidden;
   border: 1px solid rgba(122, 92, 46, 0.3);
   border-radius: 2px;
   background-color: var(--parch-dark);
@@ -84,33 +87,45 @@ textarea.ef {
   border: 0;
   border-radius: 0;
   background: transparent;
+  padding: 6px 40px 38px 8px;
+}
+.markdown-field > textarea.ef {
+  resize: none;
 }
 .markdown-field > textarea.ef:focus {
   background: transparent;
 }
-.markdown-field-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  flex: none;
-  padding: 3px 6px;
-  border-bottom: 1px solid rgba(122, 92, 46, 0.2);
-  background: rgba(122, 92, 46, 0.04);
-}
 .markdown-toggle {
-  padding: 2px 8px;
-  border: 0;
-  border-radius: 2px;
-  background: transparent;
+  position: absolute;
+  right: 22px;
+  bottom: 7px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(122, 92, 46, 0.24);
+  border-radius: 6px;
+  background: var(--parch-dark);
   color: var(--ink);
-  font: inherit;
-  font-size: 13px;
-  line-height: 1.4;
   cursor: pointer;
+}
+.markdown-toggle svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
 }
 .markdown-toggle:hover,
 .markdown-toggle:focus-visible {
   background: rgba(184, 134, 11, 0.08);
-  outline: 1px solid var(--gold);
+  border-color: var(--gold);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.16);
 }
 .markdown-preview {
   box-sizing: border-box;

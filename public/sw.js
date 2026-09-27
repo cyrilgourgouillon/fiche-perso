@@ -9,7 +9,7 @@
  *
  * Bump CACHE to retire an old set of files.
  */
-const CACHE = 'fiche-perso-v1';
+const CACHE = 'fiche-perso-v2';
 const SHELL = [new URL('./', self.location).pathname];
 
 self.addEventListener('install', (event) => {

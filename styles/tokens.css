@@ -1,28 +1,29 @@
 :root {
-  --ink: #1a1208;
-  --ink-light: #5c4a32;
-
-  /* Livre / parchemin commun */
-  --parch: #f5ead6;
-  --parch-dark: #e8d9bc;
-  --parch-mid: #efe3c8;
-  --section-bg: rgba(232, 217, 188, 0.75);
-
-  --red: #8b1a1a;
-  --red-light: #c0392b;
-  --gold: #755607;
-  --yellow: #ffe600;
-  --gold-light: #533e08;
-  --border: #7a5c2e;
-
-  --shadow: rgba(26, 18, 8, 0.25);
-  --dark: #222;
-
-  /* good and bad news: death saves, quest outcomes, advantage and disadvantage */
-  --success: rgb(57, 117, 76);
-  --failure: rgb(139, 45, 45);
-
-  --toolbar-start: #1a0d05;
-  --toolbar-end: #2c1a0a;
-  --toolbar-hover: rgba(184, 134, 11, 0.2);
+  color-scheme: light;
+  --ink: #202722;
+  --ink-light: #66736c;
+  --parch: #fbf9f3;
+  --parch-dark: #f1ede2;
+  --parch-mid: #f7f4ec;
+  --section-bg: #f4f0e7;
+  --red: #9b442f;
+  --red-light: #c5684f;
+  --gold: #9c7a3b;
+  --yellow: #e3bc64;
+  --gold-light: #725a32;
+  --border: #ded6c5;
+  --shadow: rgba(23, 31, 26, 0.11);
+  --dark: #252b27;
+  --success: #4e8062;
+  --failure: #a54843;
+  --toolbar-start: #18231f;
+  --toolbar-end: #26352e;
+  --toolbar-hover: rgba(227, 188, 100, 0.16);
+  --page-a: #25352e;
+  --page-b: #111a18;
+  --surface-glow: rgba(251, 249, 243, 0.74);
+  --focus-ring: color-mix(in srgb, var(--red) 55%, white);
+  --ui-font: 'DM Sans', 'Segoe UI', sans-serif;
+  --display-font: 'Marcellus', Georgia, serif;
+  --body-font: 'Literata', Georgia, serif;
 }

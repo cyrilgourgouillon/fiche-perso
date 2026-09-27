@@ -3,6 +3,7 @@ import Panel from './Panel.jsx';
 import RemoveRowButton from '../fields/RemoveRowButton.jsx';
 import TextField from '../fields/TextField.jsx';
 import Checkbox from '../fields/Checkbox.jsx';
+import CombatIncludeCheckbox from '../fields/CombatIncludeCheckbox.jsx';
 import TextAreaField from '../fields/TextAreaField.jsx';
 import { CLASS_FEATURES, CLASS_FEATURES_USED } from '../../data/sheetLists.js';
 import { useListRows } from '../../hooks/useListRows.js';
@@ -24,6 +25,14 @@ export default function ClassFeaturesPanel() {
                 <span>Réinitialiser après :</span>
                 <label><Checkbox name={CLASS_FEATURES.field(index, 'repos_court')} /> Repos court</label>
                 <label><Checkbox name={CLASS_FEATURES.field(index, 'repos_long')} /> Repos long</label>
+                <label className="combat-include-option">
+                  <CombatIncludeCheckbox
+                    name={CLASS_FEATURES.field(index, 'combat')}
+                    defaultField={CLASS_FEATURES.field(index)}
+                    aria-label={'Inclure capacité ' + (index + 1) + ' dans le résumé de combat'}
+                  />
+                  Résumé combat
+                </label>
               </div>
             </div>
             {removable && (

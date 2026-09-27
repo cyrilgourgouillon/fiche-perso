@@ -1,6 +1,55 @@
 /* ── DICE ──
    Every colour below comes from a theme variable, so the dice follow the
    selected class theme without a single hard-coded value. */
+.dice-widget {
+  position: fixed;
+  right: clamp(12px, 2vw, 24px);
+  bottom: clamp(12px, 2vw, 24px);
+  z-index: 90;
+  display: flex;
+  justify-content: flex-end;
+  width: min(522px, calc(100vw - 24px));
+}
+.dice-widget .dice-panel {
+  width: 100%;
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.dice-panel .section-title {
+  justify-content: flex-start;
+  text-align: left;
+}
+.dice-launcher {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--parch);
+  box-shadow: 0 8px 24px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: var(--red);
+  font-family: var(--ui-font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dice-launcher:hover {
+  border-color: var(--gold);
+  background: var(--parch-mid);
+}
+.dice-launcher:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+.dice-launcher .die-icon {
+  color: var(--red);
+}
+
 .dice-modes {
   display: flex;
   gap: 6px;

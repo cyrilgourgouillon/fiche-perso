@@ -44,6 +44,8 @@ export function useCharacterSheet({ notify } = {}) {
 
   useEffect(() => {
     document.body.dataset.theme = theme;
+    const themeColor = getComputedStyle(document.body).getPropertyValue('--toolbar-start').trim();
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
   }, [theme]);
 
   return { data, update, apply, theme, setTheme, replace };

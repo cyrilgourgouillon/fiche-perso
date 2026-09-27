@@ -1,9 +1,11 @@
 import AddRowButton from '../fields/AddRowButton.jsx';
+import CombatIncludeCheckbox from '../fields/CombatIncludeCheckbox.jsx';
 import Checkbox from '../fields/Checkbox.jsx';
 import FieldTable from '../fields/FieldTable.jsx';
 import LabeledField from '../fields/LabeledField.jsx';
 import Panel from './Panel.jsx';
 import SelectField from '../fields/SelectField.jsx';
+import TextField from '../fields/TextField.jsx';
 import { ABILITIES } from '../../data/abilities.js';
 import { SPELLS } from '../../data/sheetLists.js';
 import { useListRows } from '../../hooks/useListRows.js';
@@ -45,7 +47,21 @@ const SPELL_FLAGS = [
 
 const SPELL_COLUMNS = [
   { field: 'niveau', header: 'Niv', align: 'center' },
-  { field: 'nom', header: 'Nom' },
+  {
+    field: 'nom',
+    header: 'Nom',
+    render: (row) => (
+      <div className="name-with-combat">
+        <CombatIncludeCheckbox
+          name={SPELLS.field(row, 'combat')}
+          defaultField={SPELLS.field(row, 'nom')}
+          aria-label={'Inclure sort ' + (row + 1) + ' dans le résumé de combat'}
+          title="Inclure dans le résumé de combat"
+        />
+        <TextField name={SPELLS.field(row, 'nom')} className="ef" />
+      </div>
+    ),
+  },
   { field: 'temps', header: 'Temps', align: 'center' },
   { field: 'portee', header: 'Portée', align: 'center' },
   {
@@ -90,6 +106,7 @@ export default function SpellsPanel() {
           />
         ))}
       </div>
+      <p className="combat-include-help">Cochez la case à côté d’un nom pour l’inclure au résumé de combat.</p>
       <FieldTable
         className="spells-table"
         columns={SPELL_COLUMNS}

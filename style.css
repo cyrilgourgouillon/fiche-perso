@@ -1,11 +1,11 @@
 /*
  * Entry point of the stylesheet: nothing but imports, in cascade order.
  *
- * Later files override earlier ones at equal specificity, so the order matters:
- * tokens and themes first, then the shared shell, then one file per area of the
- * sheet, and every breakpoint override last in `responsive.css`.
+ * Later files override earlier ones at equal specificity: tokens and themes
+ * first, shared components next, then responsive rules and the final redesign
+ * layer that brings every panel onto the same visual system.
  */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Marcellus&display=swap');
 
 /* palette and themes */
 @import './styles/tokens.css';
@@ -40,5 +40,8 @@
 @import './styles/controls.css';
 @import './styles/footer.css';
 
-/* breakpoints — must stay last */
+/* breakpoints, followed by final visual layers */
 @import './styles/responsive.css';
+/* final design layer: responsive polish and unified theme overrides */
+@import './styles/redesign.css';
+@import './styles/combat-summary.css';

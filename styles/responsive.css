@@ -102,7 +102,6 @@
   .markdown-field.tall {
     min-height: 200px;
   }
-  textarea.ef.notes-textarea,
   .markdown-field.notes-textarea {
     min-height: 260px;
   }
