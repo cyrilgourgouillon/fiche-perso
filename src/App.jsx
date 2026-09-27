@@ -3,6 +3,7 @@ import CharacterSheet from './components/sheet/CharacterSheet.jsx';
 import CombatSummary from './components/sheet/CombatSummary.jsx';
 import DiceTray from './components/dice/DiceTray.jsx';
 import DiceFlash from './components/dice/DiceFlash.jsx';
+import SheetNav from './components/sheet/SheetNav.jsx';
 import DiceProvider from './context/DiceProvider.jsx';
 import SheetProvider from './context/SheetProvider.jsx';
 import Toolbar from './components/Toolbar.jsx';
@@ -38,7 +39,10 @@ export default function App() {
             combatSummaryOpen={showCombatSummary}
           />
           {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet />}
-          <DiceTray />
+          <div className="sheet-tools" role="group" aria-label="Outils de la fiche">
+            {!showCombatSummary && <SheetNav />}
+            <DiceTray />
+          </div>
           <DiceFlash />
           <input ref={inputRef} type="file" accept=".json" hidden onChange={importFile} />
         </main>

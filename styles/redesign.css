@@ -1398,8 +1398,6 @@ td .ef {
   #toolbar { padding-inline: 18px; }
   .sheet { width: min(100% - 32px, 780px); margin-top: 91px; }
   .sheet-nav { top: 78px; }
-  .nav-links { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
-  .nav-links::-webkit-scrollbar { display: none; }
   .nav-link { white-space: nowrap; }
   .nav-folds .nav-fold { min-height: 34px; padding-inline: 8px; font-size: 11px; }
   .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1759,4 +1757,119 @@ td .ef {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* Floating navigation and dice share one dock in the lower corner. */
+.sheet-tools {
+  position: fixed;
+  right: clamp(12px, 2vw, 24px);
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 90;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: end;
+  align-content: flex-end;
+  justify-content: flex-end;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sheet-nav-widget {
+  display: flex;
+  min-width: 0;
+  align-items: flex-end;
+}
+
+.sheet-tools .dice-widget {
+  position: static;
+  inset: auto;
+  width: auto;
+  max-width: 100%;
+  z-index: auto;
+}
+
+.sheet-tools-launcher,
+.sheet-tools .dice-launcher {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--parch);
+  box-shadow: 0 8px 24px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  color: var(--red);
+  font-family: var(--ui-font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sheet-tools-launcher:hover,
+.sheet-tools .dice-launcher:hover {
+  border-color: var(--gold);
+  background: var(--parch-mid);
+}
+
+.sheet-tools-launcher:focus-visible,
+.sheet-tools .dice-launcher:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.nav-launcher-icon {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.nav-launcher-icon circle { fill: var(--parch); }
+
+.sheet-tools .sheet-nav {
+  position: static;
+  top: auto;
+  z-index: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  width: min(620px, calc(100vw - 24px));
+  min-height: 0;
+  max-height: min(72dvh, calc(100dvh - 100px));
+  overflow: auto;
+}
+
+.sheet-tools .sheet-nav.panel {
+  padding: clamp(17px, 2vw, 26px);
+  border: 1px solid color-mix(in srgb, var(--border) 88%, white);
+  border-radius: 17px;
+  background:
+    radial-gradient(ellipse at 95% 0%, color-mix(in srgb, var(--red) 5%, transparent), transparent 33%),
+    linear-gradient(145deg, var(--parch), var(--parch-mid));
+  box-shadow: 0 12px 34px var(--shadow), 0 2px 5px rgba(8, 14, 10, 0.09);
+}
+
+.sheet-tools .dice-widget .dice-panel {
+  width: min(500px, calc(100vw - 24px));
+  max-height: min(72dvh, calc(100dvh - 100px));
+}
+
+.sheet-tools .sheet-nav .nav-folds { margin-top: 10px; }
+.sheet-tools .sheet-nav .nav-links { flex-wrap: wrap; overflow: visible; }
+
+@media (max-width: 700px) {
+  .sheet-tools { gap: 6px; }
+  .sheet-tools .sheet-nav.panel { padding: 16px 14px; border-radius: 14px; }
+  .sheet-tools .sheet-nav .nav-bar { align-items: center; }
+  .sheet-tools .sheet-nav .nav-links { flex: 1; }
+  .sheet-tools .sheet-nav .nav-folds { width: auto; }
+  .sheet-tools .sheet-nav .nav-fold { flex: 1; }
 }

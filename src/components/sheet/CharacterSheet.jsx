@@ -9,7 +9,6 @@ import NotesPanel from './NotesPanel.jsx';
 import ProficienciesPanel from './ProficienciesPanel.jsx';
 import QuestsPanel from './QuestsPanel.jsx';
 import SheetFooter from './SheetFooter.jsx';
-import SheetNav from './SheetNav.jsx';
 import SpellSlotsPanel from './SpellSlotsPanel.jsx';
 import SpellsPanel from './SpellsPanel.jsx';
 import WeaponsPanel from './WeaponsPanel.jsx';
@@ -17,7 +16,6 @@ import WeaponsPanel from './WeaponsPanel.jsx';
 export default function CharacterSheet() {
   return (
     <div className="sheet">
-      <SheetNav />
       <HeaderPanel />
       <CombatPanel />
       <AbilitiesPanel />

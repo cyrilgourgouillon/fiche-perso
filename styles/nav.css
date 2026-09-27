@@ -26,17 +26,6 @@
   min-width: 0;
   list-style: none;
 }
-/* there is room for every link on a wide screen, so nothing to expand */
-.sheet-nav .nav-more {
-  display: none;
-}
-.sheet-nav .nav-more .fold-caret {
-  position: static;
-  margin: 0;
-}
-.sheet-nav.expanded .nav-more .fold-caret {
-  transform: rotate(180deg);
-}
 .nav-link {
   display: block;
   padding: 4px 7px;

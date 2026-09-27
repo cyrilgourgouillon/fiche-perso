@@ -55,38 +55,11 @@
   .sheet {
     margin-top: 0;
   }
-  /*
-   * Thirteen links wrap into five rows at this width — 290px of nav before the
-   * sheet even starts. One swipeable row instead, with the fold controls below it.
-   */
   .sheet-nav {
     flex-direction: column;
-    /* wrapping a column would let each row keep its max-content width */
     flex-wrap: nowrap;
     align-items: stretch;
     gap: 6px;
-  }
-  .nav-links {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .nav-links::-webkit-scrollbar {
-    display: none;
-  }
-  /* one row is not enough for thirteen links here: this opens the whole list */
-  .sheet-nav .nav-more {
-    display: flex;
-    flex-shrink: 0;
-  }
-  .sheet-nav.expanded .nav-links {
-    flex-wrap: wrap;
-    overflow-x: visible;
-  }
-  /* beside the first row of links rather than floating in the middle of the block */
-  .sheet-nav.expanded .nav-more {
-    align-self: flex-start;
   }
   .nav-link {
     padding: 7px 9px;

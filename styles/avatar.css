@@ -162,10 +162,16 @@
   margin-top: 7px;
 }
 
-.avatar-style-group .avatar-style-options {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 5px;
+select.avatar-style-select {
+  width: 100%;
+  min-height: 36px;
+  margin-top: 4px;
+  padding: 6px 28px 6px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background-color: color-mix(in srgb, var(--parch) 78%, transparent);
+  font-family: var(--ui-font);
+  font-size: 12px;
 }
 
 .avatar-style-button {
@@ -193,13 +199,14 @@
 }
 
 .avatar-outfit-card .avatar-color-group {
-  margin-top: 14px;
+  margin-top: 10px;
   padding-top: 0;
 }
 
 .avatar-color-options {
-  display: grid;
-  grid-template-columns: repeat(9, 24px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 7px;
   margin-top: 3px;
 }
@@ -207,6 +214,7 @@
 .avatar-color-button {
   width: 24px;
   height: 24px;
+  flex: 0 0 24px;
   padding: 0;
   border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
   border-radius: 50%;
@@ -275,13 +283,13 @@
   }
 
   .avatar-color-options {
-    grid-template-columns: repeat(5, 20px);
     gap: 6px;
   }
 
   .avatar-color-button {
     width: 20px;
     height: 20px;
+    flex-basis: 20px;
   }
 
   .avatar-style-button {
@@ -309,13 +317,13 @@
   }
 
   .avatar-color-options {
-    grid-template-columns: repeat(5, 20px);
     gap: 6px;
   }
 
   .avatar-color-button {
     width: 20px;
     height: 20px;
+    flex-basis: 20px;
   }
 }
 

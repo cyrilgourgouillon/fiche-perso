@@ -8,7 +8,6 @@
  */
 export const SECTIONS = [
   { id: 'combat', label: 'Combat', foldable: false },
-  { id: 'des', label: 'Dés', foldable: false },
   { id: 'caracteristiques', label: 'Caractéristiques', foldable: false },
   { id: 'armes', label: 'Armes' },
   { id: 'capacites', label: 'Capacités' },

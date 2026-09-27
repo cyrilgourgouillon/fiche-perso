@@ -47,23 +47,36 @@ const COLORS = [
   { value: 'white', label: 'Blanc', color: '#f3f1e9' },
 ];
 
-function StyleChoices({ label, field, options, selected, onChange, className = '' }) {
+function StyleChoices({ label, field, options, selected, onChange, className = '', asSelect = false }) {
   return (
     <fieldset className={`avatar-choice-group ${className}`.trim()}>
       <legend>{label}</legend>
-      <div className="avatar-style-options">
-        {options.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            className="avatar-style-button"
-            aria-pressed={selected === option.value}
-            onClick={() => onChange(field, option.value)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      {asSelect ? (
+        <select
+          className="ef avatar-style-select"
+          aria-label={label}
+          value={selected}
+          onChange={(event) => onChange(field, event.target.value)}
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      ) : (
+        <div className="avatar-style-options">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className="avatar-style-button"
+              aria-pressed={selected === option.value}
+              onClick={() => onChange(field, option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
     </fieldset>
   );
 }
@@ -105,7 +118,7 @@ export default function AvatarEditor() {
       <div className="avatar-workshop-heading">
         <PixelAvatar data={data} />
         <div>
-          <h3>Petit héros, grande aventure</h3>
+          <h3>Petit héro, grande aventure</h3>
           <p>Compose ton aventurier en pixels.</p>
         </div>
       </div>
@@ -132,11 +145,11 @@ export default function AvatarEditor() {
 
       <div className="avatar-outfit-grid">
         <div className="avatar-outfit-card">
-          <StyleChoices label="Haut" field="avatar_shirt_style" options={SHIRT_STYLES} selected={shirtStyle} onChange={update} className="avatar-style-group" />
+          <StyleChoices label="Haut" field="avatar_shirt_style" options={SHIRT_STYLES} selected={shirtStyle} onChange={update} asSelect />
           <ColorChoices label="Couleur du haut" field="avatar_shirt_color" selected={shirtColor} onChange={update} />
         </div>
         <div className="avatar-outfit-card">
-          <StyleChoices label="Pantalon" field="avatar_trousers_style" options={TROUSER_STYLES} selected={trousersStyle} onChange={update} className="avatar-style-group" />
+          <StyleChoices label="Pantalon" field="avatar_trousers_style" options={TROUSER_STYLES} selected={trousersStyle} onChange={update} asSelect />
           <ColorChoices label="Couleur du pantalon" field="avatar_trousers_color" selected={trousersColor} onChange={update} />
         </div>
       </div>
