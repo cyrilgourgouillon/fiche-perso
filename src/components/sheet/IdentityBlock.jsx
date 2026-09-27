@@ -1,5 +1,6 @@
 import LabeledField from '../fields/LabeledField.jsx';
 import { useSheet } from '../../context/SheetContext.js';
+import PixelAvatar from './PixelAvatar.jsx';
 
 const IDENTITY_FIELDS = [
   { label: '👤 Nom du perso', name: 'nom_personnage' },
@@ -23,10 +24,15 @@ export default function IdentityBlock() {
 
   return (
     <div className="char-name-block">
-      <div className={name ? 'char-name ef-display' : 'char-name ef-display unnamed'}>
-        {name || 'Sans nom'}
+      <div className="char-title-line">
+        <PixelAvatar data={data} />
+        <div className="char-title-copy">
+          <div className={name ? 'char-name ef-display' : 'char-name ef-display unnamed'}>
+            {name || 'Sans nom'}
+          </div>
+          {summary && <div className="char-name-sub">{summary}</div>}
+        </div>
       </div>
-      {summary && <div className="char-name-sub">{summary}</div>}
       <div className="identity-fields">
         {IDENTITY_FIELDS.map((field) => (
           <LabeledField key={field.name} {...field} />

@@ -45,3 +45,4 @@
 /* final design layer: responsive polish and unified theme overrides */
 @import './styles/redesign.css';
 @import './styles/combat-summary.css';
+@import './styles/avatar.css';

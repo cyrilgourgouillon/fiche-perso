@@ -479,6 +479,13 @@ button.section-title:hover {
   min-width: 0;
 }
 
+.vitals-top-grid > div {
+  padding: 10px 12px 8px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
 .header-panel .section-title {
   margin-top: 8px;
 }

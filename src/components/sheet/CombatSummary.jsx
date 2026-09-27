@@ -17,6 +17,7 @@ import {
 } from '../../services/characterMath.js';
 import { useSheet } from '../../context/SheetContext.js';
 import Checkbox from '../fields/Checkbox.jsx';
+import PixelAvatar from './PixelAvatar.jsx';
 
 const text = (value) => (typeof value === 'string' ? value.trim() : '');
 const valueOr = (value, fallback = '—') => text(value) || fallback;
@@ -112,7 +113,10 @@ export default function CombatSummary({ onBack }) {
       <header className="summary-heading">
         <div className="summary-identity">
           <p>Résumé de combat</p>
-          <h2>{valueOr(data.nom_personnage, 'Sans nom')}</h2>
+          <div className="summary-title-line">
+            <PixelAvatar data={data} />
+            <h2>{valueOr(data.nom_personnage, 'Sans nom')}</h2>
+          </div>
           <div>{identity}</div>
         </div>
         <div className="summary-actions">
@@ -142,7 +146,7 @@ export default function CombatSummary({ onBack }) {
 
       <div className="summary-columns">
         <div className="summary-column">
-          <SummarySection title="Caractéristiques" className="summary-saves">
+          <SummarySection title="Jets de sauvegarde" className="summary-saves">
             <div className="summary-abilities">
               {ABILITIES.map((ability) => (
                 <div key={ability.key}>

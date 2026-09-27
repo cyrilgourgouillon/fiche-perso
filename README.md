@@ -13,6 +13,9 @@ French.
 - Identity, hit points, hit dice, death saves, combat stats, the six abilities with saves and all
   eighteen skills, weapons, class features, spells, spell slots, equipment, coins, proficiencies,
   a quest journal and free-form notes.
+- **Pixel-art avatars** with fantasy ancestries, masculine or feminine presentation, six top
+  styles and six trouser styles, nine colours for each clothing piece, and optional weapons. The
+  portrait appears beside the character's name and travels with the sheet.
 - **Computed values as hints** — proficiency bonus, initiative, passive perception, skill and save
   bonuses, and the spell slots for your level are derived from what you typed. They appear as
   placeholders; type your own value and it wins, cascading through everything downstream.

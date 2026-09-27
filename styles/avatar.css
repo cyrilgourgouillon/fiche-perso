@@ -1,0 +1,327 @@
+/* Pixel hero customizer and its shared in-sheet portrait. */
+.pixel-avatar {
+  display: block;
+  width: 54px;
+  height: 62px;
+  flex: 0 0 auto;
+  --avatar-back: color-mix(in srgb, var(--gold) 16%, var(--parch-dark));
+  --avatar-back-inner: color-mix(in srgb, var(--parch) 76%, white);
+  --avatar-outline: var(--ink);
+}
+
+.char-title-line {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.char-title-line > .pixel-avatar {
+  width: 78px;
+  height: 91px;
+}
+
+.char-title-copy {
+  min-width: 0;
+}
+
+.char-title-copy .char-name {
+  max-width: 100%;
+}
+
+.char-title-copy .char-name-sub {
+  margin-top: 5px;
+}
+
+.avatar-workshop {
+  flex: 0 0 auto;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--border));
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--parch-dark) 64%, transparent);
+}
+
+.avatar-workshop-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.avatar-workshop-heading .pixel-avatar {
+  width: 96px;
+  height: 112px;
+}
+
+.avatar-workshop-heading h3 {
+  margin: 0;
+  color: var(--red);
+  font-family: var(--display-font);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.avatar-workshop-heading p {
+  margin: 2px 0 0;
+  color: var(--ink-light);
+  font-family: var(--ui-font);
+  font-size: 11px;
+}
+
+.avatar-identity-controls {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(0, 1.3fr);
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avatar-identity-controls .avatar-gender-group {
+  padding-top: 0;
+}
+
+.avatar-identity-controls .avatar-gender-group .avatar-style-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.avatar-identity-controls .avatar-race-field {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  margin-top: 0;
+}
+
+.avatar-race-field {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--ink-light);
+  font-family: var(--ui-font);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.avatar-race-field select.ef {
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-family: var(--ui-font);
+  font-size: 12px;
+}
+
+.avatar-outfit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 0;
+}
+
+.avatar-outfit-card {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--parch) 54%, transparent);
+}
+
+.avatar-choice-group {
+  min-width: 0;
+  margin: 0;
+  padding: 10px 0 0;
+  border: 0;
+}
+
+.avatar-workshop > .avatar-choice-group {
+  margin-bottom: 2px;
+}
+
+.avatar-outfit-card .avatar-choice-group {
+  padding-top: 0;
+}
+
+.avatar-choice-group legend {
+  padding: 0;
+  color: var(--ink-light);
+  font-family: var(--ui-font);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.avatar-style-options,
+.avatar-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.avatar-style-group .avatar-style-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.avatar-style-button {
+  min-height: 29px;
+  padding: 4px 5px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--parch) 78%, transparent);
+  color: var(--ink);
+  font-family: var(--ui-font);
+  font-size: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.avatar-style-button:hover {
+  border-color: var(--gold);
+}
+
+.avatar-style-button[aria-pressed='true'] {
+  border-color: var(--red);
+  background: color-mix(in srgb, var(--red) 12%, var(--parch));
+  color: var(--red);
+  font-weight: 700;
+}
+
+.avatar-outfit-card .avatar-color-group {
+  margin-top: 14px;
+  padding-top: 0;
+}
+
+.avatar-color-options {
+  display: grid;
+  grid-template-columns: repeat(9, 24px);
+  gap: 7px;
+  margin-top: 3px;
+}
+
+.avatar-color-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 50%;
+  background: var(--swatch);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.avatar-color-button:hover {
+  transform: translateY(-1px);
+}
+
+.avatar-color-button[aria-pressed='true'] {
+  border-color: var(--parch);
+  box-shadow: 0 0 0 2px var(--red);
+}
+
+.avatar-color-button:focus-visible,
+.avatar-style-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--red-light) 66%, white);
+  outline-offset: 2px;
+}
+
+.summary-title-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-title-line .pixel-avatar {
+  width: 68px;
+  height: 80px;
+}
+
+.summary-title-line h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .pixel-avatar {
+    width: 46px;
+    height: 53px;
+  }
+
+  .char-title-line > .pixel-avatar {
+    width: 66px;
+    height: 77px;
+  }
+
+  .char-title-line {
+    gap: 9px;
+  }
+
+  .avatar-workshop {
+    padding: 13px;
+  }
+
+  .avatar-workshop-heading .pixel-avatar {
+    width: 88px;
+    height: 103px;
+  }
+
+  .avatar-outfit-grid {
+    gap: 12px;
+  }
+
+  .avatar-color-options {
+    grid-template-columns: repeat(5, 20px);
+    gap: 6px;
+  }
+
+  .avatar-color-button {
+    width: 20px;
+    height: 20px;
+  }
+
+  .avatar-style-button {
+    padding-inline: 6px;
+  }
+
+  .summary-title-line .pixel-avatar {
+    width: 60px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 520px) {
+  .avatar-identity-controls,
+  .avatar-outfit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .avatar-identity-controls {
+    gap: 12px;
+  }
+
+  .avatar-outfit-grid {
+    gap: 10px;
+  }
+
+  .avatar-color-options {
+    grid-template-columns: repeat(5, 20px);
+    gap: 6px;
+  }
+
+  .avatar-color-button {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .avatar-race-field {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}
