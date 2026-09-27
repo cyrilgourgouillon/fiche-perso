@@ -37,7 +37,7 @@ export default function FieldTable({
         {range(rowCount).map((rowIndex) => (
           <tr key={rowIndex}>
             {columns.map((column) => (
-              <td key={column.field} className={column.cellClassName}>
+              <td key={column.field} className={column.cellClassName} data-label={column.header}>
                 {column.render ? (
                   column.render(rowIndex)
                 ) : (

@@ -1,8 +1,8 @@
-import { ABILITIES } from '../../data/abilities.js';
+import { ABILITIES, SKILLS } from '../../data/abilities.js';
 import { CLASS_FEATURES, CLASS_FEATURES_USED, SPELLS, WEAPONS } from '../../data/sheetLists.js';
 import { range } from '../../utils/range.js';
 import { listRowCount } from '../../services/sheetRows.js';
-import { spellSlotRows } from '../../services/spellSlots.js';
+import { spellSlotField, spellSlotRows } from '../../services/spellSlots.js';
 import {
   derivedInitiative,
   derivedPassivePerception,
@@ -11,10 +11,12 @@ import {
   formatModifier,
   proficiencyBonus,
   savingThrowBonus,
+  skillBonus,
   spellcastingAbility,
   spellcastingModifier,
 } from '../../services/characterMath.js';
 import { useSheet } from '../../context/SheetContext.js';
+import Checkbox from '../fields/Checkbox.jsx';
 
 const text = (value) => (typeof value === 'string' ? value.trim() : '');
 const valueOr = (value, fallback = '—') => text(value) || fallback;
@@ -140,7 +142,7 @@ export default function CombatSummary({ onBack }) {
 
       <div className="summary-columns">
         <div className="summary-column">
-          <SummarySection title="Jets de sauvegarde" className="summary-saves">
+          <SummarySection title="Caractéristiques" className="summary-saves">
             <div className="summary-abilities">
               {ABILITIES.map((ability) => (
                 <div key={ability.key}>
@@ -153,6 +155,41 @@ export default function CombatSummary({ onBack }) {
               <DeathMarks data={data} name="mort_succes" label="Succès" tone="success" />
               <DeathMarks data={data} name="mort_echecs" label="Échecs" tone="failure" />
             </div>
+          </SummarySection>
+
+          <SummarySection title="Compétences" className="summary-skill-card">
+            <div className="summary-skills">
+              {SKILLS.map((skill) => (
+                <div key={skill.key}>
+                  <span>{skill.label}</span>
+                  <strong>{formatModifier(skillBonus(data, skill))}</strong>
+                </div>
+              ))}
+            </div>
+          </SummarySection>
+        </div>
+
+        <div className="summary-column">
+          <SummarySection
+            title="Capacités de classe"
+            className="summary-features"
+            emptyMessage="Cochez Résumé combat à côté d’une capacité pour l’ajouter ici."
+            hasContent={features.length > 0}
+          >
+            <ul className="summary-entry-list">
+              {features.length > 0 && features.map((feature, index) => (
+                <li key={index} className={feature.used ? 'feature-used' : ''}>
+                  <div className="summary-entry-top">
+                    <strong>{text(feature.title)}</strong>
+                    <span>{feature.used ? 'Utilisée' : ''}</span>
+                  </div>
+                  {text(feature.description) && <div className="summary-entry-detail">{text(feature.description)}</div>}
+                  {(feature.shortRest || feature.longRest) && (
+                    <small>Récupération : {[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}</small>
+                  )}
+                </li>
+              ))}
+            </ul>
           </SummarySection>
 
           <SummarySection
@@ -179,30 +216,6 @@ export default function CombatSummary({ onBack }) {
         </div>
 
         <div className="summary-column">
-          <SummarySection
-            title="Capacités de classe"
-            className="summary-features"
-            emptyMessage="Cochez Résumé combat à côté d’une capacité pour l’ajouter ici."
-            hasContent={features.length > 0}
-          >
-            <ul className="summary-entry-list">
-              {features.length > 0 && features.map((feature, index) => (
-                <li key={index} className={feature.used ? 'feature-used' : ''}>
-                  <div className="summary-entry-top">
-                    <strong>{text(feature.title)}</strong>
-                    <span>{feature.used ? 'Utilisée' : ''}</span>
-                  </div>
-                  {text(feature.description) && <div className="summary-entry-detail">{text(feature.description)}</div>}
-                  {(feature.shortRest || feature.longRest) && (
-                    <small>Récupération : {[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}</small>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </SummarySection>
-        </div>
-
-        <div className="summary-column">
           {hasSpellcasting && (
             <SummarySection title="Incantation" className="summary-spell-meta">
               <div className="summary-spell-stats">
@@ -215,17 +228,26 @@ export default function CombatSummary({ onBack }) {
           )}
 
           {slots.length > 0 && (
-            <SummarySection title="Emplacements disponibles" className="summary-slot-card">
+            <SummarySection title="Emplacements de sorts" className="summary-slot-card">
               <div className="summary-slots">
                 {slots.map((slot) => {
-                  const available = slot.total - slot.spent;
                   return (
-                    <span
+                    <div
                       key={slot.spellLevel}
-                      title={'Niveau ' + slot.spellLevel + ' : ' + available + ' sur ' + slot.total + ' disponibles'}
+                      className="summary-slot-level"
                     >
-                      N{slot.spellLevel} · <b>{available}</b> dispo
-                    </span>
+                      <span>Niveau {slot.spellLevel}</span>
+                      <div className="summary-slot-boxes">
+                        {range(slot.total).map((slotIndex) => (
+                          <Checkbox
+                            key={slotIndex}
+                            name={spellSlotField(slot.spellLevel, slotIndex)}
+                            aria-label={`Emplacement de sort niveau ${slot.spellLevel}, ${slotIndex + 1}`}
+                            disabled
+                          />
+                        ))}
+                      </div>
+                    </div>
                   );
                 })}
               </div>

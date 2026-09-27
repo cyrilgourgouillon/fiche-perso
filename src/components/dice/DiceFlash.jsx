@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RollDice from './RollDice.jsx';
 import { criticalOf } from '../../services/dice.js';
 import { useDice } from '../../context/DiceContext.js';
@@ -22,8 +23,11 @@ export default function DiceFlash() {
 
 function Toast({ roll }) {
   const { face, settled } = useTumble(roll);
+  const [visible, setVisible] = useState(true);
   const critical = criticalOf(roll);
   const state = (settled && critical) || undefined;
+
+  if (!visible) return null;
 
   return (
     <>
@@ -34,6 +38,9 @@ function Toast({ roll }) {
         data-critique={state}
         role="status"
         aria-live="polite"
+        onAnimationEnd={(event) => {
+          if (event.target === event.currentTarget) setVisible(false);
+        }}
       >
         <div className="dice-flash-label">{roll.label}</div>
         <div className="dice-flash-total">{settled ? roll.total : face}</div>

@@ -165,6 +165,7 @@ main[data-view='combat-summary'] .dice-flash {
 }
 
 .summary-abilities > div,
+.summary-skills > div,
 .summary-entry-top {
   min-width: 0;
   display: flex;
@@ -173,7 +174,13 @@ main[data-view='combat-summary'] .dice-flash {
   gap: 8px;
 }
 
+.summary-abilities > div {
+  justify-content: flex-start;
+  gap: 5px;
+}
+
 .summary-abilities span,
+.summary-skills span,
 .summary-entry-top strong {
   overflow: hidden;
   color: var(--ink);
@@ -190,6 +197,25 @@ main[data-view='combat-summary'] .dice-flash {
   color: var(--red);
   font-family: var(--display-font);
   font-size: 15px;
+}
+
+.summary-skills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 8px;
+}
+
+.summary-skills > div {
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.summary-skills span { font-size: 9px; }
+.summary-skills strong {
+  flex: 0 0 auto;
+  color: var(--red);
+  font-family: var(--display-font);
+  font-size: 12px;
 }
 
 .summary-death-saves {
@@ -308,23 +334,35 @@ main[data-view='combat-summary'] .dice-flash {
 .summary-slots {
   margin-top: 8px;
   padding-top: 7px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  display: grid;
+  gap: 7px;
   border-top: 1px solid var(--border);
 }
 
-.summary-slots > span {
-  padding: 3px 5px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
+.summary-slot-level {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
   color: var(--ink-light);
-  background: var(--parch);
   font-family: var(--ui-font);
   font-size: 9px;
 }
 
-.summary-slots b { color: var(--red); }
+.summary-slot-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.summary-slot-boxes input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--red);
+  opacity: 1;
+  cursor: default;
+}
 
 .name-with-combat {
   min-width: 0;
@@ -384,6 +422,7 @@ main[data-view='combat-summary'] .dice-flash {
   .summary-stat { min-height: 65px; padding: 8px 5px; }
   .summary-columns { grid-template-columns: minmax(0, 1fr); }
   .summary-column:last-child { grid-column: auto; }
+  .summary-skills { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media print {
@@ -485,6 +524,9 @@ main[data-view='combat-summary'] .dice-flash {
   .summary-abilities { gap: 0.6mm 2mm; }
   .summary-abilities span { font-size: 7.5pt; }
   .summary-abilities strong { font-size: 10pt; }
+  .summary-skills { gap: 0.6mm 1.5mm; }
+  .summary-skills span { font-size: 6.2pt; }
+  .summary-skills strong { font-size: 7.5pt; }
   .summary-death-saves { margin-top: 1.5mm; padding-top: 1.2mm; }
   .summary-death-group { gap: 1.2mm; font-size: 7pt; }
   .summary-death-group i { width: 3mm; height: 3mm; }
@@ -500,7 +542,9 @@ main[data-view='combat-summary'] .dice-flash {
   .summary-spell-stats { gap: 0.8mm 2mm; }
   .summary-spell-stats > div { font-size: 7pt; }
   .summary-slots { margin-top: 1.5mm; padding-top: 1.2mm; gap: 0.7mm; }
-  .summary-slots > span { padding: 0.5mm 1mm; border-radius: 1mm; font-size: 6.2pt; }
+  .summary-slot-level { font-size: 6.2pt; }
+  .summary-slot-boxes { gap: 1mm; }
+  .summary-slot-boxes input[type='checkbox'] { width: 3.5mm; height: 3.5mm; }
 
   * {
     -webkit-print-color-adjust: exact;
