@@ -38,8 +38,8 @@ const withAllSections = (data, collapsed, foldableSections) => ({
 export default function SheetNav({ open, onToggle }) {
   const { data, apply } = useSheet();
   const layout = useMemo(
-    () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides),
-    [data.tile_layout, data.tile_order, data.tile_sides],
+    () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths),
+    [data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths],
   );
   const sections = useMemo(() => {
     const orderedIds = [

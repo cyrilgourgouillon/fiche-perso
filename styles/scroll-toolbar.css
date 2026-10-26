@@ -1,0 +1,15 @@
+#toolbar {
+  transition: transform 220ms ease;
+}
+
+main[data-toolbar-hidden='true'] #toolbar {
+  transform: translateY(calc(-100% - 8px));
+}
+
+@media (max-width: 700px) {
+  #toolbar { top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #toolbar { transition-duration: 0.01ms; }
+}

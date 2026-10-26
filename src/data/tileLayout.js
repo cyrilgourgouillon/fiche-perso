@@ -21,28 +21,32 @@ export const DEFAULT_TILE_LAYOUT = {
 };
 
 export const TILE_BY_ID = Object.fromEntries(TILE_CATALOG.map((tile) => [tile.id, tile]));
+const ALWAYS_WIDE_TILE_IDS = new Set(['header', 'caracteristiques']);
 
 /**
  * Read the current configuration, or migrate older saves that only had a flat
  * order and optional side/width overrides. Missing blocks in a new configuration
  * stay hidden; legacy saves get the previous complete set of blocks.
  */
-export function normalizeTileLayout(layout, legacyOrder, legacySides) {
+export function normalizeTileLayout(layout, legacyOrder, legacySides, legacyWidths) {
   const source = layout && typeof layout === 'object' && !Array.isArray(layout)
     ? layout
     : null;
 
   if (!source) {
     const oldOrder = Array.isArray(legacyOrder) ? legacyOrder : [];
-    const uniqueOrder = [
+    const uniqueOrder = [...new Set([
       'header',
       ...oldOrder.filter((id) => TILE_BY_ID[id] && id !== 'header'),
       ...TILE_CATALOG.map(({ id }) => id).filter((id) => !oldOrder.includes(id)),
-    ];
+    ])];
     const migrated = { wide: [], left: [], right: [] };
     uniqueOrder.forEach((id) => {
       const tile = TILE_BY_ID[id];
-      if (tile.width === 'wide') {
+      const isWide = ALWAYS_WIDE_TILE_IDS.has(id)
+        || legacyWidths?.[id] === true
+        || (legacyWidths?.[id] !== false && tile.width === 'wide');
+      if (isWide) {
         migrated.wide.push(id);
       } else {
         const side = legacySides?.[id] === 'left' || legacySides?.[id] === 'right'
@@ -70,11 +74,12 @@ export function normalizeTileLayout(layout, legacyOrder, legacySides) {
     source[group].forEach((id) => {
       const tile = TILE_BY_ID[id];
       if (!tile || seen.has(id)) return;
-      const isWideGroup = group === 'wide' || group === 'top' || group === 'bottom';
-      const validGroup = tile.width === 'wide' ? isWideGroup : !isWideGroup;
-      if (!validGroup) return;
+      if (id === 'header' && group !== 'wide' && group !== 'top' && group !== 'bottom') return;
       seen.add(id);
-      if (group === 'wide') {
+      if (ALWAYS_WIDE_TILE_IDS.has(id) && group !== 'wide' && group !== 'top' && group !== 'bottom') {
+        if (explicitPlacements || normalized.top.length < 2) normalized.top.push(id);
+        else normalized.bottom.push(id);
+      } else if (group === 'wide') {
         if (normalized.top.length < 2) normalized.top.push(id);
         else normalized.bottom.push(id);
       } else {

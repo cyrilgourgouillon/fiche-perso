@@ -22,7 +22,7 @@ function cloneDefaultLayout() {
 export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
   const dialogRef = useRef(null);
   const { data, update, apply } = useSheet();
-  const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides);
+  const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths);
   const hidden = hiddenTiles(layout);
 
   useEffect(() => {
@@ -44,24 +44,16 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
     nextGroup.splice(destination, 0, id);
     saveLayout({ ...layout, [group]: nextGroup });
   };
-  const moveWide = (id, destination) => {
-    if (id === 'header') return;
-    saveLayout({
-      ...layout,
-      top: layout.top.filter((tileId) => tileId !== id),
-      bottom: layout.bottom.filter((tileId) => tileId !== id),
-      [destination]: [...layout[destination], id],
-    });
-  };
-  const moveColumn = (id, destination) => {
-    const source = layout.left.includes(id) ? 'left' : 'right';
+  const place = (id, destination) => {
+    if (id === 'header' || (id === 'caracteristiques' && destination !== 'top' && destination !== 'bottom')) return;
+    const groups = ['top', 'left', 'right', 'bottom'];
+    const source = groups.find((group) => layout[group].includes(id));
+    if (!source || source === destination || !groups.includes(destination)) return;
     const index = layout[source].indexOf(id);
-    if (index < 0 || source === destination) return;
-    const nextLayout = {
-      ...layout,
-      [source]: layout[source].filter((tileId) => tileId !== id),
-      [destination]: [...layout[destination]],
-    };
+    const nextLayout = Object.fromEntries(groups.map((group) => [
+      group,
+      layout[group].filter((tileId) => tileId !== id),
+    ]));
     nextLayout[destination].splice(Math.min(index, nextLayout[destination].length), 0, id);
     saveLayout(nextLayout);
   };
@@ -70,7 +62,7 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
     saveLayout({ ...layout, [group]: layout[group].filter((tileId) => tileId !== id) });
   };
   const add = (id, group) => {
-    if (id === 'header') return;
+    if (id === 'header' || (id === 'caracteristiques' && group !== 'top' && group !== 'bottom')) return;
     saveLayout({ ...layout, [group]: [...layout[group], id] });
   };
   const resetConfiguration = () => apply((current) => ({
@@ -109,7 +101,8 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
           <div className="settings-section-heading">
             <div>
               <h3 id="settings-order-title">Disposition des blocs</h3>
-              <p>Placez les blocs pleine largeur au-dessus ou sous les colonnes. Ajoutez les autres &agrave; gauche ou &agrave; droite, puis ordonnez-les.</p>
+              <p>Choisissez une largeur et un emplacement pour chaque bloc. Caract&eacute;ristiques &amp; comp&eacute;tences reste en pleine largeur pour garder les comp&eacute;tences lisibles. Utilisez les fl&egrave;ches pour changer l&rsquo;ordre.</p>
+              <p className="settings-responsive-note">La disposition &agrave; deux colonnes s&rsquo;applique uniquement aux grands &eacute;crans. Sur les petits &eacute;crans, la fiche s&rsquo;affiche automatiquement sur une seule colonne.</p>
             </div>
             <button type="button" className="sheet-button settings-reset" onClick={resetConfiguration}>R&eacute;initialiser la configuration</button>
           </div>
@@ -131,11 +124,25 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
                         <span className="settings-tile-actions">
                           <button type="button" aria-label={`Monter ${TILE_BY_ID[id].label} dans ${GROUP_LABELS[group]}`} disabled={index === 0 || (group === 'top' && index === 1 && layout.top[0] === 'header')} onClick={() => move(group, id, -1)}>&uarr;</button>
                           <button type="button" aria-label={`Descendre ${TILE_BY_ID[id].label} dans ${GROUP_LABELS[group]}`} disabled={index === layout[group].length - 1} onClick={() => move(group, id, 1)}>&darr;</button>
-                          {group === 'top' && <button type="button" className="settings-placement-button" aria-label={`Placer ${TILE_BY_ID[id].label} sous les colonnes`} title="Placer après les colonnes" onClick={() => moveWide(id, 'bottom')}>Après</button>}
-                          {group === 'bottom' && <button type="button" className="settings-placement-button" aria-label={`Placer ${TILE_BY_ID[id].label} au-dessus des colonnes`} title="Placer avant les colonnes" onClick={() => moveWide(id, 'top')}>Avant</button>}
-                          {group === 'left' && <button type="button" className="settings-column-button" aria-label={`Déplacer ${TILE_BY_ID[id].label} vers la colonne droite`} title="Déplacer vers la colonne droite" onClick={() => moveColumn(id, 'right')}>&rarr;</button>}
-                          {group === 'right' && <button type="button" className="settings-column-button" aria-label={`Déplacer ${TILE_BY_ID[id].label} vers la colonne gauche`} title="Déplacer vers la colonne gauche" onClick={() => moveColumn(id, 'left')}>&larr;</button>}
-                          <button type="button" className="settings-remove-tile" aria-label={`Masquer ${TILE_BY_ID[id].label}`} onClick={() => remove(group, id)}>&minus;</button>
+                          <select
+                            className="settings-placement-select"
+                            aria-label={`Largeur et emplacement de ${TILE_BY_ID[id].label}`}
+                            title="Changer la largeur et l'emplacement"
+                            value={group}
+                            onChange={(event) => place(id, event.target.value)}
+                          >
+                            <optgroup label="Pleine largeur">
+                              <option value="top">2 colonnes &middot; au-dessus</option>
+                              <option value="bottom">2 colonnes &middot; en dessous</option>
+                            </optgroup>
+                            {id !== 'caracteristiques' && (
+                              <optgroup label="Une colonne">
+                                <option value="left">1 colonne &middot; gauche</option>
+                                <option value="right">1 colonne &middot; droite</option>
+                              </optgroup>
+                            )}
+                          </select>
+                          <button type="button" className="settings-remove-tile" title={`Masquer ${TILE_BY_ID[id].label}`} aria-label={`Masquer ${TILE_BY_ID[id].label}`} onClick={() => remove(group, id)}>&minus;</button>
                         </span>
                       )}
                     </li>
@@ -149,24 +156,23 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
           <section className="settings-hidden-zone" aria-labelledby="settings-hidden-title">
             <div>
               <h4 id="settings-hidden-title">R&eacute;serve de blocs masqu&eacute;s</h4>
-              <p>Les blocs ici ne figurent pas sur la fiche ni dans la navigation.</p>
+              <p>Choisissez la largeur et la position pour r&eacute;afficher un bloc.</p>
             </div>
             {hidden.length ? (
               <ul className="settings-hidden-list">
-                {hidden.map(({ id, label, width }) => (
+                {hidden.map(({ id, label }) => (
                   <li className="settings-hidden-block" key={id}>
-                    <span className="settings-tile-name"><span>{label}<small>{width === 'wide' ? 'Pleine largeur' : 'Une colonne'}</small></span></span>
-                    {width === 'wide' ? (
-                      <span className="settings-hidden-actions">
-                        <button type="button" className="settings-add-tile" aria-label={`Ajouter ${label} au-dessus des colonnes`} onClick={() => add(id, 'top')}>Au-dessus</button>
-                        <button type="button" className="settings-add-tile" aria-label={`Ajouter ${label} sous les colonnes`} onClick={() => add(id, 'bottom')}>En dessous</button>
-                      </span>
-                    ) : (
-                      <span className="settings-hidden-actions">
-                        <button type="button" className="settings-add-tile" aria-label={`Ajouter ${label} à gauche`} onClick={() => add(id, 'left')}>Gauche</button>
-                        <button type="button" className="settings-add-tile" aria-label={`Ajouter ${label} à droite`} onClick={() => add(id, 'right')}>Droite</button>
-                      </span>
-                    )}
+                    <span className="settings-tile-name">{label}</span>
+                    <span className={`settings-hidden-actions${id === 'caracteristiques' ? ' settings-hidden-actions-wide-only' : ''}`}>
+                      <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur au-dessus des colonnes" aria-label={`Ajouter ${label} sur deux colonnes au-dessus`} onClick={() => add(id, 'top')}>2 col. &uarr;</button>
+                      <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur sous les colonnes" aria-label={`Ajouter ${label} sur deux colonnes en dessous`} onClick={() => add(id, 'bottom')}>2 col. &darr;</button>
+                      {id !== 'caracteristiques' && (
+                        <>
+                          <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; gauche" aria-label={`Ajouter ${label} sur une colonne &agrave; gauche`} onClick={() => add(id, 'left')}>1 col. &larr;</button>
+                          <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; droite" aria-label={`Ajouter ${label} sur une colonne &agrave; droite`} onClick={() => add(id, 'right')}>1 col. &rarr;</button>
+                        </>
+                      )}
+                    </span>
                   </li>
                 ))}
               </ul>

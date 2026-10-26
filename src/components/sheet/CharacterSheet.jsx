@@ -33,8 +33,8 @@ const TILE_COMPONENTS = {
 export default function CharacterSheet({ onOpenAppearance }) {
   const { data } = useSheet();
   const layout = useMemo(
-    () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides),
-    [data.tile_layout, data.tile_order, data.tile_sides],
+    () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths),
+    [data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths],
   );
   const renderWideTile = (id) => {
     const Tile = TILE_COMPONENTS[id];

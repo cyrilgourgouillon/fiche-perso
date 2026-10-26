@@ -28,7 +28,7 @@ function sheetSearchEntries(data) {
 
 export default function SheetSearch({ open, onToggle }) {
   const { data, apply } = useSheet();
-  const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides);
+  const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths);
   const visibleSections = new Set([...layout.top, ...layout.left, ...layout.right, ...layout.bottom]);
   const [query, setQuery] = useState('');
   const [pendingField, setPendingField] = useState('');

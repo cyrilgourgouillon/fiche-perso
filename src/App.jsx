@@ -19,6 +19,7 @@ import { useStatusMessage } from './hooks/useStatusMessage.js';
 
 export default function App() {
   const [showCombatSummary, setShowCombatSummary] = useState(false);
+  const [toolbarHidden, setToolbarHidden] = useState(false);
   const [activeTool, setActiveTool] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
   const toggleTool = (tool) => setActiveTool((current) => current === tool ? null : tool);
@@ -33,6 +34,28 @@ export default function App() {
   useEffect(() => {
     if (showCombatSummary) window.scrollTo(0, 0);
   }, [showCombatSummary]);
+
+  useEffect(() => {
+    let previousY = window.scrollY;
+    const handleScroll = () => {
+      const currentY = Math.max(0, window.scrollY);
+      const delta = currentY - previousY;
+
+      if (currentY <= 8) {
+        setToolbarHidden(false);
+      } else if (Math.abs(delta) >= 6) {
+        const toolbar = document.getElementById('toolbar');
+        if (delta < 0 || !toolbar?.contains(document.activeElement)) {
+          setToolbarHidden(delta > 0);
+        }
+      }
+
+      if (Math.abs(delta) >= 6 || currentY <= 8) previousY = currentY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const toolByKey = Object.fromEntries(KEYBOARD_SHORTCUTS
@@ -81,7 +104,11 @@ export default function App() {
   return (
     <SheetProvider data={data} update={update} apply={apply}>
       <DiceProvider>
-        <main data-theme={theme} data-view={showCombatSummary ? 'combat-summary' : 'sheet'}>
+        <main
+          data-theme={theme}
+          data-view={showCombatSummary ? 'combat-summary' : 'sheet'}
+          data-toolbar-hidden={toolbarHidden ? 'true' : undefined}
+        >
           <Toolbar
             status={status}
             onOpenSettings={() => setActiveTool('settings')}
