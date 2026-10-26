@@ -1,5 +1,6 @@
-﻿import { useEffect, useState } from 'react';
-import { FOLDABLE_SECTIONS, SECTIONS, foldField, sectionAnchor } from '../../data/sections.js';
+import { useEffect, useMemo, useState } from 'react';
+import { SECTIONS, foldField, sectionAnchor } from '../../data/sections.js';
+import { normalizeTileLayout } from '../../data/tileLayout.js';
 import { isFlagged } from '../../services/characterMath.js';
 import { useSheet } from '../../context/SheetContext.js';
 
@@ -28,37 +29,57 @@ function SectionIcon({ id }) {
 }
 
 /** Sets every foldable section at once - the fold flags are ordinary sheet fields. */
-const withAllSections = (data, collapsed) => ({
+const withAllSections = (data, collapsed, foldableSections) => ({
   ...data,
-  ...Object.fromEntries(FOLDABLE_SECTIONS.map(({ id }) => [foldField(id), String(collapsed)])),
+  ...Object.fromEntries(foldableSections.map(({ id }) => [foldField(id), String(collapsed)])),
 });
 
 /** Quick jumps and section controls, grouped into easy-to-scan navigation cards. */
 export default function SheetNav({ open, onToggle }) {
   const { data, apply } = useSheet();
-  const collapsedCount = FOLDABLE_SECTIONS.filter(({ id }) =>
+  const layout = useMemo(
+    () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides),
+    [data.tile_layout, data.tile_order, data.tile_sides],
+  );
+  const sections = useMemo(() => {
+    const orderedIds = [
+      ...layout.top,
+      ...layout.left,
+      ...layout.right,
+      ...layout.bottom,
+    ];
+    return orderedIds
+      .map((id) => SECTIONS.find((section) => section.id === id))
+      .filter(Boolean);
+  }, [layout]);
+  const foldableSections = useMemo(() => sections.filter(({ foldable }) => foldable !== false), [sections]);
+  const collapsedCount = foldableSections.filter(({ id }) =>
     isFlagged(data, foldField(id)),
   ).length;
-  const [activeSection, setActiveSection] = useState(SECTIONS[0]?.id ?? '');
+  const [activeSection, setActiveSection] = useState(sections[0]?.id ?? '');
 
   useEffect(() => {
+    if (!sections.some(({ id }) => id === activeSection)) setActiveSection(sections[0]?.id ?? '');
+  }, [sections, activeSection]);
+
+  useEffect(() => {
+    if (!sections.length) return undefined;
     const observer = new IntersectionObserver((entries) => {
       const visible = entries
         .filter((entry) => entry.isIntersecting)
         .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       if (visible.length) {
-        const section = SECTIONS.find(({ id }) => sectionAnchor(id) === visible[0].target.id);
+        const section = sections.find(({ id }) => sectionAnchor(id) === visible[0].target.id);
         if (section) setActiveSection(section.id);
       }
     }, { rootMargin: '-18% 0px -70% 0px', threshold: 0 });
 
-    SECTIONS.forEach(({ id }) => {
+    sections.forEach(({ id }) => {
       const element = document.getElementById(sectionAnchor(id));
       if (element) observer.observe(element);
     });
     return () => observer.disconnect();
-  }, []);
-
+  }, [sections]);
   return (
     <div className="sheet-nav-widget">
         <button
@@ -94,10 +115,10 @@ export default function SheetNav({ open, onToggle }) {
           <div id="sheet-navigation-content">
             <div className="nav-intro">
               <span>Acces rapide aux rubriques</span>
-              <span className="nav-section-count">{SECTIONS.length} sections</span>
+              <span className="nav-section-count">{sections.length} sections</span>
             </div>
             <ul className="nav-links">
-              {SECTIONS.map(({ id, label }, index) => (
+              {sections.map(({ id, label }, index) => (
                 <li key={id}>
                   <a
                     className={`nav-link${activeSection === id ? ' active' : ''}`}
@@ -123,8 +144,8 @@ export default function SheetNav({ open, onToggle }) {
                 <button
                   type="button"
                   className="sheet-button nav-fold"
-                  disabled={collapsedCount === FOLDABLE_SECTIONS.length}
-                  onClick={() => apply((current) => withAllSections(current, true))}
+                  disabled={collapsedCount === foldableSections.length}
+                  onClick={() => apply((current) => withAllSections(current, true, foldableSections))}
                 >
                   <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5h10M3 8h10M3 11h10" /></svg>
                   Tout replier
@@ -133,7 +154,7 @@ export default function SheetNav({ open, onToggle }) {
                   type="button"
                   className="sheet-button nav-fold"
                   disabled={collapsedCount === 0}
-                  onClick={() => apply((current) => withAllSections(current, false))}
+                  onClick={() => apply((current) => withAllSections(current, false, foldableSections))}
                 >
                   <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 5h10M3 8h10M3 11h10M8 3v10" /></svg>
                   Tout d&eacute;plier

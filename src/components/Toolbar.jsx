@@ -1,6 +1,4 @@
-import { THEMES } from '../data/themes.js';
-
-export default function Toolbar({ status, theme, onThemeChange, onLoad, onSave, onToggleCombatSummary, combatSummaryOpen }) {
+export default function Toolbar({ status, onLoad, onSave, onOpenSettings, onToggleCombatSummary, combatSummaryOpen }) {
   return (
     <header id="toolbar">
       <div className="brand-lockup">
@@ -13,16 +11,9 @@ export default function Toolbar({ status, theme, onThemeChange, onLoad, onSave, 
       <span id="save-status" className={status ? 'show' : undefined} role="status">
         {status}
       </span>
-      <label className="theme-picker">
-        <span>Thème</span>
-        <select value={theme} onChange={(event) => onThemeChange(event.target.value)}>
-          {THEMES.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <button id="btn-settings" type="button" onClick={onOpenSettings}>
+        <span aria-hidden="true">⚙</span> Paramètres
+      </button>
       <button id="btn-combat" type="button" onClick={onToggleCombatSummary}>
         <span aria-hidden="true">{combatSummaryOpen ? '↩' : '⚔'}</span>
         {combatSummaryOpen ? 'Fiche' : 'Résumé'}

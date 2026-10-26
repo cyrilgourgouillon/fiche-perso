@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CLASS_FEATURES, INVENTORY, MAGIC_ITEMS, QUESTS, SPELLS, WEAPONS } from '../../data/sheetLists.js';
 import { SECTIONS, foldField } from '../../data/sections.js';
+import { normalizeTileLayout } from '../../data/tileLayout.js';
 import { listRowCount } from '../../services/sheetRows.js';
 import { useSheet } from '../../context/SheetContext.js';
 
@@ -27,11 +28,27 @@ function sheetSearchEntries(data) {
 
 export default function SheetSearch({ open, onToggle }) {
   const { data, apply } = useSheet();
+  const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides);
+  const visibleSections = new Set([...layout.top, ...layout.left, ...layout.right, ...layout.bottom]);
   const [query, setQuery] = useState('');
   const [pendingField, setPendingField] = useState('');
   const searchResults = query.trim().length >= 2
-    ? sheetSearchEntries(data).filter((entry) => normalized(entry.searchText).includes(normalized(query.trim()))).slice(0, 8)
+    ? sheetSearchEntries(data)
+      .filter((entry) => visibleSections.has(entry.section))
+      .filter((entry) => normalized(entry.searchText).includes(normalized(query.trim())))
+      .slice(0, 8)
     : [];
+  const groupedResults = searchResults.reduce((groups, entry) => {
+    const label = SECTIONS.find(({ id }) => id === entry.section)?.label || 'Autres';
+    const group = groups.find(({ section }) => section === entry.section);
+    if (group) group.entries.push(entry);
+    else groups.push({ section: entry.section, label, entries: [entry] });
+    return groups;
+  }, []);
+
+  useEffect(() => {
+    if (!open) setQuery('');
+  }, [open]);
 
   useEffect(() => {
     if (!pendingField) return undefined;
@@ -93,11 +110,16 @@ export default function SheetSearch({ open, onToggle }) {
               />
               {query.trim().length >= 2 && (
                 <div className="sheet-search-results" role="listbox" aria-label="Résultats de recherche">
-                  {searchResults.length ? searchResults.map((entry) => (
-                    <button type="button" role="option" aria-selected="false" key={entry.field} onClick={() => openSearchResult(entry)}>
-                      <strong>{entry.title}</strong>
-                      <span>{SECTIONS.find(({ id }) => id === entry.section)?.label}{entry.detail ? ` · ${entry.detail}` : ''}</span>
-                    </button>
+                  {groupedResults.length ? groupedResults.map((group) => (
+                    <div className="sheet-search-result-group" data-section={group.section} role="group" aria-label={group.label} key={group.section}>
+                      <h3>{group.label}</h3>
+                      {group.entries.map((entry) => (
+                        <button type="button" role="option" aria-selected="false" key={entry.field} onClick={() => openSearchResult(entry)}>
+                          <strong>{entry.title}</strong>
+                          {entry.detail && <span>{entry.detail}</span>}
+                        </button>
+                      ))}
+                    </div>
                   )) : <p>Aucun résultat.</p>}
                 </div>
               )}

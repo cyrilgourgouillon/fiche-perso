@@ -8,6 +8,7 @@ import AppearancePanel from './components/sheet/AppearancePanel.jsx';
 import QuickReferencePanel from './components/sheet/QuickReferencePanel.jsx';
 import SheetSearch from './components/sheet/SheetSearch.jsx';
 import ShortcutsHelp from './components/sheet/ShortcutsHelp.jsx';
+import SettingsModal from './components/sheet/SettingsModal.jsx';
 import { KEYBOARD_SHORTCUTS } from './data/keyboardShortcuts.js';
 import DiceProvider from './context/DiceProvider.jsx';
 import SheetProvider from './context/SheetProvider.jsx';
@@ -83,8 +84,7 @@ export default function App() {
         <main data-theme={theme} data-view={showCombatSummary ? 'combat-summary' : 'sheet'}>
           <Toolbar
             status={status}
-            theme={theme}
-            onThemeChange={setTheme}
+            onOpenSettings={() => setActiveTool('settings')}
             onLoad={openPicker}
             onSave={exportFile}
             onToggleCombatSummary={() => setShowCombatSummary((current) => !current)}
@@ -111,6 +111,12 @@ export default function App() {
             )}
             <DiceTray open={activeTool === 'dice'} onToggle={() => toggleTool('dice')} />
           </div>
+          <SettingsModal
+            open={activeTool === 'settings'}
+            onClose={() => setActiveTool(null)}
+            theme={theme}
+            onThemeChange={setTheme}
+          />
           <DiceFlash />
           <input ref={inputRef} type="file" accept=".json" hidden onChange={importFile} />
         </main>

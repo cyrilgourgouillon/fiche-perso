@@ -98,3 +98,60 @@
 .sheet-search-results > p { color: var(--ink-light); font-size: 10px; font-weight: 400; }
 .sheet-search-results button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sheet-search-results > p { margin: 6px 8px; }
+.sheet-search-result-group + .sheet-search-result-group { margin-top: 5px; }
+.sheet-search-result-group h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 10px 5px;
+  color: var(--red);
+  font-family: var(--display-font);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+}
+.global-search-panel .sheet-search-result-group { padding: 0 3px 5px; }
+.global-search-panel .sheet-search-result-group + .sheet-search-result-group {
+  margin-top: 7px;
+  padding-top: 6px;
+}
+.global-search-panel .sheet-search-result-group h3 {
+  margin: 2px 8px 5px;
+  color: var(--category-color, var(--red));
+}
+.global-search-panel .sheet-search-results button {
+  min-height: 56px;
+  gap: 4px;
+  padding: 10px 12px;
+}
+.global-search-panel .sheet-search-results button strong { font-size: 15px; line-height: 1.3; }
+.global-search-panel .sheet-search-results button span { font-size: 12px; line-height: 1.4; }
+.global-search-panel .sheet-search-result-group h3::after {
+  height: 1px;
+  flex: 1;
+  background: color-mix(in srgb, var(--category-color, var(--border)) 38%, transparent);
+  content: '';
+}
+.global-search-panel .sheet-search-results button { transition: background-color 140ms ease, transform 140ms ease; }
+.global-search-panel .sheet-search-results button:hover,
+.global-search-panel .sheet-search-results button:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--category-color, var(--border)) 52%, transparent);
+  background: color-mix(in srgb, var(--category-color, var(--parch-dark)) 10%, var(--parch));
+}
+.global-search-panel .sheet-search-result-group[data-section='armes'] { --category-color: #a34b32; }
+.global-search-panel .sheet-search-result-group[data-section='sorts'] { --category-color: #5d68a5; }
+.global-search-panel .sheet-search-result-group[data-section='equipement'] { --category-color: #238071; }
+.global-search-panel .sheet-search-result-group[data-section='capacites'] { --category-color: #8463a2; }
+.global-search-panel .sheet-search-result-group[data-section='quetes'] { --category-color: #8a7131; }
+.global-search-panel .sheet-search-result-group[data-section='armes'] h3::before,
+.global-search-panel .sheet-search-result-group[data-section='sorts'] h3::before,
+.global-search-panel .sheet-search-result-group[data-section='equipement'] h3::before,
+.global-search-panel .sheet-search-result-group[data-section='capacites'] h3::before,
+.global-search-panel .sheet-search-result-group[data-section='quetes'] h3::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--category-color);
+  content: '';
+}
+.global-search-panel .sheet-search-results button:active { transform: scale(0.995); }
