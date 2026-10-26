@@ -150,6 +150,8 @@
 .settings-tile-name { display: flex; min-width: 0; flex: 1; align-items: center; gap: 9px; color: var(--ink); font: 500 14px/1.35 var(--ui-font); }
 .settings-tile-name strong { min-width: 20px; color: var(--gold); font-size: 11px; letter-spacing: .06em; }
 .settings-tile-name small { display: block; margin-top: 3px; color: var(--ink-light); font: 12px var(--ui-font); }
+.settings-layout-block .settings-tile-name { flex-wrap: wrap; }
+.settings-tile-name .settings-width-label { flex: 0 0 auto; margin: 0; padding: 3px 7px; border-radius: 999px; color: var(--red); background: color-mix(in srgb, var(--red) 9%, var(--parch)); font: 700 10px/1.2 var(--ui-font); white-space: nowrap; }
 .settings-fixed-label { padding: 5px 8px; border-radius: 20px; color: var(--red); background: rgba(131, 49, 45, .1); font: 700 11px var(--ui-font); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
 .settings-tile-actions { display: flex; gap: 4px; }
 .settings-tile-actions button,
@@ -193,6 +195,9 @@
 }
 @media (max-width: 1199px) {
   .sheet-custom-order > .tile-columns { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+}
+@media (orientation: landscape) and (min-width: 768px) and (max-width: 1199px) {
+  .sheet-custom-order > .tile-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 }
 @media (max-width: 390px) {
   #toolbar #btn-settings { font-size: 0; }

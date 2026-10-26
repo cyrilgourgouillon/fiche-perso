@@ -1,4 +1,5 @@
 import { KEYBOARD_SHORTCUTS } from '../../data/keyboardShortcuts.js';
+import { createPortal } from 'react-dom';
 
 export default function ShortcutsHelp({ open, onToggle, onClose }) {
   return (
@@ -15,7 +16,7 @@ export default function ShortcutsHelp({ open, onToggle, onClose }) {
           <span aria-hidden="true">?</span>
         </button>
       </div>
-      {open && (
+      {open && createPortal(
         <div className="shortcuts-overlay" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
           <section
             id="keyboard-shortcuts-dialog"
@@ -41,7 +42,8 @@ export default function ShortcutsHelp({ open, onToggle, onClose }) {
             </ul>
             <p className="shortcuts-note">Les raccourcis lettre, / et ? sont inactifs pendant la saisie. Ctrl / ⌘ + K reste actif.</p>
           </section>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

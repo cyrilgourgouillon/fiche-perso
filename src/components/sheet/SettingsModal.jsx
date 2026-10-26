@@ -117,7 +117,11 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
                 <ol className="settings-tile-list" aria-label={GROUP_LABELS[group]}>
                   {layout[group].map((id, index) => (
                     <li className={`settings-layout-block${id === 'header' ? ' settings-layout-block-fixed' : ''}`} key={id}>
-                      <span className="settings-tile-name"><strong>{String(index + 1).padStart(2, '0')}</strong>{TILE_BY_ID[id].label}</span>
+                      <span className="settings-tile-name">
+                        <strong>{String(index + 1).padStart(2, '0')}</strong>
+                        {TILE_BY_ID[id].label}
+                        {id === 'caracteristiques' && <small className="settings-width-label">2 colonnes uniquement</small>}
+                      </span>
                       {id === 'header' ? (
                         <span className="settings-fixed-label">Toujours en haut</span>
                       ) : (
@@ -162,7 +166,10 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
               <ul className="settings-hidden-list">
                 {hidden.map(({ id, label }) => (
                   <li className="settings-hidden-block" key={id}>
-                    <span className="settings-tile-name">{label}</span>
+                    <span className="settings-tile-name">
+                      {label}
+                      {id === 'caracteristiques' && <small className="settings-width-label">2 colonnes uniquement</small>}
+                    </span>
                     <span className={`settings-hidden-actions${id === 'caracteristiques' ? ' settings-hidden-actions-wide-only' : ''}`}>
                       <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur au-dessus des colonnes" aria-label={`Ajouter ${label} sur deux colonnes au-dessus`} onClick={() => add(id, 'top')}>2 col. &uarr;</button>
                       <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur sous les colonnes" aria-label={`Ajouter ${label} sur deux colonnes en dessous`} onClick={() => add(id, 'bottom')}>2 col. &darr;</button>
