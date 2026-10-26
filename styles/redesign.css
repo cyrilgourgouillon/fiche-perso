@@ -2920,7 +2920,7 @@ td .ef {
 .keyboard-shortcut-list { display: grid; gap: 5px; list-style: none; }
 .keyboard-shortcut-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 42px; padding: 7px 10px; border: 1px solid color-mix(in srgb, var(--border) 70%, transparent); border-radius: 9px; background: color-mix(in srgb, white 34%, transparent); font: 500 13px var(--ui-font); }
 .shortcuts-note { margin-top: 12px; color: var(--ink-light); font: 11px/1.45 var(--ui-font); }
-@media (max-width: 480px) { .search-overlay, .shortcuts-overlay { padding: 12px; } .search-input-block { padding: 13px; border-radius: 14px; } .global-search-panel .sheet-search input { min-height: 52px; font-size: 16px; } .search-help-group li > span { flex-basis: 100%; } .shortcuts-dialog { padding: 17px; border-radius: 15px; } .shortcuts-heading h2 { font-size: 21px; } }
+@media (max-width: 480px) { .search-overlay, .shortcuts-overlay { padding: 12px; } .search-overlay { padding-top: 112px; } .search-input-block { padding: 13px; border-radius: 14px; } .global-search-panel .sheet-search input { min-height: 52px; font-size: 16px; } .search-help-group li > span { flex-basis: 100%; } .shortcuts-dialog { padding: 17px; border-radius: 15px; } .shortcuts-heading h2 { font-size: 21px; } }
 
 /* Sharper layers make dense sections easier to scan without changing the palette. */
 .panel {
