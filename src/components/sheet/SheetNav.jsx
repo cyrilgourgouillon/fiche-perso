@@ -35,7 +35,7 @@ const withAllSections = (data, collapsed, foldableSections) => ({
 });
 
 /** Quick jumps and section controls, grouped into easy-to-scan navigation cards. */
-export default function SheetNav({ open, onToggle }) {
+export default function SheetNav({ open, onToggle, onOpenSettings }) {
   const { data, apply } = useSheet();
   const layout = useMemo(
     () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths),
@@ -160,6 +160,14 @@ export default function SheetNav({ open, onToggle }) {
                   Tout d&eacute;plier
                 </button>
               </div>
+              <button
+                type="button"
+                className="sheet-button nav-configure"
+                onClick={onOpenSettings}
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3h12M2 8h12M2 13h12M5 1v4M10 6v4M7 11v4" /></svg>
+                Configurer les colonnes
+              </button>
             </div>
           </div>
         </nav>

@@ -154,6 +154,10 @@
   background: color-mix(in srgb, var(--parch) 54%, transparent);
 }
 
+.avatar-hat-card {
+  margin-top: 14px;
+}
+
 .avatar-choice-group {
   min-width: 0;
   margin: 0;

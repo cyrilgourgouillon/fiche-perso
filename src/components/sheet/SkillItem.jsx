@@ -11,7 +11,7 @@ export default function SkillItem({ skill }) {
   const bonus = skillBonus(data, skill);
 
   return (
-    <div className="skill-item">
+    <div className="skill-item" data-skill={skill.key}>
       <Checkbox name={skill.key} />
       <span className="skill-bonus">{formatModifier(bonus)}</span>
       <span className="skill-name">{skill.label}</span>

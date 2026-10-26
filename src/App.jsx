@@ -120,23 +120,27 @@ export default function App() {
           {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet onOpenAppearance={() => setActiveTool("appearance")} />}
           <div className="sheet-tools" role="group" aria-label="Outils de la fiche">
             {!showCombatSummary && (
-              <SheetNav open={activeTool === 'sections'} onToggle={() => toggleTool('sections')} />
+              <SheetSearch open={activeTool === 'search'} onToggle={() => toggleTool('search')} />
             )}
             {!showCombatSummary && (
-              <SheetSearch open={activeTool === 'search'} onToggle={() => toggleTool('search')} />
+              <QuickReferencePanel open={activeTool === 'quick-reference'} onToggle={() => toggleTool('quick-reference')} />
+            )}
+            {!showCombatSummary && (
+              <SheetNav
+                open={activeTool === 'sections'}
+                onToggle={() => toggleTool('sections')}
+                onOpenSettings={() => setActiveTool('settings')}
+              />
+            )}
+            <DiceTray open={activeTool === 'dice'} onToggle={() => toggleTool('dice')} />
+            {!showCombatSummary && (
+              <AppearancePanel open={activeTool === 'appearance'} onToggle={() => toggleTool('appearance')} />
             )}
             <ShortcutsHelp
               open={showShortcuts}
               onToggle={() => setShowShortcuts((current) => !current)}
               onClose={() => setShowShortcuts(false)}
             />
-            {!showCombatSummary && (
-              <AppearancePanel open={activeTool === 'appearance'} onToggle={() => toggleTool('appearance')} />
-            )}
-            {!showCombatSummary && (
-              <QuickReferencePanel open={activeTool === 'quick-reference'} onToggle={() => toggleTool('quick-reference')} />
-            )}
-            <DiceTray open={activeTool === 'dice'} onToggle={() => toggleTool('dice')} />
           </div>
           <SettingsModal
             open={activeTool === 'settings'}

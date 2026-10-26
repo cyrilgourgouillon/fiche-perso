@@ -19,6 +19,29 @@
 .hp-adjust-damage { color: var(--failure); }
 .hp-adjust-heal { color: var(--success); }
 
+.money-quick-adjust {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 9px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--parch) 76%, white);
+}
+.money-adjust-field { display: grid; min-width: 0; gap: 4px; }
+.money-adjust-field label { color: var(--ink-light); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.money-adjust-field input,
+.money-adjust-field select { box-sizing: border-box; width: 100%; min-height: 38px; padding: 5px 8px; font-size: 16px; }
+.money-adjust-field input { text-align: center; }
+.money-adjust-field select { border: 1px solid var(--border); border-radius: 6px; color: var(--ink); background: var(--parch-dark); }
+.money-adjust-actions { display: flex; grid-column: 1 / -1; gap: 7px; }
+.money-adjust-actions .sheet-button { min-height: 38px; flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 700; }
+.money-adjust-actions .sheet-button span { margin-right: 4px; font-size: 15px; }
+.money-adjust-remove { color: var(--failure); }
+.money-adjust-add { color: var(--success); }
+
 .death-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
 .death-group { min-width: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--parch) 76%, white); text-align: left; }
 .death-group.success { border-top: 3px solid var(--success); }
@@ -41,10 +64,103 @@
   .hp-quick-adjust { align-items: stretch; }
   .hp-adjust-actions { flex-basis: 100%; }
   .hp-adjust-actions .sheet-button { flex: 1; padding-inline: 8px; }
+  .money-quick-adjust { gap: 7px; padding: 8px; }
+  .money-adjust-actions .sheet-button { padding-inline: 8px; }
   .death-row { gap: 7px; }
   .death-group { padding: 9px; }
   .death-group-heading { align-items: flex-start; flex-direction: column; gap: 2px; }
 }
+
+/* Keep the header's hit point controls on one compact row. */
+.header-panel .hp-quick-adjust {
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 7px;
+  margin: 8px 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.header-panel .hp-adjust-amount {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+}
+.header-panel .hp-adjust-amount label {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+.header-panel .hp-adjust-amount input {
+  box-sizing: border-box;
+  width: 48px;
+  min-height: 32px;
+  padding-inline: 3px;
+  font-size: 14px;
+}
+.header-panel .hp-adjust-actions {
+  flex-basis: 0;
+  min-width: 0;
+  flex-wrap: nowrap;
+  gap: 5px;
+}
+.header-panel .hp-adjust-actions .sheet-button {
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 7px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.header-panel .hp-adjust-actions .sheet-button span {
+  margin-right: 2px;
+  font-size: 13px;
+}
+
+/* Flatten and shrink the HP controls inside the combat summary stat card. */
+.summary-hit-points .hp-quick-adjust {
+  box-sizing: border-box;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.summary-hit-points .hp-adjust-amount {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.summary-hit-points .hp-adjust-amount label {
+  font-size: 8px;
+  letter-spacing: 0;
+}
+.summary-hit-points .hp-adjust-amount input {
+  box-sizing: border-box;
+  width: 34px;
+  min-height: 24px;
+  padding-inline: 2px;
+  font-size: 10px;
+}
+.summary-hit-points .hp-adjust-actions {
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  gap: 2px;
+}
+.summary-hit-points .hp-adjust-actions .sheet-button {
+  min-height: 24px;
+  padding: 3px 4px;
+  font-size: 8px;
+  white-space: nowrap;
+}
+.summary-hit-points .hp-adjust-actions .sheet-button span {
+  margin-right: 1px;
+  font-size: 10px;
+}
+
 .sheet.sheet-custom-order {
   display: block;
 }
@@ -218,18 +334,18 @@
 @media (max-width: 1199px) {
   .settings-section-heading .settings-responsive-note { display: block; }
 }
+.sheet-tools {
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, white);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--parch) 94%, transparent);
+  box-shadow: 0 8px 24px rgba(8, 14, 10, 0.2);
+}
 @media (max-width: 700px) {
   .settings-section-heading { flex-direction: column; }
   .settings-reset { align-self: flex-start; max-width: 100%; white-space: normal; text-align: center; line-height: 1.35; }
   .settings-fixed-label { justify-self: start; }
   .sheet.sheet-custom-order { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
-  .sheet-tools {
-    padding: 5px;
-    border: 1px solid color-mix(in srgb, var(--border) 82%, white);
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--parch) 94%, transparent);
-    box-shadow: 0 8px 24px rgba(8, 14, 10, 0.2);
-  }
 }
 @media (max-width: 390px) {
   .sheet-tools { gap: 4px; }

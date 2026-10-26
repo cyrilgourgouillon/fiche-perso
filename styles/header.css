@@ -1,15 +1,8 @@
 /* ── HEADER ── */
-/*
- * Identity on the left, vitals on the right.
- *
- * Both tracks are explicit fractions: an `auto` track would let the vitals take
- * their preferred width and squeeze the identity column down to the width of its
- * longest label, which is exactly backwards — the identity fields are the ones
- * that hold typed text.
- */
+/* The identity and vitality cards share one header tile in the layout configurator. */
 .header-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   align-items: start;
 }

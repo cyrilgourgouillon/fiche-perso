@@ -3,9 +3,13 @@ import VitalsBlock from './VitalsBlock.jsx';
 
 export default function HeaderPanel({ onOpenAppearance }) {
   return (
-    <div className="panel header-panel">
-      <IdentityBlock onOpenAppearance={onOpenAppearance} />
-      <VitalsBlock />
+    <div className="header-panel">
+      <section className="panel header-subpanel header-identity-panel">
+        <IdentityBlock onOpenAppearance={onOpenAppearance} />
+      </section>
+      <section className="panel header-subpanel header-vitals-panel">
+        <VitalsBlock />
+      </section>
     </div>
   );
 }
