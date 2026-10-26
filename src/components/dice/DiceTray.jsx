@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import DieButton from './DieButton.jsx';
 import DieIcon from './DieIcon.jsx';
 import RollResult from './RollResult.jsx';
@@ -6,9 +6,8 @@ import { DICE_TYPES, ROLL_MODES } from '../../data/diceTypes.js';
 import { parseDiceExpression } from '../../services/dice.js';
 import { useDice } from '../../context/DiceContext.js';
 
-export default function DiceTray() {
+export default function DiceTray({ open, onToggle }) {
   const { log, lastRoll, mode, setMode, rollDice, rollExpression, clear } = useDice();
-  const [expanded, setExpanded] = useState(false);
   const [expression, setExpression] = useState('');
   const validExpression = parseDiceExpression(expression) !== null;
 
@@ -19,17 +18,17 @@ export default function DiceTray() {
 
   return (
     <div className="dice-widget" id="section-des">
-      {!expanded ? (
         <button
           type="button"
           className="dice-launcher"
-          aria-expanded="false"
-          onClick={() => setExpanded(true)}
+          aria-controls="dice-panel-content"
+          aria-expanded={open}
+          onClick={onToggle}
         >
           <DieIcon className="die-icon" />
           <span>Lancer de dés</span>
         </button>
-      ) : (
+      {open && (
         <section className="panel dice-panel" aria-labelledby="dice-panel-toggle">
           <h2 className="section-heading">
             <button
@@ -38,7 +37,7 @@ export default function DiceTray() {
               className="section-title"
               aria-expanded="true"
               aria-controls="dice-panel-content"
-              onClick={() => setExpanded(false)}
+              onClick={onToggle}
             >
               Lancer de dés
               <span className="fold-caret" aria-hidden="true" />
@@ -98,7 +97,7 @@ export default function DiceTray() {
 
             {log.length > 1 && (
               <div className="dice-log">
-                <div className="meta-label">🎲 Derniers jets</div>
+                <div className="meta-label">Derniers jets</div>
                 {log.slice(1).map((roll) => (
                   <RollResult key={roll.id} roll={roll} compact />
                 ))}

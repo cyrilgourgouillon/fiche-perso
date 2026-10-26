@@ -1,31 +1,19 @@
-/**
- * A d20 silhouette, drawn rather than typed.
- *
- * The character that used to sit here (U+2684) came from whatever system font
- * happened to carry it — Segoe UI Symbol on Windows, something else on iOS — so
- * the affordance looked different on every device and read like a missing glyph
- * at small sizes. This scales cleanly and takes its colour from `currentColor`,
- * which is what makes the roll mode readable at a glance.
- */
+﻿/** Shared d20 outline for every dice action in the sheet. */
 export default function DieIcon({ className = 'die-icon' }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 24 24"
+      viewBox="0 0 32 32"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.5"
+      strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
     >
-      {/* the body, tinted so the colour reads at 20px */}
-      <path d="M12 1.8 21 7v10L12 22.2 3 17V7Z" fill="currentColor" fillOpacity=".16" />
-      {/* the face turned towards you */}
-      <path d="M12 5.6 18 15.6H6Z" />
-      {/* the three edges running off to the corners */}
-      <path d="M12 5.6V1.8M18 15.6l3 1.4M6 15.6l-3 1.4M12 22.2v-6.6" />
+      <path d="M16 1.5 28.5 9v14L16 30.5 3.5 23V9L16 1.5Z" />
+      <path d="M16 1.5v5.7L3.5 9m12.5-1.8L28.5 9M3.5 9 7.5 22.5m21-13.5-4 13.5M16 7.2 7.5 22.5h17L16 7.2ZM7.5 22.5 16 30.5l8.5-8M7.5 22.5h17" />
     </svg>
   );
 }

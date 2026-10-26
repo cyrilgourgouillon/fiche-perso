@@ -35,6 +35,14 @@ const GENDERS = [
   { value: 'female', label: 'Féminin' },
 ];
 
+const HAT_STYLES = [
+  { value: 'none', label: 'Sans chapeau' },
+  { value: 'cap', label: 'Bonnet' },
+  { value: 'hood', label: 'Capuche' },
+  { value: 'wizard', label: 'Chapeau de mage' },
+  { value: 'crown', label: 'Couronne' },
+];
+
 const COLORS = [
   { value: 'crimson', label: 'Écarlate', color: '#b84f48' },
   { value: 'ocean', label: 'Azur', color: '#397a9a' },
@@ -112,6 +120,8 @@ export default function AvatarEditor() {
   const trousersColor = data.avatar_trousers_color || 'plum';
   const gender = data.avatar_gender || 'male';
   const weapon = data.avatar_weapon || 'none';
+  const hatStyle = data.avatar_hat_style || 'none';
+  const hatColor = data.avatar_hat_color || 'gold';
 
   return (
     <section className="avatar-workshop" aria-label="Atelier d’avatar">
@@ -152,6 +162,11 @@ export default function AvatarEditor() {
           <StyleChoices label="Pantalon" field="avatar_trousers_style" options={TROUSER_STYLES} selected={trousersStyle} onChange={update} asSelect />
           <ColorChoices label="Couleur du pantalon" field="avatar_trousers_color" selected={trousersColor} onChange={update} />
         </div>
+      </div>
+
+      <div className="avatar-outfit-card avatar-hat-card">
+        <StyleChoices label="Chapeau" field="avatar_hat_style" options={HAT_STYLES} selected={hatStyle} onChange={update} asSelect />
+        {hatStyle !== 'none' && <ColorChoices label="Couleur du chapeau" field="avatar_hat_color" selected={hatColor} onChange={update} />}
       </div>
 
       <label className="avatar-race-field avatar-weapon-field">

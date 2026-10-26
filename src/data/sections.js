@@ -13,7 +13,6 @@ export const SECTIONS = [
   { id: 'capacites', label: 'Capacités' },
   { id: 'emplacements_sorts', label: 'Emplacements' },
   { id: 'sorts', label: 'Sorts' },
-  { id: 'apparence', label: 'Apparence' },
   { id: 'pieces', label: 'Pièces' },
   { id: 'equipement', label: 'Équipement' },
   { id: 'maitrises', label: 'Maîtrises' },

@@ -17,7 +17,7 @@ const identitySummary = (data) => {
   return [data.espece?.trim(), parts.join(' / ')].filter(Boolean).join(' · ');
 };
 
-export default function IdentityBlock() {
+export default function IdentityBlock({ onOpenAppearance }) {
   const { data } = useSheet();
   const name = data.nom_personnage?.trim();
   const summary = identitySummary(data);
@@ -25,7 +25,15 @@ export default function IdentityBlock() {
   return (
     <div className="char-name-block">
       <div className="char-title-line">
-        <PixelAvatar data={data} />
+        <button
+          type="button"
+          className="avatar-edit-trigger"
+          aria-label="Ouvrir l'apparence du personnage"
+          title="Modifier l'apparence"
+          onClick={onOpenAppearance}
+        >
+          <PixelAvatar data={data} />
+        </button>
         <div className="char-title-copy">
           <div className={name ? 'char-name ef-display' : 'char-name ef-display unnamed'}>
             {name || 'Sans nom'}

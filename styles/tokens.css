@@ -1,17 +1,17 @@
 :root {
   color-scheme: light;
   --ink: #202722;
-  --ink-light: #66736c;
+  --ink-light: #58645d;
   --parch: #fbf9f3;
   --parch-dark: #f1ede2;
   --parch-mid: #f7f4ec;
-  --section-bg: #f4f0e7;
+  --section-bg: #eee8dc;
   --red: #9b442f;
   --red-light: #c5684f;
   --gold: #9c7a3b;
   --yellow: #e3bc64;
   --gold-light: #725a32;
-  --border: #ded6c5;
+  --border: #d2c7b5;
   --shadow: rgba(23, 31, 26, 0.11);
   --dark: #252b27;
   --success: #4e8062;

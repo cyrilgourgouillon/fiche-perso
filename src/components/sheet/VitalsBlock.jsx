@@ -3,6 +3,7 @@ import LabeledField from '../fields/LabeledField.jsx';
 import RestControls from './RestControls.jsx';
 import TextField from '../fields/TextField.jsx';
 import { MAX_CHARACTER_LEVEL, MIN_CHARACTER_LEVEL } from '../../data/spellSlotTable.js';
+import HpQuickAdjustments from './HpQuickAdjustments.jsx';
 
 const HIT_POINT_FIELDS = [
   { label: '📈 Max', name: 'points_vie_max' },
@@ -38,6 +39,8 @@ export default function VitalsBlock() {
           <LabeledField key={field.name} {...field} className="ef big" centered />
         ))}
       </div>
+
+      <HpQuickAdjustments />
 
       <DeathSaves />
 

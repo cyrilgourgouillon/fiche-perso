@@ -240,17 +240,22 @@ main[data-view='combat-summary'] .dice-flash {
   gap: 3px;
 }
 
-.summary-death-group i {
+.summary-death-group input[type='checkbox'] {
   width: 12px;
   height: 12px;
-  display: block;
+  margin: 0;
+  appearance: none;
   border: 1px solid currentColor;
   border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
 }
+
+.summary-death-group input[type='checkbox']:checked { background: currentColor; }
+.summary-death-group input[type='checkbox']:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .summary-death-group.success { color: var(--success); }
 .summary-death-group.failure { color: var(--failure); }
-.summary-death-group i.marked { background: currentColor; }
 
 .summary-entry-list {
   list-style: none;
@@ -336,7 +341,6 @@ main[data-view='combat-summary'] .dice-flash {
   padding-top: 7px;
   display: grid;
   gap: 7px;
-  border-top: 1px solid var(--border);
 }
 
 .summary-slot-level {
@@ -361,7 +365,7 @@ main[data-view='combat-summary'] .dice-flash {
   margin: 0;
   accent-color: var(--red);
   opacity: 1;
-  cursor: default;
+  cursor: pointer;
 }
 
 .name-with-combat {
@@ -529,7 +533,7 @@ main[data-view='combat-summary'] .dice-flash {
   .summary-skills strong { font-size: 7.5pt; }
   .summary-death-saves { margin-top: 1.5mm; padding-top: 1.2mm; }
   .summary-death-group { gap: 1.2mm; font-size: 7pt; }
-  .summary-death-group i { width: 3mm; height: 3mm; }
+  .summary-death-group input[type='checkbox'] { width: 3mm; height: 3mm; }
 
   .summary-entry-list > li { padding: 1.1mm 0; }
   .summary-entry-top strong { font-size: 8pt; }
@@ -552,3 +556,12 @@ main[data-view='combat-summary'] .dice-flash {
     box-shadow: none !important;
   }
 }
+
+.summary-attack-actions { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; }
+
+@media print { .summary-hit-points .hp-quick-adjust { display: none !important; } }
+
+.summary-hit-points .hp-quick-adjust { width: 100%; justify-content: center; gap: 3px; margin: 5px 0 0; }
+.summary-hit-points .hp-quick-adjust > label { display: none; }
+.summary-hit-points .hp-quick-adjust input { width: 38px; min-height: 28px; padding-inline: 2px; font-size: 11px; }
+.summary-hit-points .hp-quick-adjust .sheet-button { min-height: 28px; padding: 4px 5px; font-size: 9px; }

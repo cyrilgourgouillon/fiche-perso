@@ -4,6 +4,16 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
 }
+.hp-quick-adjust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin: 7px 0 10px;
+}
+.hp-quick-adjust > label { color: var(--ink-light); font-size: 11px; }
+.hp-quick-adjust input { width: 58px; min-height: 32px; text-align: center; }
+.hp-quick-adjust .sheet-button { min-height: 32px; padding: 5px 8px; font-size: 11px; }
 .hp-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

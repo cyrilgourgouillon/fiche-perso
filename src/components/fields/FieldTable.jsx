@@ -1,20 +1,8 @@
-import RemoveRowButton from './RemoveRowButton.jsx';
+﻿import RemoveRowButton from './RemoveRowButton.jsx';
 import TextField from './TextField.jsx';
 import { range } from '../../utils/range.js';
 
-/**
- * Table of sheet fields, one row per list entry.
- *
- * `columns` entries accept:
- *  - `field`       key suffix passed to `fieldName`
- *  - `header`      column caption
- *  - `align`       `'center'` to center the input
- *  - `placeholder` input placeholder
- *  - `render`      escape hatch `(rowIndex) => node` for non-text cells
- *
- * `className` lets the caller drive per-column widths from CSS (see mobile rules).
- * Passing `onRemoveRow` adds a trailing column of remove buttons.
- */
+/** Table of sheet fields, one row per list entry. */
 export default function FieldTable({
   columns,
   rowCount,

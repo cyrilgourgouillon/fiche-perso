@@ -61,6 +61,8 @@ export default function PixelAvatar({ data, className = '' }) {
   const trouserStyle = data.avatar_trousers_style || 'straight';
   const gender = data.avatar_gender || 'male';
   const weapon = data.avatar_weapon || 'none';
+  const hatStyle = data.avatar_hat_style || 'none';
+  const hat = shirtColors[data.avatar_hat_color] || shirtColors.gold;
   const skinShadow = race.skin === '#63a98f' ? '#43806e' : race.skin === '#7fa65d' || race.skin === '#95aa72' ? '#5e7948' : '#bf8968';
   const hairShadow = race.hair;
 
@@ -85,6 +87,10 @@ export default function PixelAvatar({ data, className = '' }) {
       {race.feature === 'tiefling' && <><rect x="14" y="5" width="4" height="5" fill={race.hair} /><rect x="12" y="3" width="3" height="3" fill={race.hair} /><rect x="30" y="5" width="4" height="5" fill={race.hair} /><rect x="33" y="3" width="3" height="3" fill={race.hair} /></>}
       {race.feature === 'paladin' ? <><rect x="14" y="8" width="20" height="5" fill={hairShadow} /><rect x="17" y="6" width="14" height="3" fill="#d09a3d" /></> : <><rect x="14" y="8" width="20" height="5" fill={hairShadow} /><rect x="14" y="12" width="3" height="5" fill={hairShadow} /><rect x="31" y="12" width="3" height="3" fill={hairShadow} /></>}
       {gender === 'female' && <><rect x="13" y="14" width="4" height="9" fill={hairShadow} /><rect x="31" y="14" width="4" height="9" fill={hairShadow} /><rect x="14" y="21" width="3" height="3" fill={hairShadow} /><rect x="31" y="21" width="3" height="3" fill={hairShadow} /></>}
+      {hatStyle === 'cap' && <g aria-hidden="true"><rect x="17" y="4" width="14" height="5" fill={hat} /><rect x="14" y="8" width="20" height="3" fill={hat} /><rect x="29" y="9" width="7" height="2" fill={hat} /></g>}
+      {hatStyle === 'hood' && <g aria-hidden="true"><rect x="13" y="6" width="22" height="5" fill={hat} /><rect x="11" y="10" width="5" height="12" fill={hat} /><rect x="32" y="10" width="5" height="12" fill={hat} /><rect x="15" y="7" width="18" height="2" fill={hat} /></g>}
+      {hatStyle === 'wizard' && <g aria-hidden="true"><rect x="10" y="9" width="28" height="2" fill={hat} /><rect x="15" y="7" width="18" height="2" fill={hat} /><rect x="18" y="4" width="12" height="3" fill={hat} /><rect x="21" y="2" width="6" height="2" fill={hat} /><rect x="20" y="8" width="2" height="2" fill="#f2dba9" /></g>}
+      {hatStyle === 'crown' && <g aria-hidden="true"><rect x="15" y="7" width="18" height="4" fill={hat} /><rect x="15" y="4" width="3" height="4" fill={hat} /><rect x="22" y="3" width="4" height="5" fill={hat} /><rect x="30" y="4" width="3" height="4" fill={hat} /><rect x="22" y="8" width="4" height="2" fill="#b84f48" /></g>}
       <rect x="18" y="15" width="2" height="2" fill="#302b2c" />
       <rect x="28" y="15" width="2" height="2" fill="#302b2c" />
       <rect x="22" y="20" width="4" height="1" fill="#814c48" />

@@ -3,6 +3,18 @@
   display: grid;
   gap: 10px;
 }
+.quest-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--ink-light);
+  font-family: var(--ui-font);
+  font-size: 12px;
+}
+.quest-filter-row select { width: min(220px, 60vw); }
+.quest-filter-row span { margin-left: auto; white-space: nowrap; }
+.filter-empty { margin: 8px 0; color: var(--ink-light); font: 12px var(--ui-font); }
 .quest-card {
   background: var(--parch-mid);
   border: 1px solid var(--border);

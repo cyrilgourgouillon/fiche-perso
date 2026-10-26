@@ -5,6 +5,7 @@ export default function TextField({ name, className = 'ef', ...props }) {
   return (
     <input
       className={className}
+      data-field={name}
       value={value}
       onChange={(event) => setValue(event.target.value)}
       {...props}

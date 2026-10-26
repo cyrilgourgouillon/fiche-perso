@@ -18,6 +18,8 @@ import {
 import { useSheet } from '../../context/SheetContext.js';
 import Checkbox from '../fields/Checkbox.jsx';
 import PixelAvatar from './PixelAvatar.jsx';
+import HpQuickAdjustments from './HpQuickAdjustments.jsx';
+import { isCantrip } from '../../services/spells.js';
 
 const text = (value) => (typeof value === 'string' ? value.trim() : '');
 const valueOr = (value, fallback = '—') => text(value) || fallback;
@@ -32,7 +34,6 @@ const included = (data, includeField, contentField) => {
   return Boolean(text(data[contentField]));
 };
 const flagged = (data, field) => data[field] === 'true';
-
 function SummarySection({ title, className = '', children, emptyMessage, hasContent = true }) {
   return (
     <section className={'summary-card ' + className}>
@@ -42,13 +43,13 @@ function SummarySection({ title, className = '', children, emptyMessage, hasCont
   );
 }
 
-function DeathMarks({ data, name, label, tone }) {
+function DeathMarks({ name, label, tone }) {
   return (
     <div className={'summary-death-group ' + tone}>
       <span>{label}</span>
-      <div role="img" aria-label={label}>
+      <div role="group" aria-label={label}>
         {range(3).map((index) => (
-          <i key={index} className={flagged(data, name + '_' + (index + 1)) ? 'marked' : ''} />
+          <Checkbox key={index} name={name + '_' + (index + 1)} aria-label={`${label}, ${index + 1}`} />
         ))}
       </div>
     </div>
@@ -81,6 +82,7 @@ export default function CombatSummary({ onBack }) {
   const spells = range(listRowCount(data, SPELLS))
     .map((row) => ({
       level: data[SPELLS.field(row, 'niveau')],
+      cantrip: isCantrip(data, row),
       name: data[SPELLS.field(row, 'nom')],
       time: data[SPELLS.field(row, 'temps')],
       range: data[SPELLS.field(row, 'portee')],
@@ -132,6 +134,7 @@ export default function CombatSummary({ onBack }) {
           <span>Points de vie</span>
           <strong>{hitPoints}</strong>
           {text(data.points_vie_temp) && <small>{data.points_vie_temp} temporaires</small>}
+          <HpQuickAdjustments />
         </div>
         <div className="summary-stat">
           <span>CA</span><strong>{valueOr(data.classe_armure)}</strong>
@@ -156,8 +159,8 @@ export default function CombatSummary({ onBack }) {
               ))}
             </div>
             <div className="summary-death-saves">
-              <DeathMarks data={data} name="mort_succes" label="Succès" tone="success" />
-              <DeathMarks data={data} name="mort_echecs" label="Échecs" tone="failure" />
+              <DeathMarks name="mort_succes" label="Succès" tone="success" />
+              <DeathMarks name="mort_echecs" label="Échecs" tone="failure" />
             </div>
           </SummarySection>
 
@@ -177,7 +180,7 @@ export default function CombatSummary({ onBack }) {
           <SummarySection
             title="Capacités de classe"
             className="summary-features"
-            emptyMessage="Cochez Résumé combat à côté d’une capacité pour l’ajouter ici."
+            emptyMessage="Activez Résumé combat à côté d’une capacité pour l’ajouter ici."
             hasContent={features.length > 0}
           >
             <ul className="summary-entry-list">
@@ -199,7 +202,7 @@ export default function CombatSummary({ onBack }) {
           <SummarySection
             title="Attaques"
             className="summary-attacks"
-            emptyMessage="Ajoutez des armes sur la fiche et cochez Combat pour les afficher ici."
+            emptyMessage="Ajoutez des armes sur la fiche et activez Résumé combat pour les afficher ici."
             hasContent={weapons.length > 0}
           >
             <ul className="summary-entry-list">
@@ -207,7 +210,9 @@ export default function CombatSummary({ onBack }) {
                 <li key={index}>
                   <div className="summary-entry-top">
                     <strong>{text(weapon.name)}</strong>
-                    <b>{displayModifier(weapon.bonus, null)}</b>
+                    <span className="summary-attack-actions">
+                      <b>{displayModifier(weapon.bonus, null)}</b>
+                    </span>
                   </div>
                   <div className="summary-entry-detail">
                     {text(weapon.damage) || 'Dégâts non renseignés'}
@@ -226,7 +231,10 @@ export default function CombatSummary({ onBack }) {
                 <div><span>Caractéristique</span><strong>{spellAbility?.label.replace(/^\S+\s*/, '') || '—'}</strong></div>
                 <div><span>Modificateur</span><strong>{formatModifier(spellcastingModifier(data))}</strong></div>
                 <div><span>DD</span><strong>{valueOr(data.dd_sauvegarde, String(derivedSpellSaveDC(data)))}</strong></div>
-                <div><span>Attaque</span><strong>{displayModifier(data.bonus_attaque_sort, derivedSpellAttackBonus(data))}</strong></div>
+                <div>
+                  <span>Attaque</span>
+                  <strong>{displayModifier(data.bonus_attaque_sort, derivedSpellAttackBonus(data))}</strong>
+                </div>
               </div>
             </SummarySection>
           )}
@@ -247,7 +255,6 @@ export default function CombatSummary({ onBack }) {
                             key={slotIndex}
                             name={spellSlotField(slot.spellLevel, slotIndex)}
                             aria-label={`Emplacement de sort niveau ${slot.spellLevel}, ${slotIndex + 1}`}
-                            disabled
                           />
                         ))}
                       </div>
@@ -261,7 +268,7 @@ export default function CombatSummary({ onBack }) {
           <SummarySection
             title="Sorts en combat"
             className="summary-spells"
-            emptyMessage="Cochez Combat à côté d’un sort pour l’ajouter ici."
+            emptyMessage="Activez Résumé combat à côté d’un sort pour l’ajouter ici."
             hasContent={spells.length > 0}
           >
             <ul className="summary-entry-list">
@@ -269,13 +276,13 @@ export default function CombatSummary({ onBack }) {
                 <li key={index}>
                   <div className="summary-entry-top">
                     <strong>{text(spell.name)}</strong>
-                    <span>{text(spell.level) === '0' ? 'Mineur' : 'Niv. ' + valueOr(spell.level)}</span>
+                    <span>{spell.cantrip ? 'Mineur' : 'Niv. ' + valueOr(spell.level)}</span>
                   </div>
                   <div className="summary-entry-detail">
                     {[text(spell.time), text(spell.range), spell.concentration && 'Concentration', spell.ritual && 'Rituel']
                       .filter(Boolean)
                       .join(' · ') || 'Détails non renseignés'}
-                    {text(spell.notes) && <span> · {text(spell.notes)}</span>}
+                    {text(spell.notes) && <span className="summary-spell-notes"> · {text(spell.notes)}</span>}
                   </div>
                 </li>
               ))}

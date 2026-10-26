@@ -48,12 +48,15 @@ export const SPELLS = multiFieldList('sorts', 8, 'sort', [
   'nom',
   'temps',
   'portee',
+  'cantrip',
   'concentration',
   'rituel',
   'materiel',
   'notes',
   'combat',
 ]);
+
+export const INVENTORY = multiFieldList('inventaire', 1, 'inventaire', ['nom', 'quantite']);
 
 export const MAGIC_ITEMS = singleFieldList('liens_magiques', 3, 'lien_magique');
 

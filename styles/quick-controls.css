@@ -1,0 +1,47 @@
+/* Clear, compact controls for HP changes and death saves. */
+.hp-quick-adjust {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--parch) 76%, white);
+}
+.hp-adjust-amount { display: grid; gap: 4px; }
+.hp-adjust-amount label { color: var(--ink-light); font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.hp-adjust-amount input { width: 76px; min-height: 38px; text-align: center; font-size: 16px; font-weight: 700; }
+.hp-adjust-actions { display: flex; flex: 1; flex-wrap: wrap; gap: 7px; }
+.hp-adjust-actions .sheet-button { min-height: 38px; padding: 7px 12px; font-size: 12px; font-weight: 700; }
+.hp-adjust-actions .sheet-button span { margin-right: 4px; font-size: 15px; }
+.hp-adjust-damage { color: var(--failure); }
+.hp-adjust-heal { color: var(--success); }
+
+.death-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.death-group { min-width: 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--parch) 76%, white); text-align: left; }
+.death-group.success { border-top: 3px solid var(--success); }
+.death-group.failure { border-top: 3px solid var(--failure); }
+.death-group-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.death-label { margin: 0; font-family: var(--ui-font); font-size: 12px; letter-spacing: 0.08em; }
+.death-group.success .death-label { color: var(--success); }
+.death-group.failure .death-label { color: var(--failure); }
+.death-hint { color: var(--ink-light); font-size: 10px; }
+.death-boxes { justify-content: flex-start; gap: 8px; margin-top: 9px; }
+.death-mark { display: flex; width: 34px; height: 34px; align-items: center; justify-content: center; position: relative; border: 1px solid var(--border); border-radius: 9px; background: rgba(255, 255, 255, 0.65); cursor: pointer; }
+.death-mark input[type='checkbox'] { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.death-mark span { color: var(--ink-light); font-size: 12px; font-weight: 700; pointer-events: none; }
+.death-group.success .death-mark:has(input:checked) { border-color: var(--success); background: color-mix(in srgb, var(--success) 16%, white); }
+.death-group.failure .death-mark:has(input:checked) { border-color: var(--failure); background: color-mix(in srgb, var(--failure) 15%, white); }
+.death-mark:has(input:checked) span { color: var(--ink); }
+.death-mark:focus-within { outline: 2px solid var(--red); outline-offset: 2px; }
+
+@media (max-width: 520px) {
+  .hp-quick-adjust { align-items: stretch; }
+  .hp-adjust-actions { flex-basis: 100%; }
+  .hp-adjust-actions .sheet-button { flex: 1; padding-inline: 8px; }
+  .death-row { gap: 7px; }
+  .death-group { padding: 9px; }
+  .death-group-heading { align-items: flex-start; flex-direction: column; gap: 2px; }
+}

@@ -16,7 +16,7 @@ export default function SkillItem({ skill }) {
       <span className="skill-bonus">{formatModifier(bonus)}</span>
       <span className="skill-name">{skill.label}</span>
       <TextField name={`${skill.key}_particularite`} className="skill-note" type="number" min="1" step="1" />
-      <span className="skill-stat">({skill.ability.slice(0, ABILITY_ABBREVIATION_LENGTH)})</span>
+      <span className="skill-stat" data-ability={skill.ability}>{skill.ability.slice(0, ABILITY_ABBREVIATION_LENGTH).toUpperCase()}</span>
       <RollButton label={skill.label} bonus={bonus} />
     </div>
   );
