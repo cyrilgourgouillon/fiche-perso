@@ -6,7 +6,6 @@
   background: color-mix(in srgb, var(--yellow) 12%, transparent) !important;
 }
 
-main[data-view='combat-summary'] #section-des,
 main[data-view='combat-summary'] .dice-backdrop,
 main[data-view='combat-summary'] .dice-flash {
   display: none !important;

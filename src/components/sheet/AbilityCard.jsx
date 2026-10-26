@@ -13,7 +13,6 @@ export default function AbilityCard({ ability }) {
     <div className="stat-card" data-ability={ability.key}>
       <div className="stat-name">
         <span>{ability.label}</span>
-        <RollButton label={ability.label} bonus={modifier} />
       </div>
       <div className="stat-mod">{formatModifier(modifier)}</div>
       <TextField name={ability.key} className="ef center stat-val" />

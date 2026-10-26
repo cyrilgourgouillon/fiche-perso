@@ -32,6 +32,21 @@ export default function App() {
   });
 
   useEffect(() => {
+    const openTool = (event) => {
+      const { tool } = event.detail || {};
+      if (tool === 'shortcuts') {
+        setActiveTool(null);
+        setShowShortcuts(true);
+      } else if (['sections', 'dice', 'quick-reference', 'appearance', 'settings'].includes(tool)) {
+        setShowShortcuts(false);
+        setActiveTool(tool);
+      }
+    };
+    window.addEventListener('sheet-search-open-tool', openTool);
+    return () => window.removeEventListener('sheet-search-open-tool', openTool);
+  }, []);
+
+  useEffect(() => {
     if (showCombatSummary) window.scrollTo(0, 0);
   }, [showCombatSummary]);
 
@@ -80,6 +95,14 @@ export default function App() {
         if (!showCombatSummary) {
           event.preventDefault();
           setActiveTool('search');
+        }
+        return;
+      }
+      if ((event.ctrlKey || event.metaKey) && (event.key === '>' || (event.code === 'Period' && event.shiftKey))) {
+        if (!showCombatSummary) {
+          event.preventDefault();
+          setActiveTool('search');
+          window.dispatchEvent(new CustomEvent('sheet-search-set-query', { detail: { query: '>' } }));
         }
         return;
       }
@@ -136,11 +159,13 @@ export default function App() {
             {!showCombatSummary && (
               <AppearancePanel open={activeTool === 'appearance'} onToggle={() => toggleTool('appearance')} />
             )}
-            <ShortcutsHelp
-              open={showShortcuts}
-              onToggle={() => setShowShortcuts((current) => !current)}
-              onClose={() => setShowShortcuts(false)}
-            />
+            {!showCombatSummary && (
+              <ShortcutsHelp
+                open={showShortcuts}
+                onToggle={() => setShowShortcuts((current) => !current)}
+                onClose={() => setShowShortcuts(false)}
+              />
+            )}
           </div>
           <SettingsModal
             open={activeTool === 'settings'}

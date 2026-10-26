@@ -89,10 +89,7 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
           onClick={onToggle}
         >
           <svg className="nav-launcher-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M3 4.5h14M3 10h14M3 15.5h14" />
-            <circle cx="6" cy="4.5" r="1.4" />
-            <circle cx="13" cy="10" r="1.4" />
-            <circle cx="8" cy="15.5" r="1.4" />
+            <path d="M3.5 3.5h13v3h-13zM3.5 8.5h13v3h-13zM3.5 13.5h13v3h-13z" />
           </svg>
           <span>Sections</span>
         </button>

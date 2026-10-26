@@ -40,7 +40,7 @@ export default function ShortcutsHelp({ open, onToggle, onClose }) {
                 </li>
               ))}
             </ul>
-            <p className="shortcuts-note">Les raccourcis lettre, / et ? sont inactifs pendant la saisie. Ctrl / ⌘ + K reste actif.</p>
+            <p className="shortcuts-note">Les raccourcis lettre, / et ? sont inactifs pendant la saisie. Ctrl / ⌘ + K et Ctrl / ⌘ + &gt; restent actifs.</p>
           </section>
         </div>,
         document.body,

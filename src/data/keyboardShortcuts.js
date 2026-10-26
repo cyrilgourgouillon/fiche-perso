@@ -1,5 +1,6 @@
 export const KEYBOARD_SHORTCUTS = [
   { key: 'Ctrl / ⌘ + K', action: 'Ouvrir la recherche', command: 'search' },
+  { key: 'Ctrl / ⌘ + >', action: 'Ouvrir les commandes', command: 'search-command' },
   { key: '/', action: 'Ouvrir la recherche', command: 'search' },
   { key: 'N', action: 'Basculer la navigation des sections', command: 'sections' },
   { key: 'C', action: 'Basculer caractéristiques et compétences', command: 'quick-reference' },
