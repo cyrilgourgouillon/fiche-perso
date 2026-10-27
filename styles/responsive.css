@@ -17,10 +17,10 @@
     margin: -12px -10px 12px;
     padding: 8px 12px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
     grid-template-areas:
-      'title title status'
-      'theme load save';
+      'title title status status'
+      'theme link load save';
     gap: 8px 10px;
   }
   #toolbar h1 {
@@ -44,6 +44,9 @@
   }
   #btn-load {
     grid-area: load;
+  }
+  #btn-link {
+    grid-area: link;
   }
   #btn-save {
     grid-area: save;

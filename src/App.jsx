@@ -14,6 +14,7 @@ import DiceProvider from './context/DiceProvider.jsx';
 import SheetProvider from './context/SheetProvider.jsx';
 import Toolbar from './components/Toolbar.jsx';
 import { useCharacterSheet } from './hooks/useCharacterSheet.js';
+import { useLinkedFile } from './hooks/useLinkedFile.js';
 import { useSheetFile } from './hooks/useSheetFile.js';
 import { useStatusMessage } from './hooks/useStatusMessage.js';
 
@@ -30,6 +31,7 @@ export default function App() {
     onImport: replace,
     notify,
   });
+  const linkedFile = useLinkedFile({ data, onLoad: replace, notify });
 
   useEffect(() => {
     const openTool = (event) => {
@@ -139,6 +141,7 @@ export default function App() {
             onSave={exportFile}
             onToggleCombatSummary={() => setShowCombatSummary((current) => !current)}
             combatSummaryOpen={showCombatSummary}
+            linkedFile={linkedFile}
           />
           {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet onOpenAppearance={() => setActiveTool("appearance")} />}
           <div className="sheet-tools" role="group" aria-label="Outils de la fiche">

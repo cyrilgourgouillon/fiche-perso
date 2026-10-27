@@ -1,4 +1,5 @@
 import { range } from '../utils/range.js';
+import { usesPactMagic } from './spellSlots.js';
 
 const DEATH_SAVE_GROUPS = ['mort_succes', 'mort_echecs'];
 const DEATH_SAVE_BOXES = 3;
@@ -20,11 +21,15 @@ const classFeatureUsedFields = (data, rest) =>
     .map((field) => field.replace(/^capacite(\d+)_repos_(?:court|long)$/, 'capacite_utilisee$1'));
 
 /**
- * Short rest: the character is back on their feet. Hit dice spending and any
- * class recovery (Arcane Recovery, a warlock's slots…) stay manual, because 5e
- * gives no automatic short-rest recovery that applies to every character.
+ * Short rest: the character is back on their feet, and warlocks recover their
+ * pact slots. Other class recovery (such as Arcane Recovery) stays manual.
  */
-export const afterShortRest = (data) => clearFields(data, [...deathSaveFields, ...classFeatureUsedFields(data, 'court')]);
+export const afterShortRest = (data) =>
+  clearFields(data, [
+    ...deathSaveFields,
+    ...classFeatureUsedFields(data, 'court'),
+    ...(usesPactMagic(data) ? spellSlotFields(data) : []),
+  ]);
 
 /** Long rest: full hit points, no temporary ones left, every spell slot back. */
 export const afterLongRest = (data) => ({

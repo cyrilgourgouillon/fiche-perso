@@ -304,10 +304,17 @@
 .settings-done { min-height: 44px; padding: 9px 20px; border: 0; border-radius: 9px; color: white; background: var(--red); font: 700 14px var(--ui-font); cursor: pointer; }
 
 @media (max-width: 700px) {
-  #toolbar { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: 'brand brand brand status' 'settings combat load save'; }
+  #toolbar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas: 'brand brand brand status' 'settings combat link link' 'load load save save';
+  }
   #toolbar button { width: 100%; min-width: 0; box-sizing: border-box; }
+  .brand-lockup { grid-area: brand; }
   #btn-settings { grid-area: settings; }
   #btn-combat { grid-area: combat; }
+  #btn-link { grid-area: link; }
+  #btn-load { grid-area: load; }
+  #btn-save { grid-area: save; }
 }
 @media (max-width: 1199px) {
   .sheet-custom-order > .tile-columns { grid-template-columns: minmax(0, 1fr); gap: 14px; }

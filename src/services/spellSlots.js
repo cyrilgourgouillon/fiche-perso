@@ -1,4 +1,4 @@
-import { MAX_SPELL_LEVEL, SPELL_SLOTS_BY_LEVEL } from '../data/spellSlotTable.js';
+import { MAX_SPELL_LEVEL, PACT_SLOTS_BY_LEVEL, SPELL_SLOTS_BY_LEVEL } from '../data/spellSlotTable.js';
 import { characterLevel, isFlagged } from './characterMath.js';
 import { range } from '../utils/range.js';
 
@@ -8,14 +8,24 @@ export const spellSlotOverrideField = (spellLevel) => `emplacements_sorts_niveau
 const spentSlots = (data, spellLevel, total) =>
   range(total).filter((slotIndex) => isFlagged(data, spellSlotField(spellLevel, slotIndex))).length;
 
+export const usesPactMagic = (data) => /occultiste|warlock/i.test(data.classe || '');
+
+const defaultSlots = (data) => {
+  const level = characterLevel(data);
+  if (!usesPactMagic(data)) return SPELL_SLOTS_BY_LEVEL[level];
+  const [count, slotLevel] = PACT_SLOTS_BY_LEVEL[level];
+  return range(slotLevel).map((index) => (index === slotLevel - 1 ? count : 0));
+};
+
 /** One row per spell level, with how many slots the character has and has spent. */
 export const spellSlotRows = (data) => {
-  const slots = SPELL_SLOTS_BY_LEVEL[characterLevel(data)];
+  const pactMagic = usesPactMagic(data);
+  const slots = defaultSlots(data);
   return range(MAX_SPELL_LEVEL).map((index) => {
     const spellLevel = index + 1;
     const override = data[spellSlotOverrideField(spellLevel)];
     const defaultTotal = slots[index] || 0;
-    const total = override === undefined || override === ''
+    const total = pactMagic || override === undefined || override === ''
       ? defaultTotal
       : Math.max(0, Math.min(20, Number.parseInt(override, 10) || 0));
     return { spellLevel, total, defaultTotal, spent: spentSlots(data, spellLevel, total) };

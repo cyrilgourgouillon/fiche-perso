@@ -30,3 +30,28 @@ export const SPELL_SLOTS_BY_LEVEL = [
   [4, 3, 3, 3, 3, 2, 1, 1, 1],
   [4, 3, 3, 3, 3, 2, 2, 1, 1],
 ];
+
+/** Warlock Pact Magic: slot count and spell level by character level. */
+export const PACT_SLOTS_BY_LEVEL = [
+  [],
+  [1, 1],
+  [2, 1],
+  [2, 2],
+  [2, 2],
+  [2, 3],
+  [2, 3],
+  [2, 4],
+  [2, 4],
+  [2, 5],
+  [2, 5],
+  [3, 5],
+  [3, 5],
+  [3, 5],
+  [3, 5],
+  [3, 5],
+  [3, 5],
+  [4, 5],
+  [4, 5],
+  [4, 5],
+  [4, 5],
+];
