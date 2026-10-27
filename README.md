@@ -34,18 +34,53 @@
   npm run preview
   ```
 
-  Les seules dépendances sont React 19 et Vite. Il n’y a pas de suite de tests ni de linter
-  configurés.
+  Les dépendances sont React 19 et Vite. Les tests utilisent le runner natif de Node.js ; aucun
+  linter n’est configuré.
 
   ## Fonctionnement des données
 
-  La fiche entière est représentée comme une map plate de clés vers valeurs, stockée sous la clé
-  `perso_sheet` dans un objet `{ metadata, data }`. Les cases à cocher sont enregistrées sous forme de
-  chaînes `'true' / 'false'`.
+  La fiche est enregistrée sous la clé `perso_sheet` du navigateur. Le format v2 regroupe les
+  attributs selon les modules de la fiche : `character`, `life`, `characteristics`, `combat`,
+  `spells`, `spellSlots`, `weapons`, `classFeatures`, `equipment`, `proficiencies`, `quests`, `notes`
+  et `settings`. Les collections liées à un module sont stockées dans ce module sous forme de tableaux.
 
-  Chaque réglage est simplement un autre champ de cette structure : nombre de lignes, état plié,
-  thème choisi, disposition des blocs, etc. Cela permet d’exporter, importer et conserver une
-  compatibilité avec les fichiers plus anciens.
+  ```json
+  {
+    "metadata": { "version": "2.0" },
+    "character": {
+      "identity": { "characterName": "Kresk", "class": "Guerrier" },
+      "traits": ["Endurance implacable"]
+    },
+    "life": { "level": "5", "hitPoints": { "maximum": "49", "current": "36" } },
+    "characteristics": {
+      "abilities": { "force": "20" },
+      "savingThrows": { "force": "true" },
+      "skills": { "perception": { "proficient": "true" } }
+    },
+    "spells": {
+      "casting": { "ability": "intelligence" },
+      "known": [{ "nom": "Bouclier", "niveau": "1" }]
+    },
+    "spellSlots": {
+      "levels": [{ "level": 1, "slots": [{ "number": 1, "used": "true" }] }]
+    },
+    "weapons": [{ "nom": "Pique", "degats": "1d10 perforant" }],
+    "equipment": {
+      "currency": { "gold": "238" },
+      "inventory": [{ "nom": "Potion", "quantite": "2" }],
+      "magicItems": ["Hache en argent"]
+    },
+    "quests": [{ "titre": "Gnomes en garde", "statut": "terminee" }]
+  }
+  ```
+
+  Les cases à cocher restent enregistrées sous forme de chaînes `'true' / 'false'`. Les tableaux
+  utilisent un objet par ligne pour conserver ensemble les champs d’une même entrée.
+
+  L’import accepte ce format, l’ancien format de production `{ metadata, data }`, les anciennes maps
+  de champs et la première forme de travail v2 `{ metadata, character, lists }`. Les données importées
+  sont converties vers le modèle utilisé par l’interface ; les prochaines sauvegardes et exports sont
+  écrits au format v2 groupé.
 
   Sur les navigateurs de bureau compatibles avec la File System Access API, « Lier un fichier »
   permet de lire et d’écrire directement la fiche liée. Les changements sont enregistrés après
