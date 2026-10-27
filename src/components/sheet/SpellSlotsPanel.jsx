@@ -1,16 +1,24 @@
 import Checkbox from '../fields/Checkbox.jsx';
 import Panel from './Panel.jsx';
 import { useSheet } from '../../context/SheetContext.js';
-import { spellSlotField, spellSlotOverrideField, spellSlotRows } from '../../services/spellSlots.js';
+import { PACT_MAGIC_FIELD, spellSlotField, spellSlotOverrideField, spellSlotRows, usesPactMagic } from '../../services/spellSlots.js';
 import { range } from '../../utils/range.js';
 
 export default function SpellSlotsPanel() {
   const { data, update } = useSheet();
+  const pactMagic = usesPactMagic(data);
   return (
     <Panel id="emplacements_sorts" title="Emplacements de sorts">
+      <label className="spell-slots-pact">
+        <Checkbox name={PACT_MAGIC_FIELD} />
+        Utiliser la magie de pacte
+      </label>
       <p className="spell-slots-help">
-        Progression de lanceur complet par défaut. Ajustez le nombre d’emplacements par niveau pour les autres classes ;
-        laissez vide pour revenir à la valeur par défaut. Cochez un emplacement lorsqu’il est dépensé.
+        {pactMagic
+          ? 'Magie de pacte : tous les emplacements sont du niveau du pacte et reviennent au repos court. '
+          : 'Progression de lanceur complet par défaut. '}
+        Ajustez le nombre d’emplacements par niveau si nécessaire ; laissez vide pour revenir à la valeur par défaut.{' '}
+        Cochez un emplacement lorsqu’il est dépensé.
       </p>
       <div className="spell-slots">
         {spellSlotRows(data).map(({ spellLevel, total, defaultTotal, spent }) => (

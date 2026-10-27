@@ -1,4 +1,11 @@
-export default function Toolbar({ status, onLoad, onSave, onOpenSettings, onToggleCombatSummary, combatSummaryOpen }) {
+import FileActionsPanel from './sheet/FileActionsPanel.jsx';
+
+export default function Toolbar({
+  onOpenSettings,
+  onToggleCombatSummary,
+  combatSummaryOpen,
+  fileActions,
+}) {
   return (
     <header id="toolbar">
       <div className="brand-lockup">
@@ -8,21 +15,13 @@ export default function Toolbar({ status, onLoad, onSave, onOpenSettings, onTogg
           Fiche de personnage
         </h1>
       </div>
-      <span id="save-status" className={status ? 'show' : undefined} role="status">
-        {status}
-      </span>
+      {fileActions && <FileActionsPanel {...fileActions} />}
       <button id="btn-settings" type="button" onClick={onOpenSettings}>
         <span aria-hidden="true">⚙</span> Paramètres
       </button>
       <button id="btn-combat" type="button" onClick={onToggleCombatSummary}>
         <span aria-hidden="true">{combatSummaryOpen ? '↩' : '⚔'}</span>
         {combatSummaryOpen ? 'Fiche' : 'Résumé'}
-      </button>
-      <button id="btn-load" type="button" onClick={onLoad}>
-        <span aria-hidden="true">↥</span> Charger
-      </button>
-      <button id="btn-save" type="button" onClick={onSave}>
-        <span aria-hidden="true">↓</span> Sauvegarder
       </button>
     </header>
   );

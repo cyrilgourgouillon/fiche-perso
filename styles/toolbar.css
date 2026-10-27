@@ -62,6 +62,14 @@
 #btn-load:hover {
   background: var(--toolbar-hover);
 }
+#btn-link {
+  background: transparent;
+  border-color: var(--parch);
+  color: var(--parch);
+}
+#btn-link:hover {
+  background: var(--toolbar-hover);
+}
 #btn-save {
   background: var(--red);
   border-color: var(--parch);

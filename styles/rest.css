@@ -8,11 +8,81 @@
 .rest-button {
   flex: 1;
 }
-/* first click of a rest: waiting for the confirmation */
-.rest-button.armed,
-.rest-button.armed:hover {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--parch);
+.rest-success-overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.rest-success-overlay::before {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 15, 13, 0.66);
+  backdrop-filter: blur(4px);
+  content: '';
+  animation: rest-backdrop-in 2200ms ease both;
+}
+.rest-success-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+.rest-success-emoji {
+  display: inline-block;
+  font-size: 96px;
+  line-height: 1;
+  animation: rest-emoji-pop 2200ms cubic-bezier(.2, .8, .2, 1.15) both;
+}
+.rest-success-label {
+  color: white;
+  font: 700 18px var(--ui-font);
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, .65);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, .95), 0 0 10px rgba(0, 0, 0, .55);
+  animation: rest-label-in 2200ms ease both;
+}
+@keyframes rest-backdrop-in {
+  0%, 8% { opacity: 0; }
+  12%, 68% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes rest-emoji-pop {
+  0%, 8% { opacity: 0; transform: scale(.25) rotate(-35deg); }
+  32% { opacity: 1; transform: scale(1.28) rotate(12deg); }
+  48%, 68% { opacity: 1; transform: scale(1) rotate(0); }
+  100% { opacity: 0; transform: scale(.8) rotate(12deg); }
+}
+@keyframes rest-label-in {
+  0%, 28% { opacity: 0; transform: translateY(5px); }
+  48%, 68% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rest-success-emoji,
+  .rest-success-label { animation: none; }
+}
+.rest-dialog-content { padding: 18px 0 0; font-family: var(--ui-font); font-size: 15px; line-height: 1.45; }
+.rest-dialog-description { margin: 8px 0 16px; color: var(--ink-light); }
+.rest-dialog-note { margin: 0 0 16px; padding: 10px 12px; border-left: 3px solid var(--gold); color: var(--ink-light); background: color-mix(in srgb, var(--gold) 9%, var(--parch)); }
+.rest-dialog-content h3 { margin: 18px 0 8px; color: var(--red); font: 700 13px var(--ui-font); text-transform: uppercase; }
+.rest-change-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rest-change-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 9px 10px; border: 1px solid color-mix(in srgb, var(--border) 72%, white); border-radius: 7px; background: rgba(255, 255, 255, .45); }
+.rest-change-list li > span { min-width: 0; }
+.rest-change-list strong { flex: 0 0 auto; text-align: right; }
+.rest-change-before { color: var(--failure); }
+.rest-change-after { color: var(--success); }
+.rest-no-changes { margin: 0; color: var(--ink-light); }
+.rest-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+.rest-dialog-actions .rest-confirm { border-color: var(--red); color: var(--parch); background: var(--red); }
+.rest-dialog-actions button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+@media (max-width: 480px) {
+  .rest-change-list li { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .rest-change-list strong { text-align: left; }
+  .rest-dialog-actions { flex-direction: column-reverse; }
+  .rest-dialog-actions button { width: 100%; }
 }
 

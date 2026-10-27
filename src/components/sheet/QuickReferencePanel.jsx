@@ -1,6 +1,7 @@
 ﻿import { useSheet } from '../../context/SheetContext.js';
 import { ABILITIES, SKILLS } from '../../data/abilities.js';
 import RollButton from '../dice/RollButton.jsx';
+import Modal from '../Modal.jsx';
 import {
   abilityModifier,
   formatModifier,
@@ -39,21 +40,17 @@ export default function QuickReferencePanel({ open, onToggle }) {
           </svg>
           <span>Carac. &amp; comp.</span>
         </button>
-      {open && (
-        <section className="panel quick-reference-panel" aria-labelledby="quick-reference-toggle">
-          <h2 className="section-heading">
-            <button
-              type="button"
-              id="quick-reference-toggle"
-              className="section-title quick-reference-title"
-              aria-expanded="true"
-              aria-controls="quick-reference-content"
-              onClick={onToggle}
-            >
-              Caractéristiques &amp; Compétences
-              <span className="quick-reference-close" aria-hidden="true">×</span>
-            </button>
-          </h2>
+      <Modal
+        id="quick-reference-dialog"
+        open={open}
+        onClose={onToggle}
+        presentation="popup"
+        eyebrow="Référence rapide"
+        title="Caractéristiques &amp; Compétences"
+        closeLabel="Fermer les caractéristiques et compétences"
+        className="app-modal-popup--reference"
+      >
+        <section className="quick-reference-panel">
           <div id="quick-reference-content" className="quick-reference-content">
             <div className="quick-reference-prof">
               <span>Bonus de maîtrise</span>
@@ -71,7 +68,6 @@ export default function QuickReferencePanel({ open, onToggle }) {
                     <article className="quick-ability-card" data-ability={ability.key} key={ability.key}>
                       <div className="quick-ability-actions">
                         <div className="quick-ability-name">{ability.label.slice(ability.label.indexOf(' ') + 1)}</div>
-                        <RollButton label={`${ability.label} · caractéristique`} bonus={modifier} />
                       </div>
                       <div className="quick-ability-values">
                         <div className="quick-ability-score">
@@ -109,7 +105,7 @@ export default function QuickReferencePanel({ open, onToggle }) {
             </section>
           </div>
         </section>
-      )}
+      </Modal>
     </div>
   );
 }

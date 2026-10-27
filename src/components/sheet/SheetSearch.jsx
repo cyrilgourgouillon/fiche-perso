@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import Modal from '../Modal.jsx';
 import { CLASS_FEATURES, INVENTORY, MAGIC_ITEMS, QUESTS, SPELLS, WEAPONS } from '../../data/sheetLists.js';
 import { ABILITIES, SKILLS } from '../../data/abilities.js';
 import { QUEST_STATUSES } from '../../data/questStatuses.js';
@@ -710,14 +711,19 @@ export default function SheetSearch({ open, onToggle }) {
         </svg>
         <span>Rechercher</span>
       </button>
-      {open && (
-        <div className="search-overlay" onMouseDown={(event) => event.target === event.currentTarget && onToggle()}>
-          <section id="sheet-search-panel" className="global-search-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-search-title">
+      <Modal
+        id="sheet-search-panel"
+        open={open}
+        onClose={onToggle}
+        title="Rechercher et commandes rapides"
+        headerActions={<kbd>Échap</kbd>}
+        initialFocus="#sheet-search-input"
+        closeLabel="Fermer la recherche"
+        className="app-modal--search"
+      >
+        {open && (
+          <div className="global-search-panel">
             <div className="search-input-block">
-              <div className="search-modal-heading">
-                <h2 id="sheet-search-title">Rechercher et commandes rapides</h2>
-                <kbd>Échap</kbd>
-              </div>
               <div className="sheet-search">
                 <div className="search-field">
                   <input
@@ -744,7 +750,6 @@ export default function SheetSearch({ open, onToggle }) {
                     }}
                     autoComplete="off"
                     spellCheck={false}
-                    autoFocus
                   />
                 </div>
               </div>
@@ -879,9 +884,9 @@ export default function SheetSearch({ open, onToggle }) {
                 )) : (!isQuickCommand && query.trim() ? <p className="search-empty-state" role="status">Aucun résultat pour cette recherche.</p> : null)}
               </div>
             )}
-          </section>
-        </div>
-      )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

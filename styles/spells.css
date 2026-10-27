@@ -60,6 +60,20 @@
   font-size: 15px;
   color: var(--ink-light);
 }
+.spell-slots-pact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--ink-light);
+  font-family: var(--ui-font);
+  font-size: 13px;
+}
+.spell-slots-pact input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--red);
+}
 .slot-row {
   background: var(--parch-dark);
   border: 1px solid rgba(122, 92, 46, 0.4);

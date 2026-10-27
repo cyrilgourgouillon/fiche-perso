@@ -2,6 +2,60 @@
   transition: transform 220ms ease;
 }
 
+#save-status {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  max-width: min(480px, calc(100vw - 24px));
+  padding: 10px 16px;
+  border: 1px solid var(--gold-light);
+  border-radius: 4px;
+  background: var(--parch);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  color: var(--ink);
+  font-family: var(--ui-font);
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: center;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+}
+
+#save-status.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+#save-status[data-tone='success'] {
+  border-color: #6eaa7a;
+  background: #e7f4e9;
+  color: #205b2e;
+}
+
+#save-status[data-tone='error'] {
+  border-color: #ca7474;
+  background: #fdeaea;
+  color: #842f2f;
+}
+
+#save-status[data-tone='info'] {
+  border-color: #729bc6;
+  background: #e9f2fb;
+  color: #264e78;
+}
+
+#save-status[data-tone='warning'] {
+  border-color: #d19a4e;
+  background: #fff1dc;
+  color: #70440e;
+}
+
 main[data-toolbar-hidden='true'] #toolbar {
   transform: translateY(calc(-100% - 8px));
 }
@@ -11,5 +65,6 @@ main[data-toolbar-hidden='true'] #toolbar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #toolbar { transition-duration: 0.01ms; }
+  #toolbar,
+  #save-status { transition-duration: 0.01ms; }
 }

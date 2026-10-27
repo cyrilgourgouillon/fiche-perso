@@ -15,15 +15,15 @@ export function useSheetFile({ data, onImport, notify }) {
       if (!file) return;
       try {
         onImport(parseSheet(await readFileAsText(file)));
-        notify('✓ Fichier chargé');
+        notify('✓ Fichier chargé', 'success');
       } catch {
-        notify('Fichier JSON invalide');
+        notify('Fichier JSON invalide', 'error');
       }
     },
     [onImport, notify],
   );
 
-  const exportFile = useCallback(() => notify(`✓ ${downloadSheet(data)} téléchargé`), [data, notify]);
+  const exportFile = useCallback(() => notify(`✓ ${downloadSheet(data)} téléchargé`, 'success'), [data, notify]);
 
   return { inputRef, openPicker, importFile, exportFile };
 }

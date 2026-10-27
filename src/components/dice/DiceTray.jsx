@@ -5,6 +5,7 @@ import RollResult from './RollResult.jsx';
 import { DICE_TYPES, ROLL_MODES } from '../../data/diceTypes.js';
 import { parseDiceExpression } from '../../services/dice.js';
 import { useDice } from '../../context/DiceContext.js';
+import Modal from '../Modal.jsx';
 
 export default function DiceTray({ open, onToggle }) {
   const { log, lastRoll, mode, setMode, rollDice, rollExpression, clear } = useDice();
@@ -21,28 +22,24 @@ export default function DiceTray({ open, onToggle }) {
         <button
           type="button"
           className="dice-launcher"
-          aria-controls="dice-panel-content"
+          aria-controls="dice-panel-dialog"
           aria-expanded={open}
           onClick={onToggle}
         >
           <DieIcon className="die-icon" />
           <span>Lancer de dés</span>
         </button>
-      {open && (
-        <section className="panel dice-panel" aria-labelledby="dice-panel-toggle">
-          <h2 className="section-heading">
-            <button
-              type="button"
-              id="dice-panel-toggle"
-              className="section-title"
-              aria-expanded="true"
-              aria-controls="dice-panel-content"
-              onClick={onToggle}
-            >
-              Lancer de dés
-              <span className="fold-caret" aria-hidden="true" />
-            </button>
-          </h2>
+      <Modal
+        id="dice-panel-dialog"
+        open={open}
+        onClose={onToggle}
+        presentation="popup"
+        eyebrow="Outil"
+        title="Lancer de dés"
+        closeLabel="Fermer le lanceur de dés"
+        className="app-modal-popup--dice"
+      >
+        <section className="dice-panel">
           <div id="dice-panel-content">
             <div className="dice-modes">
               {ROLL_MODES.map(({ value, label }) => (
@@ -96,19 +93,23 @@ export default function DiceTray({ open, onToggle }) {
             )}
 
             {log.length > 1 && (
-              <div className="dice-log">
-                <div className="meta-label">Derniers jets</div>
-                {log.slice(1).map((roll) => (
-                  <RollResult key={roll.id} roll={roll} compact />
-                ))}
-                <button type="button" className="add-row" onClick={clear}>
-                  Effacer l’historique
-                </button>
-              </div>
+              <details className="dice-log">
+                <summary>
+                  Historique des jets <span>{log.length - 1}</span>
+                </summary>
+                <div className="dice-log-list">
+                  {log.slice(1).map((roll) => (
+                    <RollResult key={roll.id} roll={roll} compact />
+                  ))}
+                  <button type="button" className="add-row" onClick={clear}>
+                    Effacer l’historique
+                  </button>
+                </div>
+              </details>
             )}
           </div>
         </section>
-      )}
+      </Modal>
     </div>
   );
 }
