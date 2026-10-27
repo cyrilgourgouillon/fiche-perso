@@ -48,7 +48,7 @@ const sampleSheet = {
 
 const asObject = (data) => JSON.parse(serializeSheet(data));
 
-test('serializes every growable collection as an array without numbered fields', () => {
+test('should serialize growable collections as arrays when converting the flat sheet model', () => {
   const serialized = asObject(sampleSheet);
 
   assert.equal(serialized.metadata.version, '2.0');
@@ -90,11 +90,11 @@ test('serializes every growable collection as an array without numbered fields',
   assert.equal(serialized.notes.notes, 'Notes de campagne');
 });
 
-test('round-trips the flat sheet model through the v2 format', () => {
+test('should preserve the flat sheet model when round-tripping through v2', () => {
   assert.deepEqual(parseSheet(serializeSheet(sampleSheet)), sampleSheet);
 });
 
-test('imports both legacy envelope files and bare field maps', () => {
+test('should import legacy envelopes and bare field maps when parsing old sheet data', () => {
   const legacyEnvelope = {
     metadata: { version: '1.1' },
     data: sampleSheet,
@@ -103,7 +103,7 @@ test('imports both legacy envelope files and bare field maps', () => {
   assert.deepEqual(parseSheet(JSON.stringify(sampleSheet)), sampleSheet);
 });
 
-test('imports the earlier in-progress v2 envelope shape', () => {
+test('should import the earlier v2 envelope when parsing in-progress sheet data', () => {
   const previousV2 = {
     metadata: { version: '2.0' },
     character: { nom_personnage: 'Kresk', force: '20' },
@@ -130,7 +130,7 @@ test('imports the earlier in-progress v2 envelope shape', () => {
   assert.equal(parsed.trait1, 'Robuste');
 });
 
-test('reads legacy and v2 local storage and writes v2 data', () => {
+test('should read legacy and v2 storage and write v2 when persisting sheet data', () => {
   const descriptor = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
   const storage = new Map([
     ['perso_sheet', JSON.stringify({ metadata: { version: '1.1' }, data: sampleSheet })],
@@ -157,7 +157,7 @@ test('reads legacy and v2 local storage and writes v2 data', () => {
   }
 });
 
-test('preserves rows beyond defaults when a legacy row count is missing', () => {
+test('should preserve rows beyond defaults when legacy row counts are missing', () => {
   const legacy = {
     arme7_nom: 'Arc long',
     sort9_nom: 'Téléportation',
@@ -184,7 +184,7 @@ test('preserves rows beyond defaults when a legacy row count is missing', () => 
   assert.equal(parsed.liens_magiques_lignes, '4');
 });
 
-test('keeps default collection row counts implicit after an import/export round-trip', () => {
+test('should keep default row counts implicit when importing and exporting a sheet', () => {
   const legacy = { capacite_utilisee8: 'true', capacite8: 'Fougue' };
   const parsed = parseSheet(serializeSheet(legacy));
 
@@ -193,7 +193,7 @@ test('keeps default collection row counts implicit after an import/export round-
   assert.equal(parsed.capacite8, 'Fougue');
 });
 
-test('normalizes historical class-feature notes when importing legacy data', () => {
+test('should normalize historical class-feature notes when importing legacy data', () => {
   const parsed = parseSheet(
     JSON.stringify({
       data: {
@@ -207,7 +207,7 @@ test('normalizes historical class-feature notes when importing legacy data', () 
   assert.equal(parsed.capacite1_description, 'Récupère des points de vie');
 });
 
-test('rejects invalid JSON and malformed v2 collection shapes', () => {
+test('should reject invalid JSON and malformed collections when importing a sheet', () => {
   assert.throws(() => parseSheet('{'), SyntaxError);
   assert.throws(() => parseSheet('[]'), /Expected a JSON object/);
   assert.throws(() => parseSheet(JSON.stringify({ character: [], lists: {} })), /Expected "character" to be an object/);
