@@ -31,8 +31,9 @@ export const afterShortRest = (data) =>
     ...(usesPactMagic(data) ? spellSlotFields(data) : []),
   ]);
 
-/** Long rest: full hit points, no temporary ones left, every spell slot back. */
+/** Long rest: restore hit dice and spell slots, with full hit points and no temporary ones. */
 export const afterLongRest = (data) => ({
   ...clearFields(data, [...deathSaveFields, ...spellSlotFields(data), ...classFeatureUsedFields(data, 'long'), 'points_vie_temp']),
   points_vie_actuel: data.points_vie_max || '',
+  des_vie: data.des_vie_max || '',
 });

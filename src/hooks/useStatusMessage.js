@@ -4,16 +4,16 @@ const RESET_DELAY_MS = 2500;
 
 /** Transient toolbar message: empty until something is notified, cleared again after a short delay. */
 export function useStatusMessage(resetDelayMs = RESET_DELAY_MS) {
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState({ message: '', tone: 'info' });
   const timer = useRef(undefined);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const notify = useCallback(
-    (message) => {
-      setStatus(message);
+    (message, tone = 'info') => {
+      setStatus({ message, tone });
       window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => setStatus(''), resetDelayMs);
+      timer.current = window.setTimeout(() => setStatus({ message: '', tone }), resetDelayMs);
     },
     [resetDelayMs],
   );

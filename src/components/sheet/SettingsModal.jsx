@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import Modal from '../Modal.jsx';
 import { THEMES } from '../../data/themes.js';
 import { useSheet } from '../../context/SheetContext.js';
 import {
@@ -20,17 +20,9 @@ function cloneDefaultLayout() {
 }
 
 export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
-  const dialogRef = useRef(null);
   const { data, update, apply } = useSheet();
   const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths);
   const hidden = hiddenTiles(layout);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
 
   const saveLayout = (nextLayout) => update('tile_layout', nextLayout);
   const move = (group, id, offset) => {
@@ -71,22 +63,14 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
   }));
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="settings-dialog"
-      aria-labelledby="settings-title"
-      onCancel={(event) => { event.preventDefault(); onClose(); }}
-      onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}
+    <Modal
+      open={open}
+      onClose={onClose}
+      title="Paramètres de la fiche"
+      eyebrow="Chroniques"
+      closeLabel="Fermer les paramètres"
+      className="app-modal--settings"
     >
-      <div className="settings-dialog-content">
-        <header className="settings-heading">
-          <div>
-            <p className="settings-eyebrow">Chroniques</p>
-            <h2 id="settings-title">Param&egrave;tres de la fiche</h2>
-          </div>
-          <button type="button" className="settings-close" aria-label="Fermer les param&egrave;tres" onClick={onClose}>&times;</button>
-        </header>
-
         <section className="settings-section" aria-labelledby="settings-theme-title">
           <h3 id="settings-theme-title">Th&egrave;me</h3>
           <label className="settings-theme-picker">
@@ -193,8 +177,7 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
           <span>Vos changements sont enregistr&eacute;s automatiquement.</span>
           <button type="button" className="settings-done" onClick={onClose}>Termin&eacute;</button>
         </footer>
-      </div>
-    </dialog>
+    </Modal>
   );
 }
 

@@ -2,13 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { DEFAULT_THEME } from '../data/themes.js';
 import { readStoredSheet, writeStoredSheet } from '../services/sheetStorage.js';
 
-const SAVED_MESSAGE = '✓ Sauvegardé';
 const FAILED_MESSAGE = '⚠ Sauvegarde impossible';
 
 /**
  * Owns the sheet field map: restores it from local storage, persists every change,
- * and keeps the document theme in sync. Reports each write through `notify` so the
- * toolbar only claims "sauvegardé" once a save really happened.
+ * and keeps the document theme in sync. Reports failed writes through `notify`.
  */
 export function useCharacterSheet({ notify } = {}) {
   const [data, setData] = useState(readStoredSheet);
@@ -36,7 +34,7 @@ export function useCharacterSheet({ notify } = {}) {
     if (written.current !== data) {
       const saved = writeStoredSheet(data);
       // the very first write only mirrors what was just restored — nothing to report
-      if (written.current !== null && !silent.current) notify?.(saved ? SAVED_MESSAGE : FAILED_MESSAGE);
+      if (written.current !== null && !silent.current && !saved) notify?.(FAILED_MESSAGE, 'error');
       written.current = data;
     }
     silent.current = false;

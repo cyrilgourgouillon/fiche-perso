@@ -4,11 +4,12 @@ import { range } from '../utils/range.js';
 
 export const spellSlotField = (spellLevel, slotIndex) => `emplacement_sort_${spellLevel}_${slotIndex + 1}`;
 export const spellSlotOverrideField = (spellLevel) => `emplacements_sorts_niveau_${spellLevel}`;
+export const PACT_MAGIC_FIELD = 'magie_pacte';
 
 const spentSlots = (data, spellLevel, total) =>
   range(total).filter((slotIndex) => isFlagged(data, spellSlotField(spellLevel, slotIndex))).length;
 
-export const usesPactMagic = (data) => /occultiste|warlock/i.test(data.classe || '');
+export const usesPactMagic = (data) => isFlagged(data, PACT_MAGIC_FIELD);
 
 const defaultSlots = (data) => {
   const level = characterLevel(data);
@@ -25,7 +26,7 @@ export const spellSlotRows = (data) => {
     const spellLevel = index + 1;
     const override = data[spellSlotOverrideField(spellLevel)];
     const defaultTotal = slots[index] || 0;
-    const total = pactMagic || override === undefined || override === ''
+    const total = override === undefined || override === ''
       ? defaultTotal
       : Math.max(0, Math.min(20, Number.parseInt(override, 10) || 0));
     return { spellLevel, total, defaultTotal, spent: spentSlots(data, spellLevel, total) };

@@ -39,7 +39,7 @@ export default function App() {
       if (tool === 'shortcuts') {
         setActiveTool(null);
         setShowShortcuts(true);
-      } else if (['sections', 'dice', 'quick-reference', 'appearance', 'settings'].includes(tool)) {
+      } else if (['sections', 'file', 'dice', 'quick-reference', 'appearance', 'settings'].includes(tool)) {
         setShowShortcuts(false);
         setActiveTool(tool);
       }
@@ -135,14 +135,20 @@ export default function App() {
           data-toolbar-hidden={toolbarHidden ? 'true' : undefined}
         >
           <Toolbar
-            status={status}
             onOpenSettings={() => setActiveTool('settings')}
-            onLoad={openPicker}
-            onSave={exportFile}
             onToggleCombatSummary={() => setShowCombatSummary((current) => !current)}
             combatSummaryOpen={showCombatSummary}
-            linkedFile={linkedFile}
+            fileActions={!showCombatSummary ? {
+              open: activeTool === 'file',
+              onToggle: () => toggleTool('file'),
+              onLoad: openPicker,
+              onSave: exportFile,
+              linkedFile,
+            } : null}
           />
+          <span id="save-status" data-tone={status.tone} className={status.message ? 'show' : undefined} role="status">
+            {status.message}
+          </span>
           {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet onOpenAppearance={() => setActiveTool("appearance")} />}
           <div className="sheet-tools" role="group" aria-label="Outils de la fiche">
             {!showCombatSummary && (

@@ -3,6 +3,7 @@ import { SECTIONS, foldField, sectionAnchor } from '../../data/sections.js';
 import { normalizeTileLayout } from '../../data/tileLayout.js';
 import { isFlagged } from '../../services/characterMath.js';
 import { useSheet } from '../../context/SheetContext.js';
+import Modal from '../Modal.jsx';
 
 const NAV_ICON_PATHS = {
   combat: ['M5 19 19 5', 'm7 5 2 2', 'm5 7 2 2', 'm17 15 2 2', 'm15 17 2 2', 'M5 5l4 4'],
@@ -86,6 +87,7 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
           type="button"
           className="sheet-tools-launcher sheet-nav-launcher"
           aria-expanded={open}
+          aria-controls="sheet-navigation-dialog"
           onClick={onToggle}
         >
           <svg className="nav-launcher-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -93,22 +95,17 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
           </svg>
           <span>Sections</span>
         </button>
-      {open && (
-        <nav className="panel sheet-nav" aria-labelledby="sheet-navigation-toggle">
-          <h2 className="section-heading">
-            <button
-              type="button"
-              id="sheet-navigation-toggle"
-              className="section-title nav-panel-toggle"
-              aria-expanded="true"
-              aria-controls="sheet-navigation-content"
-              title="Masquer la navigation"
-              onClick={onToggle}
-            >
-              Navigation
-              <span className="fold-caret" aria-hidden="true" />
-            </button>
-          </h2>
+      <Modal
+        id="sheet-navigation-dialog"
+        open={open}
+        onClose={onToggle}
+        presentation="popup"
+        eyebrow="Sections"
+        title="Navigation"
+        closeLabel="Fermer la navigation"
+        className="app-modal-popup--navigation"
+      >
+        <nav className="sheet-nav" aria-label="Navigation dans la fiche">
           <div id="sheet-navigation-content">
             <div className="nav-intro">
               <span>Acces rapide aux rubriques</span>
@@ -121,7 +118,10 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
                     className={`nav-link${activeSection === id ? ' active' : ''}`}
                     href={`#${sectionAnchor(id)}`}
                     aria-current={activeSection === id ? 'location' : undefined}
-                    onClick={() => setActiveSection(id)}
+                    onClick={() => {
+                      setActiveSection(id);
+                      onToggle();
+                    }}
                   >
                     <span className="nav-link-icon"><SectionIcon id={id} /></span>
                     <span className="nav-link-copy">
@@ -168,7 +168,7 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
             </div>
           </div>
         </nav>
-      )}
+      </Modal>
     </div>
   );
 }

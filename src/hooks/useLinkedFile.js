@@ -53,12 +53,12 @@ export function useLinkedFile({ data, onLoad, notify }) {
       if (!(await load(target, undefined, () => version === connectionVersion.current))) return false;
     } catch (error) {
       log.error(`lecture de ${target.name} impossible`, error);
-      notify(`⚠ ${target.name} illisible`);
+      notify(`⚠ ${target.name} illisible`, 'error');
       return false;
     }
     setHandle(target);
     setStatus('linked');
-    notify(`🔗 ${target.name} lié`);
+    notify(`🔗 ${target.name} lié`, 'success');
     log.info(`lié à ${target.name} — vérification toutes les ${POLL_INTERVAL_MS / 1000} s et au focus`);
     return true;
   }, [load, notify]);
@@ -71,7 +71,7 @@ export function useLinkedFile({ data, onLoad, notify }) {
       disque: formatTime(fileContents.modifiedAt),
     });
     if (!(await load(target, fileContents, isCurrent))) return false;
-    notify(message);
+    notify(message, 'info');
     return true;
   }, [load, notify]);
 
@@ -98,12 +98,12 @@ export function useLinkedFile({ data, onLoad, notify }) {
         } catch (error) {
           log.error(`restauration du lien vers ${stored.name} impossible`, error);
           setStatus('reconnect');
-          notify(`⚠ Reconnexion nécessaire pour ${stored.name}`);
+          notify(`⚠ Reconnexion nécessaire pour ${stored.name}`, 'warning');
         }
       })
       .catch((error) => {
         log.error('lecture du lien mémorisé impossible', error);
-        notify('⚠ Lecture du lien mémorisé impossible');
+        notify('⚠ Lecture du lien mémorisé impossible', 'error');
       });
   }, [connect, notify]);
 
@@ -136,7 +136,7 @@ export function useLinkedFile({ data, onLoad, notify }) {
         log.info(`écrit ${handle.name}`, { octets: text.length });
       } catch (error) {
         log.error(`écriture de ${handle.name} impossible`, error);
-        notify(`⚠ Écriture de ${handle.name} impossible`);
+        notify(`⚠ Écriture de ${handle.name} impossible`, 'error');
       } finally {
         busy.current = false;
       }
@@ -155,7 +155,7 @@ export function useLinkedFile({ data, onLoad, notify }) {
         await refresh(handle, `↻ ${handle.name} rechargé`, () => version === connectionVersion.current);
       } catch (error) {
         log.error(`lecture de ${handle.name} impossible`, error);
-        notify(`⚠ Lecture de ${handle.name} impossible`);
+        notify(`⚠ Lecture de ${handle.name} impossible`, 'error');
       } finally {
         busy.current = false;
       }
@@ -178,14 +178,14 @@ export function useLinkedFile({ data, onLoad, notify }) {
         return;
       }
       log.error('sélection de fichier impossible', error);
-      notify('⚠ Sélection du fichier impossible');
+      notify('⚠ Sélection du fichier impossible', 'error');
       return;
     }
 
     try {
       if (!(await hasWritePermission(picked, true))) {
         log.warn(`permission d’écriture refusée pour ${picked.name}`);
-        notify(`⚠ Accès à ${picked.name} refusé`);
+        notify(`⚠ Accès à ${picked.name} refusé`, 'warning');
         return;
       }
       await storeHandle(picked);
@@ -194,7 +194,7 @@ export function useLinkedFile({ data, onLoad, notify }) {
       }
     } catch (error) {
       log.error(`liaison de ${picked.name} impossible`, error);
-      notify(`⚠ Liaison de ${picked.name} impossible`);
+      notify(`⚠ Liaison de ${picked.name} impossible`, 'error');
     }
   }, [connect, notify]);
 
@@ -204,13 +204,13 @@ export function useLinkedFile({ data, onLoad, notify }) {
     try {
       if (!(await hasWritePermission(handle, true))) {
         log.warn(`permission d’écriture refusée pour ${handle.name}`);
-        notify(`⚠ Accès à ${handle.name} refusé`);
+        notify(`⚠ Accès à ${handle.name} refusé`, 'warning');
         return;
       }
       await connect(handle);
     } catch (error) {
       log.error(`reconnexion à ${handle.name} impossible`, error);
-      notify(`⚠ Reconnexion à ${handle.name} impossible`);
+      notify(`⚠ Reconnexion à ${handle.name} impossible`, 'error');
     }
   }, [handle, connect, notify]);
 
@@ -223,10 +223,10 @@ export function useLinkedFile({ data, onLoad, notify }) {
       setStatus('none');
       baselineText.current = null;
       loadedSheet.current = null;
-      notify('Fichier délié');
+      notify('Fichier délié', 'success');
     } catch (error) {
       log.error('suppression du lien mémorisé impossible', error);
-      notify('⚠ Impossible de délier le fichier');
+      notify('⚠ Impossible de délier le fichier', 'error');
     }
   }, [handle, notify]);
 
