@@ -7,6 +7,7 @@ import {
   normalizeTileLayout,
   TILE_BY_ID,
 } from '../../data/tileLayout.js';
+import { DEFAULT_TEXTAREA_MODE } from '../../services/sheetSerializer.js';
 
 const GROUP_LABELS = {
   top: 'Au-dessus des colonnes',
@@ -79,6 +80,35 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
               {THEMES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
             </select>
           </label>
+        </section>
+
+        <section className="settings-section" aria-labelledby="settings-textarea-title">
+          <h3 id="settings-textarea-title">Zones de texte</h3>
+          <label className="settings-theme-picker">
+            <span>Mode d&rsquo;affichage par d&eacute;faut</span>
+            <select
+              value={data.textarea_mode || DEFAULT_TEXTAREA_MODE}
+              onChange={(event) => update('textarea_mode', event.target.value)}
+            >
+              <option value="edit">&Eacute;dition</option>
+              <option value="visual">Visuel (Markdown)</option>
+            </select>
+          </label>
+        </section>
+
+        <section className="settings-section" aria-labelledby="settings-motion-title">
+          <h3 id="settings-motion-title">Accessibilit&eacute;</h3>
+          <label className="settings-motion-toggle">
+            <input
+              type="checkbox"
+              checked={data.reduce_motion === 'true'}
+              onChange={(event) => update('reduce_motion', event.target.checked ? 'true' : 'false')}
+            />
+            <span>R&eacute;duire les animations</span>
+          </label>
+          <p className="settings-motion-description">
+            Raccourcit les animations et d&eacute;sactive le d&eacute;filement fluide.
+          </p>
         </section>
 
         <section className="settings-section" aria-labelledby="settings-order-title">
@@ -180,4 +210,3 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
     </Modal>
   );
 }
-

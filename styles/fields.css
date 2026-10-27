@@ -128,10 +128,21 @@ textarea.ef {
   box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.16);
 }
 .markdown-preview {
+  position: absolute;
+  inset: 0;
   box-sizing: border-box;
-  padding: 6px 8px;
+  overflow-y: auto;
   overflow-wrap: anywhere;
   white-space: normal;
+  visibility: hidden;
+  pointer-events: none;
+}
+.markdown-field[data-mode='visual'] > textarea.ef {
+  visibility: hidden;
+}
+.markdown-field[data-mode='visual'] > .markdown-preview {
+  visibility: visible;
+  pointer-events: auto;
 }
 .markdown-preview > :first-child {
   margin-top: 0;
@@ -145,6 +156,10 @@ textarea.ef {
 .markdown-preview ul,
 .markdown-preview ol {
   padding-left: 1.5em;
+}
+.markdown-preview > ul:not(:last-child),
+.markdown-preview > ol:not(:last-child) {
+  margin-bottom: 0.7em;
 }
 .markdown-placeholder {
   opacity: 0.65;

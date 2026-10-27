@@ -13,7 +13,7 @@
   - Calculs automatiques pour bonus et emplacements de sorts, y compris la magie de pacte de l’occultiste.
   - Dés, jets et historique des derniers lancers.
   - Recherche et navigation rapide par sections.
-  - Paramètres de mise en page et thèmes.
+  - Paramètres de mise en page, thèmes, affichage des zones de texte et réduction des animations.
   - Sauvegarde auto, import/export JSON et mode hors ligne.
   - Liaison directe avec un fichier JSON sur Chrome, Edge et Vivaldi pour ordinateur.
 

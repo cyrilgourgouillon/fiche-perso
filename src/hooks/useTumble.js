@@ -10,16 +10,21 @@ const prefersReducedMotion = () =>
  *
  * Returns `{ face, settled }` — show `face` until `settled`, then the true total.
  */
-export function useTumble(roll) {
-  const skip = prefersReducedMotion();
+export function useTumble(roll, reduceMotion = false) {
+  const skip = reduceMotion || prefersReducedMotion();
   const [face, setFace] = useState(() => (skip ? roll.total : randomTotalLike(roll)));
   const [settled, setSettled] = useState(skip);
 
   useEffect(() => {
-    if (skip) return undefined;
+    if (skip) {
+      setFace(roll.total);
+      setSettled(true);
+      return undefined;
+    }
 
     let step = 0;
     let timer;
+    setSettled(false);
     const tick = () => {
       if (step >= TUMBLE_DELAYS_MS.length) {
         setSettled(true);

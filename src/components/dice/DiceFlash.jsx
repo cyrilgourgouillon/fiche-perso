@@ -13,16 +13,16 @@ const CRITICAL_LABELS = {
  * The latest roll, thrown up in the middle of the screen and faded away. Rolls
  * usually start from a bonus far from the tray, so the result comes to the player.
  */
-export default function DiceFlash() {
+export default function DiceFlash({ reduceMotion = false }) {
   const { lastRoll } = useDice();
   if (!lastRoll) return null;
 
   // remounting on the roll id is what replays the whole show for an equal result
-  return <Toast key={lastRoll.id} roll={lastRoll} />;
+  return <Toast key={lastRoll.id} roll={lastRoll} reduceMotion={reduceMotion} />;
 }
 
-function Toast({ roll }) {
-  const { face, settled } = useTumble(roll);
+function Toast({ roll, reduceMotion }) {
+  const { face, settled } = useTumble(roll, reduceMotion);
   const [visible, setVisible] = useState(true);
   const critical = criticalOf(roll);
   const state = (settled && critical) || undefined;

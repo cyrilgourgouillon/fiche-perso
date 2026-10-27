@@ -34,6 +34,14 @@ export default function App() {
   const linkedFile = useLinkedFile({ data, onLoad: replace, notify });
 
   useEffect(() => {
+    if (data.reduce_motion === 'true') {
+      document.documentElement.dataset.reduceMotion = 'true';
+    } else {
+      delete document.documentElement.dataset.reduceMotion;
+    }
+  }, [data.reduce_motion]);
+
+  useEffect(() => {
     const openTool = (event) => {
       const { tool } = event.detail || {};
       if (tool === 'shortcuts') {
@@ -182,7 +190,7 @@ export default function App() {
             theme={theme}
             onThemeChange={setTheme}
           />
-          <DiceFlash />
+          <DiceFlash reduceMotion={data.reduce_motion === 'true'} />
           <input ref={inputRef} type="file" accept=".json" hidden onChange={importFile} />
         </main>
       </DiceProvider>

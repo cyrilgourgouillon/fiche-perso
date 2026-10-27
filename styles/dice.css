@@ -605,6 +605,31 @@
   }
 }
 
+html[data-reduce-motion='true'] .dice-flash .dice-flash-total,
+html[data-reduce-motion='true'] .dice-flash .roll-detail,
+html[data-reduce-motion='true'] .dice-flash .dice-flash-tag {
+  animation: none !important;
+}
+
+html[data-reduce-motion='true'] .dice-flash[data-critique='reussite'] .dice-flash-total::before {
+  display: none;
+}
+
+html[data-reduce-motion='true'] .dice-backdrop,
+html[data-reduce-motion='true'] .dice-flash {
+  animation: dice-flash-still 4s steps(1) forwards !important;
+}
+
+@keyframes dice-flash-still {
+  0%,
+  93% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 
 /*
  * The "roll this" button that sits next to a computed bonus. A monochrome die

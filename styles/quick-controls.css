@@ -19,6 +19,10 @@
 .hp-adjust-damage { color: var(--failure); }
 .hp-adjust-heal { color: var(--success); }
 
+.settings-motion-toggle { display: flex; align-items: center; gap: 10px; color: var(--ink-light); font: 500 15px var(--ui-font); cursor: pointer; }
+.settings-motion-toggle input { width: 18px; height: 18px; accent-color: var(--red); }
+.settings-motion-description { margin: 8px 0 0 28px; color: var(--ink-light); font: 14px/1.5 var(--ui-font); }
+
 .money-quick-adjust {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

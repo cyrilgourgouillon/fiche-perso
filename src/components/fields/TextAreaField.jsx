@@ -1,33 +1,35 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { useSheetField } from '../../context/SheetContext.js';
+import remarkBreaks from 'remark-breaks';
+import { useSheet, useSheetField } from '../../context/SheetContext.js';
 
 export default function TextAreaField({ name, className = 'ef', ...props }) {
+  const { data } = useSheet();
   const [value, setValue] = useSheetField(name);
-  const [preview, setPreview] = useState(false);
+  const [previewOverride, setPreviewOverride] = useState(null);
+  const preview = previewOverride ?? (data.textarea_mode === 'visual');
   const fieldVariants = className.split(/\s+/).filter((classNamePart) => classNamePart && classNamePart !== 'ef').join(' ');
 
   return (
-    <div className={`markdown-field ${fieldVariants}`}>
-      {preview ? (
-        <div className={`ef ${fieldVariants} markdown-preview`}>
-          {value ? <ReactMarkdown>{value}</ReactMarkdown> : <span className="markdown-placeholder">{props.placeholder}</span>}
-        </div>
-      ) : (
-        <textarea
-          className={className}
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          {...props}
-        />
-      )}
+    <div className={`markdown-field ${fieldVariants}`} data-mode={preview ? 'visual' : 'edit'}>
+      <textarea
+        className={className}
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        {...props}
+        aria-hidden={preview ? 'true' : undefined}
+        tabIndex={preview ? -1 : props.tabIndex}
+      />
+      <div className={`ef ${fieldVariants} markdown-preview`} aria-hidden={!preview}>
+        {value ? <ReactMarkdown remarkPlugins={[remarkBreaks]}>{value}</ReactMarkdown> : <span className="markdown-placeholder">{props.placeholder}</span>}
+      </div>
       <button
         type="button"
         className="markdown-toggle"
         aria-label={preview ? 'Modifier le texte' : 'Afficher l’aperçu Markdown'}
         aria-pressed={preview}
         title={preview ? 'Modifier' : 'Aperçu Markdown'}
-        onClick={() => setPreview((current) => !current)}
+        onClick={() => setPreviewOverride((current) => !(current ?? (data.textarea_mode === 'visual')))}
       >
         {preview ? (
           <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">

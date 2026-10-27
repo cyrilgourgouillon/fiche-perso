@@ -3,6 +3,18 @@ import { DEFAULT_THEME } from '../data/themes.js';
 const FORMAT_VERSION = '1.1';
 const FALLBACK_FILE_NAME = 'kresk';
 const ILLEGAL_FILE_NAME_CHARS = /[\\/:*?"<>|]/g;
+export const DEFAULT_TEXTAREA_MODE = 'edit';
+export const DEFAULT_REDUCE_MOTION = 'false';
+
+export const normalizeTextAreaMode = (data) => ({
+  ...data,
+  textarea_mode: data.textarea_mode === 'visual' ? 'visual' : DEFAULT_TEXTAREA_MODE,
+});
+
+export const normalizeReducedMotion = (data) => ({
+  ...data,
+  reduce_motion: data.reduce_motion === 'true' ? 'true' : DEFAULT_REDUCE_MOTION,
+});
 
 /** Wraps the raw field map in a metadata envelope — the on-disk / stored format. */
 export const serializeSheet = (data) =>
@@ -16,7 +28,7 @@ export const serializeSheet = (data) =>
         generatedAt: new Date().toISOString(),
         version: FORMAT_VERSION,
       },
-      data,
+      data: normalizeReducedMotion(normalizeTextAreaMode(data)),
     },
     null,
     2,
@@ -76,7 +88,7 @@ export const normalizeClassFeatureNotes = (data) => {
 /** Accepts both the envelope format and a bare field map. Throws on invalid JSON. */
 export const parseSheet = (text) => {
   const parsed = JSON.parse(text);
-  return normalizeClassFeatureNotes(parsed.data || parsed);
+  return normalizeReducedMotion(normalizeTextAreaMode(normalizeClassFeatureNotes(parsed.data || parsed)));
 };
 
 export const sheetFileName = (data) => {
