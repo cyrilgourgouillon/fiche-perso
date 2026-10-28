@@ -1,4 +1,4 @@
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 import { useArmedAction } from '../../hooks/useArmedAction';
 
 function LinkFileButton({ status, fileName, link, reconnect, unlink }) {

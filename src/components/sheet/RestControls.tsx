@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 import { afterLongRest, afterShortRest } from '../../services/rest';
 import { useSheet } from '../../context/SheetContext';
 import { spellSlotRows, usesPactMagic } from '../../services/spellSlots';

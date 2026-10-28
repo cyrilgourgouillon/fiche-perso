@@ -1,5 +1,5 @@
 import { KEYBOARD_SHORTCUTS } from '../../data/keyboardShortcuts';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 
 export default function ShortcutsHelp({ open, onToggle, onClose }) {
   return (

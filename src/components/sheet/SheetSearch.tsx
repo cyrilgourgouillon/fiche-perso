@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 import { CLASS_FEATURES, INVENTORY, MAGIC_ITEMS, QUESTS, SPELLS, WEAPONS } from '../../data/sheetLists';
 import { ABILITIES, SKILLS } from '../../data/abilities';
 import { QUEST_STATUSES } from '../../data/questStatuses';

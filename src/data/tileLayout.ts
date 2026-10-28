@@ -11,36 +11,49 @@ export const TILE_CATALOG = [
   { id: 'maitrises', label: 'Entraînements & maîtrises', width: 'single' },
   { id: 'notes', label: 'Notes', width: 'wide' },
   { id: 'quetes', label: 'Journal de quêtes', width: 'wide' },
-];
+] as const;
 
-export const DEFAULT_TILE_LAYOUT = {
+export type TileId = (typeof TILE_CATALOG)[number]['id'];
+export type TileGroup = 'top' | 'left' | 'right' | 'bottom';
+export type TileLayout = Record<TileGroup, TileId[]>;
+
+export const DEFAULT_TILE_LAYOUT: TileLayout = {
   top: ['header', 'caracteristiques'],
   left: ['combat', 'armes', 'capacites', 'pieces'],
   right: ['emplacements_sorts', 'sorts', 'equipement', 'maitrises'],
   bottom: ['notes', 'quetes'],
 };
 
-export const TILE_BY_ID = Object.fromEntries(TILE_CATALOG.map((tile) => [tile.id, tile]));
+export const TILE_BY_ID = Object.fromEntries(TILE_CATALOG.map((tile) => [tile.id, tile])) as Record<
+  TileId,
+  (typeof TILE_CATALOG)[number]
+>;
 const ALWAYS_WIDE_TILE_IDS = new Set(['header', 'caracteristiques']);
+const isTileId = (id: unknown): id is TileId => typeof id === 'string' && id in TILE_BY_ID;
 
 /**
  * Read the current configuration, or migrate older saves that only had a flat
  * order and optional side/width overrides. Missing blocks in a new configuration
  * stay hidden; legacy saves get the previous complete set of blocks.
  */
-export function normalizeTileLayout(layout, legacyOrder, legacySides, legacyWidths) {
+export function normalizeTileLayout(
+  layout: unknown,
+  legacyOrder?: unknown,
+  legacySides?: Record<string, unknown> | null,
+  legacyWidths?: Record<string, unknown> | null,
+): TileLayout {
   const source = layout && typeof layout === 'object' && !Array.isArray(layout)
-    ? layout
+    ? layout as Record<string, unknown>
     : null;
 
   if (!source) {
     const oldOrder = Array.isArray(legacyOrder) ? legacyOrder : [];
-    const uniqueOrder = [...new Set([
+    const uniqueOrder: TileId[] = [...new Set<TileId>([
       'header',
-      ...oldOrder.filter((id) => TILE_BY_ID[id] && id !== 'header'),
+      ...oldOrder.filter((id): id is TileId => isTileId(id) && id !== 'header'),
       ...TILE_CATALOG.map(({ id }) => id).filter((id) => !oldOrder.includes(id)),
     ])];
-    const migrated = { wide: [], left: [], right: [] };
+    const migrated: Record<'wide' | 'left' | 'right', TileId[]> = { wide: [], left: [], right: [] };
     uniqueOrder.forEach((id) => {
       const tile = TILE_BY_ID[id];
       const isWide = ALWAYS_WIDE_TILE_IDS.has(id)
@@ -49,7 +62,7 @@ export function normalizeTileLayout(layout, legacyOrder, legacySides, legacyWidt
       if (isWide) {
         migrated.wide.push(id);
       } else {
-        const side = legacySides?.[id] === 'left' || legacySides?.[id] === 'right'
+        const side: 'left' | 'right' = legacySides?.[id] === 'left' || legacySides?.[id] === 'right'
           ? legacySides[id]
           : DEFAULT_TILE_LAYOUT.left.includes(id) ? 'left' : 'right';
         migrated[side].push(id);
@@ -64,14 +77,15 @@ export function normalizeTileLayout(layout, legacyOrder, legacySides, legacyWidt
   }
 
   const explicitPlacements = Array.isArray(source.top) || Array.isArray(source.bottom);
-  const groups = explicitPlacements
+  const groups: Array<TileGroup | 'wide'> = explicitPlacements
     ? ['top', 'left', 'right', 'bottom']
     : ['wide', 'left', 'right'];
-  const normalized = { top: [], left: [], right: [], bottom: [] };
+  const normalized: TileLayout = { top: [], left: [], right: [], bottom: [] };
   const seen = new Set();
   groups.forEach((group) => {
     if (!Array.isArray(source[group])) return;
     source[group].forEach((id) => {
+      if (!isTileId(id)) return;
       const tile = TILE_BY_ID[id];
       if (!tile || seen.has(id)) return;
       if (id === 'header' && group !== 'wide' && group !== 'top' && group !== 'bottom') return;
@@ -92,8 +106,7 @@ export function normalizeTileLayout(layout, legacyOrder, legacySides, legacyWidt
   return normalized;
 }
 
-export function hiddenTiles(layout) {
+export function hiddenTiles(layout: TileLayout) {
   const visible = new Set([...layout.top, ...layout.left, ...layout.right, ...layout.bottom]);
   return TILE_CATALOG.filter(({ id }) => !visible.has(id));
 }
-

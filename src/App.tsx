@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import CharacterSheet from './components/sheet/CharacterSheet';
+import CharacterSheet from './components/sheet/layout/CharacterSheet';
 import CombatSummary from './components/sheet/CombatSummary';
 import DiceTray from './components/dice/DiceTray';
 import DiceFlash from './components/dice/DiceFlash';
@@ -12,7 +12,7 @@ import SettingsModal from './components/sheet/SettingsModal';
 import { KEYBOARD_SHORTCUTS } from './data/keyboardShortcuts';
 import DiceProvider from './context/DiceProvider';
 import SheetProvider from './context/SheetProvider';
-import Toolbar from './components/Toolbar';
+import Toolbar from './components/common/Toolbar';
 import { useCharacterSheet } from './hooks/useCharacterSheet';
 import { useLinkedFile } from './hooks/useLinkedFile';
 import { useSheetFile } from './hooks/useSheetFile';

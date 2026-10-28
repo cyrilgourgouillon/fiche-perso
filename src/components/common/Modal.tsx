@@ -1,6 +1,20 @@
 import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  eyebrow?: string;
+  closeLabel?: string;
+  headerActions?: React.ReactNode;
+  initialFocus?: string;
+  presentation?: 'modal' | 'popup';
+  className?: string;
+  id?: string;
+  children: React.ReactNode;
+}
+
 export default function Modal({
   open,
   onClose,
@@ -13,8 +27,8 @@ export default function Modal({
   className = '',
   id,
   children,
-}) {
-  const dialogRef = useRef(null);
+}: ModalProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
 
   useEffect(() => {
@@ -23,7 +37,7 @@ export default function Modal({
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
-      if (initialFocus) dialog.querySelector(initialFocus)?.focus({ preventScroll: true });
+      if (initialFocus) dialog.querySelector<HTMLElement>(initialFocus)?.focus({ preventScroll: true });
     }
     if (!open && dialog.open) dialog.close();
   }, [open, presentation]);

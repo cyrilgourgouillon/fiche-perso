@@ -1,7 +1,7 @@
 ﻿import { useSheet } from '../../context/SheetContext';
 import { ABILITIES, SKILLS } from '../../data/abilities';
 import RollButton from '../dice/RollButton';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 import {
   abilityModifier,
   formatModifier,

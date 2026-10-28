@@ -1,32 +1,62 @@
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 import { THEMES } from '../../data/themes';
+import type { Theme } from '../../data/themes';
 import { useSheet } from '../../context/SheetContext';
 import {
   DEFAULT_TILE_LAYOUT,
   hiddenTiles,
   normalizeTileLayout,
   TILE_BY_ID,
+  type TileGroup,
+  type TileId,
+  type TileLayout,
 } from '../../data/tileLayout';
 import { DEFAULT_TEXTAREA_MODE } from '../../services/sheetSerializer';
 
-const GROUP_LABELS = {
+interface SettingsModalProps {
+  open: boolean;
+  onClose: () => void;
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+}
+
+const TILE_GROUPS: TileGroup[] = ['top', 'left', 'right', 'bottom'];
+const GROUP_LABELS: Record<TileGroup, string> = {
   top: 'Au-dessus des colonnes',
   left: 'Colonne gauche',
   right: 'Colonne droite',
   bottom: 'Sous les colonnes',
 };
 
-function cloneDefaultLayout() {
-  return Object.fromEntries(Object.entries(DEFAULT_TILE_LAYOUT).map(([group, ids]) => [group, [...ids]]));
+function isTheme(value: string): value is Theme {
+  return THEMES.some(({ value: theme }) => theme === value);
 }
 
-export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
+function isTileGroup(value: string): value is TileGroup {
+  return TILE_GROUPS.some((group) => group === value);
+}
+
+function cloneDefaultLayout(): TileLayout {
+  return {
+    top: [...DEFAULT_TILE_LAYOUT.top],
+    left: [...DEFAULT_TILE_LAYOUT.left],
+    right: [...DEFAULT_TILE_LAYOUT.right],
+    bottom: [...DEFAULT_TILE_LAYOUT.bottom],
+  };
+}
+
+export default function SettingsModal({
+  open,
+  onClose,
+  theme,
+  onThemeChange,
+}: SettingsModalProps) {
   const { data, update, apply } = useSheet();
   const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths);
   const hidden = hiddenTiles(layout);
 
-  const saveLayout = (nextLayout) => update('tile_layout', nextLayout);
-  const move = (group, id, offset) => {
+  const saveLayout = (nextLayout: TileLayout) => update('tile_layout', nextLayout);
+  const move = (group: TileGroup, id: TileId, offset: -1 | 1) => {
     if (id === 'header') return;
     const index = layout[group].indexOf(id);
     const destination = index + offset;
@@ -37,24 +67,25 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
     nextGroup.splice(destination, 0, id);
     saveLayout({ ...layout, [group]: nextGroup });
   };
-  const place = (id, destination) => {
+  const place = (id: TileId, destination: TileGroup) => {
     if (id === 'header' || (id === 'caracteristiques' && destination !== 'top' && destination !== 'bottom')) return;
-    const groups = ['top', 'left', 'right', 'bottom'];
-    const source = groups.find((group) => layout[group].includes(id));
-    if (!source || source === destination || !groups.includes(destination)) return;
+    const source = TILE_GROUPS.find((group) => layout[group].includes(id));
+    if (!source || source === destination) return;
     const index = layout[source].indexOf(id);
-    const nextLayout = Object.fromEntries(groups.map((group) => [
-      group,
-      layout[group].filter((tileId) => tileId !== id),
-    ]));
+    const nextLayout: TileLayout = {
+      top: layout.top.filter((tileId) => tileId !== id),
+      left: layout.left.filter((tileId) => tileId !== id),
+      right: layout.right.filter((tileId) => tileId !== id),
+      bottom: layout.bottom.filter((tileId) => tileId !== id),
+    };
     nextLayout[destination].splice(Math.min(index, nextLayout[destination].length), 0, id);
     saveLayout(nextLayout);
   };
-  const remove = (group, id) => {
+  const remove = (group: TileGroup, id: TileId) => {
     if (id === 'header') return;
     saveLayout({ ...layout, [group]: layout[group].filter((tileId) => tileId !== id) });
   };
-  const add = (id, group) => {
+  const add = (id: TileId, group: TileGroup) => {
     if (id === 'header' || (id === 'caracteristiques' && group !== 'top' && group !== 'bottom')) return;
     saveLayout({ ...layout, [group]: [...layout[group], id] });
   };
@@ -76,7 +107,12 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
           <h3 id="settings-theme-title">Th&egrave;me</h3>
           <label className="settings-theme-picker">
             <span>Apparence de la fiche</span>
-            <select value={theme} onChange={(event) => onThemeChange(event.target.value)}>
+            <select
+              value={theme}
+              onChange={(event) => {
+                if (isTheme(event.target.value)) onThemeChange(event.target.value);
+              }}
+            >
               {THEMES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
             </select>
           </label>
@@ -87,8 +123,12 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
           <label className="settings-theme-picker">
             <span>Mode d&rsquo;affichage par d&eacute;faut</span>
             <select
-              value={data.textarea_mode || DEFAULT_TEXTAREA_MODE}
-              onChange={(event) => update('textarea_mode', event.target.value)}
+              value={data.textarea_mode === 'visual' ? 'visual' : DEFAULT_TEXTAREA_MODE}
+              onChange={(event) => {
+                if (event.target.value === 'edit' || event.target.value === 'visual') {
+                  update('textarea_mode', event.target.value);
+                }
+              }}
             >
               <option value="edit">&Eacute;dition</option>
               <option value="visual">Visuel (Markdown)</option>
@@ -122,7 +162,7 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
           </div>
 
           <div className="settings-layout-zones">
-            {['top', 'left', 'right', 'bottom'].map((group) => (
+            {TILE_GROUPS.map((group) => (
               <section className={`settings-layout-zone settings-layout-zone-${group}`} key={group} aria-labelledby={`settings-zone-${group}`}>
                 <h4 id={`settings-zone-${group}`}>{GROUP_LABELS[group]}</h4>
                 <p className="settings-zone-hint">{group === 'top' || group === 'bottom'
@@ -147,7 +187,9 @@ export default function SettingsModal({ open, onClose, theme, onThemeChange }) {
                             aria-label={`Largeur et emplacement de ${TILE_BY_ID[id].label}`}
                             title="Changer la largeur et l'emplacement"
                             value={group}
-                            onChange={(event) => place(id, event.target.value)}
+                            onChange={(event) => {
+                              if (isTileGroup(event.target.value)) place(id, event.target.value);
+                            }}
                           >
                             <optgroup label="Pleine largeur">
                               <option value="top">2 colonnes &middot; au-dessus</option>

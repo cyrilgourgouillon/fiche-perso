@@ -1,6 +1,6 @@
 ﻿import TextAreaField from '../fields/TextAreaField';
 import AvatarEditor from './AvatarEditor';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 
 export default function AppearancePanel({ open, onToggle }) {
 

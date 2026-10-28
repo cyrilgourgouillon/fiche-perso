@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
-import { useSheet } from '../../context/SheetContext';
-import { normalizeTileLayout } from '../../data/tileLayout';
-import AbilitiesPanel from './AbilitiesPanel';
-import ClassFeaturesPanel from './ClassFeaturesPanel';
-import CombatPanel from './CombatPanel';
-import EquipmentPanel from './EquipmentPanel';
-import HeaderPanel from './HeaderPanel';
-import MoneyPanel from './MoneyPanel';
-import NotesPanel from './NotesPanel';
-import ProficienciesPanel from './ProficienciesPanel';
-import QuestsPanel from './QuestsPanel';
+import { useSheet } from '../../../context/SheetContext';
+import { normalizeTileLayout } from '../../../data/tileLayout';
+import AbilitiesPanel from '../AbilitiesPanel';
+import ClassFeaturesPanel from '../ClassFeaturesPanel';
+import CombatPanel from '../CombatPanel';
+import EquipmentPanel from '../EquipmentPanel';
+import HeaderPanel from '../HeaderPanel';
+import MoneyPanel from '../MoneyPanel';
+import NotesPanel from '../NotesPanel';
+import ProficienciesPanel from '../ProficienciesPanel';
+import QuestsPanel from '../QuestsPanel';
+import SpellSlotsPanel from '../SpellSlotsPanel';
+import SpellsPanel from '../SpellsPanel';
+import WeaponsPanel from '../WeaponsPanel';
 import SheetFooter from './SheetFooter';
-import SpellSlotsPanel from './SpellSlotsPanel';
-import SpellsPanel from './SpellsPanel';
-import WeaponsPanel from './WeaponsPanel';
 
 const TILE_COMPONENTS = {
   header: HeaderPanel,

@@ -13,4 +13,6 @@ export const THEMES = [
   { value: 'monk', label: 'Moine' },
   { value: 'warlock', label: 'Occultiste' },
   { value: 'ranger', label: 'Rôdeur' },
-];
+] as const;
+
+export type Theme = (typeof THEMES)[number]['value'];

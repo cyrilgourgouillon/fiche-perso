@@ -3,7 +3,7 @@ import { SECTIONS, foldField, sectionAnchor } from '../../data/sections';
 import { normalizeTileLayout } from '../../data/tileLayout';
 import { isFlagged } from '../../services/characterMath';
 import { useSheet } from '../../context/SheetContext';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 
 const NAV_ICON_PATHS = {
   combat: ['M5 19 19 5', 'm7 5 2 2', 'm5 7 2 2', 'm17 15 2 2', 'm15 17 2 2', 'M5 5l4 4'],

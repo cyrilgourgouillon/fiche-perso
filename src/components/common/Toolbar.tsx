@@ -1,4 +1,4 @@
-import FileActionsPanel from './sheet/FileActionsPanel';
+import FileActionsPanel from '../sheet/FileActionsPanel';
 
 export default function Toolbar({
   onOpenSettings,

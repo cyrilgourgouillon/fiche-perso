@@ -5,7 +5,7 @@ import RollResult from './RollResult';
 import { DICE_TYPES, ROLL_MODES } from '../../data/diceTypes';
 import { parseDiceExpression } from '../../services/dice';
 import { useDice } from '../../context/DiceContext';
-import Modal from '../Modal';
+import Modal from '../common/Modal';
 
 export default function DiceTray({ open, onToggle }) {
   const { log, lastRoll, mode, setMode, rollDice, rollExpression, clear } = useDice();
