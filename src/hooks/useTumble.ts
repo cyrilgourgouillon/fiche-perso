@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TUMBLE_DELAYS_MS, randomTotalLike } from '../services/dice';
 
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * The suspense of a die bouncing on the table: the total flickers through

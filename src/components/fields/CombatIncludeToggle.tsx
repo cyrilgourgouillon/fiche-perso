@@ -1,4 +1,4 @@
-﻿import CombatIncludeCheckbox from './CombatIncludeCheckbox';
+import CombatIncludeCheckbox from './CombatIncludeCheckbox';
 
 export default function CombatIncludeToggle({ name, defaultField, ariaLabel }) {
   return (

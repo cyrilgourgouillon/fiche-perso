@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { DEFAULT_THEME } from '../data/themes';
 import { readStoredSheet, writeStoredSheet } from '../services/sheetStorage';
 
@@ -46,5 +48,7 @@ export function useCharacterSheet({ notify } = {}) {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor);
   }, [theme]);
 
-  return { data, update, apply, theme, setTheme, replace };
+  return {
+    data, update, apply, theme, setTheme, replace,
+  };
 }

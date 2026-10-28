@@ -26,10 +26,10 @@ export default function MoneyPanel() {
   return (
     <Panel as="div" id="pieces" title="Pièces">
       <div className="money-grid">
-        {COIN_TYPES.map((coin) => (
-          <div className="coin-block" key={coin}>
-            <div className="coin-label">{coin.toUpperCase()}</div>
-            <TextField name={coin} />
+        {COIN_TYPES.map((coinType) => (
+          <div className="coin-block" key={coinType}>
+            <div className="coin-label">{coinType.toUpperCase()}</div>
+            <TextField name={coinType} />
           </div>
         ))}
       </div>
@@ -54,10 +54,14 @@ export default function MoneyPanel() {
         </div>
         <div className="money-adjust-actions">
           <button type="button" className="sheet-button money-adjust-remove" onClick={() => adjust('remove')}>
-            <span aria-hidden="true">−</span> Retirer
+            <span aria-hidden="true">−</span>
+            {' '}
+            Retirer
           </button>
           <button type="button" className="sheet-button money-adjust-add" onClick={() => adjust('add')}>
-            <span aria-hidden="true">+</span> Ajouter
+            <span aria-hidden="true">+</span>
+            {' '}
+            Ajouter
           </button>
         </div>
       </div>

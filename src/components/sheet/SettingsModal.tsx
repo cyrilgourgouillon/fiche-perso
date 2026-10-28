@@ -14,7 +14,7 @@ import {
 import { DEFAULT_TEXTAREA_MODE } from '../../services/sheetSerializer';
 
 interface SettingsModalProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
@@ -46,7 +46,7 @@ function cloneDefaultLayout(): TileLayout {
 }
 
 export default function SettingsModal({
-  open,
+  isOpen,
   onClose,
   theme,
   onThemeChange,
@@ -96,159 +96,161 @@ export default function SettingsModal({
 
   return (
     <Modal
-      open={open}
+      isOpen={isOpen}
       onClose={onClose}
       title="Paramètres de la fiche"
       eyebrow="Chroniques"
       closeLabel="Fermer les paramètres"
       className="app-modal--settings"
     >
-        <section className="settings-section" aria-labelledby="settings-theme-title">
-          <h3 id="settings-theme-title">Th&egrave;me</h3>
-          <label className="settings-theme-picker">
-            <span>Apparence de la fiche</span>
-            <select
-              value={theme}
-              onChange={(event) => {
-                if (isTheme(event.target.value)) onThemeChange(event.target.value);
-              }}
-            >
-              {THEMES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
-            </select>
-          </label>
-        </section>
+      <section className="settings-section" aria-labelledby="settings-theme-title">
+        <h3 id="settings-theme-title">Th&egrave;me</h3>
+        <label className="settings-theme-picker">
+          <span>Apparence de la fiche</span>
+          <select
+            value={theme}
+            onChange={(event) => {
+              if (isTheme(event.target.value)) onThemeChange(event.target.value);
+            }}
+          >
+            {THEMES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        </label>
+      </section>
 
-        <section className="settings-section" aria-labelledby="settings-textarea-title">
-          <h3 id="settings-textarea-title">Zones de texte</h3>
-          <label className="settings-theme-picker">
-            <span>Mode d&rsquo;affichage par d&eacute;faut</span>
-            <select
-              value={data.textarea_mode === 'visual' ? 'visual' : DEFAULT_TEXTAREA_MODE}
-              onChange={(event) => {
-                if (event.target.value === 'edit' || event.target.value === 'visual') {
-                  update('textarea_mode', event.target.value);
-                }
-              }}
-            >
-              <option value="edit">&Eacute;dition</option>
-              <option value="visual">Visuel (Markdown)</option>
-            </select>
-          </label>
-        </section>
+      <section className="settings-section" aria-labelledby="settings-textarea-title">
+        <h3 id="settings-textarea-title">Zones de texte</h3>
+        <label className="settings-theme-picker">
+          <span>Mode d&rsquo;affichage par d&eacute;faut</span>
+          <select
+            value={data.textarea_mode === 'visual' ? 'visual' : DEFAULT_TEXTAREA_MODE}
+            onChange={(event) => {
+              if (event.target.value === 'edit' || event.target.value === 'visual') {
+                update('textarea_mode', event.target.value);
+              }
+            }}
+          >
+            <option value="edit">&Eacute;dition</option>
+            <option value="visual">Visuel (Markdown)</option>
+          </select>
+        </label>
+      </section>
 
-        <section className="settings-section" aria-labelledby="settings-motion-title">
-          <h3 id="settings-motion-title">Accessibilit&eacute;</h3>
-          <label className="settings-motion-toggle">
-            <input
-              type="checkbox"
-              checked={data.reduce_motion === 'true'}
-              onChange={(event) => update('reduce_motion', event.target.checked ? 'true' : 'false')}
-            />
-            <span>R&eacute;duire les animations</span>
-          </label>
-          <p className="settings-motion-description">
-            Raccourcit les animations et d&eacute;sactive le d&eacute;filement fluide.
-          </p>
-        </section>
+      <section className="settings-section" aria-labelledby="settings-motion-title">
+        <h3 id="settings-motion-title">Accessibilit&eacute;</h3>
+        <label className="settings-motion-toggle">
+          <input
+            type="checkbox"
+            checked={data.reduce_motion === 'true'}
+            onChange={(event) => update('reduce_motion', event.target.checked ? 'true' : 'false')}
+          />
+          <span>R&eacute;duire les animations</span>
+        </label>
+        <p className="settings-motion-description">
+          Raccourcit les animations et d&eacute;sactive le d&eacute;filement fluide.
+        </p>
+      </section>
 
-        <section className="settings-section" aria-labelledby="settings-order-title">
-          <div className="settings-section-heading">
-            <div>
-              <h3 id="settings-order-title">Disposition des blocs</h3>
-              <p>Choisissez une largeur et un emplacement pour chaque bloc. Caract&eacute;ristiques &amp; comp&eacute;tences reste en pleine largeur pour garder les comp&eacute;tences lisibles. Utilisez les fl&egrave;ches pour changer l&rsquo;ordre.</p>
-              <p className="settings-responsive-note">La disposition &agrave; deux colonnes s&rsquo;applique uniquement aux grands &eacute;crans. Sur les petits &eacute;crans, la fiche s&rsquo;affiche automatiquement sur une seule colonne.</p>
-            </div>
-            <button type="button" className="sheet-button settings-reset" onClick={resetConfiguration}>R&eacute;initialiser la configuration</button>
+      <section className="settings-section" aria-labelledby="settings-order-title">
+        <div className="settings-section-heading">
+          <div>
+            <h3 id="settings-order-title">Disposition des blocs</h3>
+            <p>Choisissez une largeur et un emplacement pour chaque bloc. Caract&eacute;ristiques &amp; comp&eacute;tences reste en pleine largeur pour garder les comp&eacute;tences lisibles. Utilisez les fl&egrave;ches pour changer l&rsquo;ordre.</p>
+            <p className="settings-responsive-note">La disposition &agrave; deux colonnes s&rsquo;applique uniquement aux grands &eacute;crans. Sur les petits &eacute;crans, la fiche s&rsquo;affiche automatiquement sur une seule colonne.</p>
           </div>
+          <button type="button" className="sheet-button settings-reset" onClick={resetConfiguration}>R&eacute;initialiser la configuration</button>
+        </div>
 
-          <div className="settings-layout-zones">
-            {TILE_GROUPS.map((group) => (
-              <section className={`settings-layout-zone settings-layout-zone-${group}`} key={group} aria-labelledby={`settings-zone-${group}`}>
-                <h4 id={`settings-zone-${group}`}>{GROUP_LABELS[group]}</h4>
-                <p className="settings-zone-hint">{group === 'top' || group === 'bottom'
+        <div className="settings-layout-zones">
+          {TILE_GROUPS.map((group) => (
+            <section className={`settings-layout-zone settings-layout-zone-${group}`} key={group} aria-labelledby={`settings-zone-${group}`}>
+              <h4 id={`settings-zone-${group}`}>{GROUP_LABELS[group]}</h4>
+              <p className="settings-zone-hint">
+                {group === 'top' || group === 'bottom'
                   ? 'Blocs pleine largeur'
-                  : 'Blocs sur une colonne'}</p>
-                <ol className="settings-tile-list" aria-label={GROUP_LABELS[group]}>
-                  {layout[group].map((id, index) => (
-                    <li className={`settings-layout-block${id === 'header' ? ' settings-layout-block-fixed' : ''}`} key={id}>
-                      <span className="settings-tile-name">
-                        <strong>{String(index + 1).padStart(2, '0')}</strong>
-                        {TILE_BY_ID[id].label}
-                        {id === 'caracteristiques' && <small className="settings-width-label">2 colonnes uniquement</small>}
-                      </span>
-                      {id === 'header' ? (
-                        <span className="settings-fixed-label">Toujours en haut</span>
-                      ) : (
-                        <span className="settings-tile-actions">
-                          <button type="button" aria-label={`Monter ${TILE_BY_ID[id].label} dans ${GROUP_LABELS[group]}`} disabled={index === 0 || (group === 'top' && index === 1 && layout.top[0] === 'header')} onClick={() => move(group, id, -1)}>&uarr;</button>
-                          <button type="button" aria-label={`Descendre ${TILE_BY_ID[id].label} dans ${GROUP_LABELS[group]}`} disabled={index === layout[group].length - 1} onClick={() => move(group, id, 1)}>&darr;</button>
-                          <select
-                            className="settings-placement-select"
-                            aria-label={`Largeur et emplacement de ${TILE_BY_ID[id].label}`}
-                            title="Changer la largeur et l'emplacement"
-                            value={group}
-                            onChange={(event) => {
-                              if (isTileGroup(event.target.value)) place(id, event.target.value);
-                            }}
-                          >
-                            <optgroup label="Pleine largeur">
-                              <option value="top">2 colonnes &middot; au-dessus</option>
-                              <option value="bottom">2 colonnes &middot; en dessous</option>
-                            </optgroup>
-                            {id !== 'caracteristiques' && (
-                              <optgroup label="Une colonne">
-                                <option value="left">1 colonne &middot; gauche</option>
-                                <option value="right">1 colonne &middot; droite</option>
-                              </optgroup>
-                            )}
-                          </select>
-                          <button type="button" className="settings-remove-tile" title={`Masquer ${TILE_BY_ID[id].label}`} aria-label={`Masquer ${TILE_BY_ID[id].label}`} onClick={() => remove(group, id)}>&minus;</button>
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                  {!layout[group].length && <li className="settings-layout-empty">Aucun bloc affich&eacute;</li>}
-                </ol>
-              </section>
-            ))}
-          </div>
-
-          <section className="settings-hidden-zone" aria-labelledby="settings-hidden-title">
-            <div>
-              <h4 id="settings-hidden-title">R&eacute;serve de blocs masqu&eacute;s</h4>
-              <p>Choisissez la largeur et la position pour r&eacute;afficher un bloc.</p>
-            </div>
-            {hidden.length ? (
-              <ul className="settings-hidden-list">
-                {hidden.map(({ id, label }) => (
-                  <li className="settings-hidden-block" key={id}>
+                  : 'Blocs sur une colonne'}
+              </p>
+              <ol className="settings-tile-list" aria-label={GROUP_LABELS[group]}>
+                {layout[group].map((id, index) => (
+                  <li className={`settings-layout-block${id === 'header' ? ' settings-layout-block-fixed' : ''}`} key={id}>
                     <span className="settings-tile-name">
-                      {label}
+                      <strong>{String(index + 1).padStart(2, '0')}</strong>
+                      {TILE_BY_ID[id].label}
                       {id === 'caracteristiques' && <small className="settings-width-label">2 colonnes uniquement</small>}
                     </span>
-                    <span className={`settings-hidden-actions${id === 'caracteristiques' ? ' settings-hidden-actions-wide-only' : ''}`}>
-                      <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur au-dessus des colonnes" aria-label={`Ajouter ${label} sur deux colonnes au-dessus`} onClick={() => add(id, 'top')}>2 col. &uarr;</button>
-                      <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur sous les colonnes" aria-label={`Ajouter ${label} sur deux colonnes en dessous`} onClick={() => add(id, 'bottom')}>2 col. &darr;</button>
-                      {id !== 'caracteristiques' && (
-                        <>
-                          <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; gauche" aria-label={`Ajouter ${label} sur une colonne &agrave; gauche`} onClick={() => add(id, 'left')}>1 col. &larr;</button>
-                          <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; droite" aria-label={`Ajouter ${label} sur une colonne &agrave; droite`} onClick={() => add(id, 'right')}>1 col. &rarr;</button>
-                        </>
-                      )}
-                    </span>
+                    {id === 'header' ? (
+                      <span className="settings-fixed-label">Toujours en haut</span>
+                    ) : (
+                      <span className="settings-tile-actions">
+                        <button type="button" aria-label={`Monter ${TILE_BY_ID[id].label} dans ${GROUP_LABELS[group]}`} disabled={index === 0 || (group === 'top' && index === 1 && layout.top[0] === 'header')} onClick={() => move(group, id, -1)}>&uarr;</button>
+                        <button type="button" aria-label={`Descendre ${TILE_BY_ID[id].label} dans ${GROUP_LABELS[group]}`} disabled={index === layout[group].length - 1} onClick={() => move(group, id, 1)}>&darr;</button>
+                        <select
+                          className="settings-placement-select"
+                          aria-label={`Largeur et emplacement de ${TILE_BY_ID[id].label}`}
+                          title="Changer la largeur et l'emplacement"
+                          value={group}
+                          onChange={(event) => {
+                            if (isTileGroup(event.target.value)) place(id, event.target.value);
+                          }}
+                        >
+                          <optgroup label="Pleine largeur">
+                            <option value="top">2 colonnes &middot; au-dessus</option>
+                            <option value="bottom">2 colonnes &middot; en dessous</option>
+                          </optgroup>
+                          {id !== 'caracteristiques' && (
+                          <optgroup label="Une colonne">
+                            <option value="left">1 colonne &middot; gauche</option>
+                            <option value="right">1 colonne &middot; droite</option>
+                          </optgroup>
+                          )}
+                        </select>
+                        <button type="button" className="settings-remove-tile" title={`Masquer ${TILE_BY_ID[id].label}`} aria-label={`Masquer ${TILE_BY_ID[id].label}`} onClick={() => remove(group, id)}>&minus;</button>
+                      </span>
+                    )}
                   </li>
                 ))}
-              </ul>
-            ) : (
-              <p className="settings-layout-empty">Tous les blocs sont affich&eacute;s.</p>
-            )}
-          </section>
-        </section>
+                {!layout[group].length && <li className="settings-layout-empty">Aucun bloc affich&eacute;</li>}
+              </ol>
+            </section>
+          ))}
+        </div>
 
-        <footer className="settings-footer">
-          <span>Vos changements sont enregistr&eacute;s automatiquement.</span>
-          <button type="button" className="settings-done" onClick={onClose}>Termin&eacute;</button>
-        </footer>
+        <section className="settings-hidden-zone" aria-labelledby="settings-hidden-title">
+          <div>
+            <h4 id="settings-hidden-title">R&eacute;serve de blocs masqu&eacute;s</h4>
+            <p>Choisissez la largeur et la position pour r&eacute;afficher un bloc.</p>
+          </div>
+          {hidden.length ? (
+            <ul className="settings-hidden-list">
+              {hidden.map(({ id, label }) => (
+                <li className="settings-hidden-block" key={id}>
+                  <span className="settings-tile-name">
+                    {label}
+                    {id === 'caracteristiques' && <small className="settings-width-label">2 colonnes uniquement</small>}
+                  </span>
+                  <span className={`settings-hidden-actions${id === 'caracteristiques' ? ' settings-hidden-actions-wide-only' : ''}`}>
+                    <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur au-dessus des colonnes" aria-label={`Ajouter ${label} sur deux colonnes au-dessus`} onClick={() => add(id, 'top')}>2 col. &uarr;</button>
+                    <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur sous les colonnes" aria-label={`Ajouter ${label} sur deux colonnes en dessous`} onClick={() => add(id, 'bottom')}>2 col. &darr;</button>
+                    {id !== 'caracteristiques' && (
+                    <>
+                      <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; gauche" aria-label={`Ajouter ${label} sur une colonne &agrave; gauche`} onClick={() => add(id, 'left')}>1 col. &larr;</button>
+                      <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; droite" aria-label={`Ajouter ${label} sur une colonne &agrave; droite`} onClick={() => add(id, 'right')}>1 col. &rarr;</button>
+                    </>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="settings-layout-empty">Tous les blocs sont affich&eacute;s.</p>
+          )}
+        </section>
+      </section>
+
+      <footer className="settings-footer">
+        <span>Vos changements sont enregistr&eacute;s automatiquement.</span>
+        <button type="button" className="settings-done" onClick={onClose}>Termin&eacute;</button>
+      </footer>
     </Modal>
   );
 }

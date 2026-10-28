@@ -11,7 +11,9 @@ import { useSheetField, useSheetFlag } from '../../context/SheetContext';
  * One quest. Finished quests are folded rather than deleted — the title, the
  * status and every note stay in the sheet, just out of the way.
  */
-export default function QuestCard({ index, removable, isRowEmpty, removeRow }) {
+export default function QuestCard({
+  index, removable, isRowEmpty, removeRow,
+}) {
   const field = (name) => QUESTS.field(index, name);
   const [status] = useSheetField(field('statut'));
   const [folded, setFolded] = useSheetFlag(field('replie'));

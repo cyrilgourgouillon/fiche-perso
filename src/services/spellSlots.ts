@@ -6,8 +6,8 @@ export const spellSlotField = (spellLevel, slotIndex) => `emplacement_sort_${spe
 export const spellSlotOverrideField = (spellLevel) => `emplacements_sorts_niveau_${spellLevel}`;
 export const PACT_MAGIC_FIELD = 'magie_pacte';
 
-const spentSlots = (data, spellLevel, total) =>
-  range(total).filter((slotIndex) => isFlagged(data, spellSlotField(spellLevel, slotIndex))).length;
+const spentSlots = (data, spellLevel, total) => range(total)
+  .filter((slotIndex) => isFlagged(data, spellSlotField(spellLevel, slotIndex))).length;
 
 export const usesPactMagic = (data) => isFlagged(data, PACT_MAGIC_FIELD);
 
@@ -20,7 +20,6 @@ const defaultSlots = (data) => {
 
 /** One row per spell level, with how many slots the character has and has spent. */
 export const spellSlotRows = (data) => {
-  const pactMagic = usesPactMagic(data);
   const slots = defaultSlots(data);
   return range(MAX_SPELL_LEVEL).map((index) => {
     const spellLevel = index + 1;
@@ -29,6 +28,11 @@ export const spellSlotRows = (data) => {
     const total = override === undefined || override === ''
       ? defaultTotal
       : Math.max(0, Math.min(20, Number.parseInt(override, 10) || 0));
-    return { spellLevel, total, defaultTotal, spent: spentSlots(data, spellLevel, total) };
+    return {
+      spellLevel,
+      total,
+      defaultTotal,
+      spent: spentSlots(data, spellLevel, total),
+    };
   });
 };

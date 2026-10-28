@@ -1,5 +1,6 @@
 import AbilityCard from './AbilityCard';
 import SkillList from './SkillList';
+import StaticPanel from '../common/StaticPanel';
 import Checkbox from '../fields/Checkbox';
 import TextField from '../fields/TextField';
 import { ABILITIES } from '../../data/abilities';
@@ -10,13 +11,15 @@ import { derivedProficiencyBonus, isFlagged } from '../../services/characterMath
 export default function AbilitiesPanel() {
   const { data } = useSheet();
   return (
-    <section className="panel" id={sectionAnchor('caracteristiques')}>
-      <h2 className="section-title">Caractéristiques &amp; Compétences</h2>
+    <StaticPanel id={sectionAnchor('caracteristiques')} title="Caractéristiques & Compétences">
       <div className="abilities-layout">
         <aside className="ability-controls">
           <div className="inspiration-control">
             <div className="control-label">💡 Inspiration</div>
-            <label className={`inspiration-box ${isFlagged(data, 'inspiration') ? 'active' : ''}`}>
+            <label
+              aria-label="Inspiration"
+              className={`inspiration-box ${isFlagged(data, 'inspiration') ? 'active' : ''}`}
+            >
               <Checkbox name="inspiration" />
             </label>
           </div>
@@ -40,6 +43,6 @@ export default function AbilitiesPanel() {
         </div>
       </div>
       <SkillList />
-    </section>
+    </StaticPanel>
   );
 }

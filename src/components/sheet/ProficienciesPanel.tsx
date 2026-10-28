@@ -17,7 +17,9 @@ export default function ProficienciesPanel() {
           <div className="meta-label">🛡️ Armures</div>
           {ARMOR_PROFICIENCIES.map(({ name, label }) => (
             <label className="proficiency-item" key={name}>
-              <Checkbox name={name} /> {label}
+              <Checkbox name={name} />
+              {' '}
+              {label}
             </label>
           ))}
         </div>

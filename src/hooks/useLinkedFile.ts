@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { parseSheet, serializeSheet } from '../services/sheetSerializer';
 import {
   canLinkFile,
@@ -48,7 +50,8 @@ export function useLinkedFile({ data, onLoad, notify }) {
   }, [onLoad]);
 
   const connect = useCallback(async (target) => {
-    const version = ++connectionVersion.current;
+    connectionVersion.current += 1;
+    const version = connectionVersion.current;
     try {
       if (!(await load(target, undefined, () => version === connectionVersion.current))) return false;
     } catch (error) {
@@ -230,5 +233,7 @@ export function useLinkedFile({ data, onLoad, notify }) {
     }
   }, [handle, notify]);
 
-  return { available: canLinkFile, status, fileName: handle?.name, link, reconnect, unlink };
+  return {
+    available: canLinkFile, status, fileName: handle?.name, link, reconnect, unlink,
+  };
 }

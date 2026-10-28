@@ -1,5 +1,6 @@
 import Checkbox from '../fields/Checkbox';
 import TextField from '../fields/TextField';
+import StaticPanel from '../common/StaticPanel';
 import { sectionAnchor } from '../../data/sections';
 import { useSheet } from '../../context/SheetContext';
 import {
@@ -35,10 +36,11 @@ export default function CombatPanel() {
   const { data } = useSheet();
 
   return (
-    <section className="panel" id={sectionAnchor('combat')}>
-      <h2 className="section-title">Combat</h2>
+    <StaticPanel id={sectionAnchor('combat')} title="Combat">
       <div className="combat-row">
-        {COMBAT_FIELDS.map(({ label, name, className, hint }) => (
+        {COMBAT_FIELDS.map(({
+          label, name, className, hint,
+        }) => (
           <div className="combat-block" key={name}>
             <div className="lbl">{label}</div>
             <TextField
@@ -55,6 +57,6 @@ export default function CombatPanel() {
           </div>
         </div>
       </div>
-    </section>
+    </StaticPanel>
   );
 }

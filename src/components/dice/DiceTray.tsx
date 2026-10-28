@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import DieButton from './DieButton';
 import DieIcon from './DieIcon';
 import RollResult from './RollResult';
@@ -8,7 +8,9 @@ import { useDice } from '../../context/DiceContext';
 import Modal from '../common/Modal';
 
 export default function DiceTray({ open, onToggle }) {
-  const { log, lastRoll, mode, setMode, rollDice, rollExpression, clear } = useDice();
+  const {
+    log, lastRoll, mode, setMode, rollDice, rollExpression, clear,
+  } = useDice();
   const [expression, setExpression] = useState('');
   const validExpression = parseDiceExpression(expression) !== null;
 
@@ -19,19 +21,19 @@ export default function DiceTray({ open, onToggle }) {
 
   return (
     <div className="dice-widget" id="section-des">
-        <button
-          type="button"
-          className="dice-launcher"
-          aria-controls="dice-panel-dialog"
-          aria-expanded={open}
-          onClick={onToggle}
-        >
-          <DieIcon className="die-icon" />
-          <span>Lancer de dés</span>
-        </button>
+      <button
+        type="button"
+        className="dice-launcher"
+        aria-controls="dice-panel-dialog"
+        aria-expanded={open}
+        onClick={onToggle}
+      >
+        <DieIcon className="die-icon" />
+        <span>Lancer de dés</span>
+      </button>
       <Modal
         id="dice-panel-dialog"
-        open={open}
+        isOpen={open}
         onClose={onToggle}
         presentation="popup"
         eyebrow="Outil"
@@ -57,8 +59,11 @@ export default function DiceTray({ open, onToggle }) {
             </div>
 
             <p className="dice-help">
-              Le mode s’applique aux jets de d20 : cliquez le dé{' '}
-              <DieIcon className="die-icon inline" /> d’une compétence, d’une sauvegarde ou d’une
+              Le mode s’applique aux jets de d20 : cliquez le dé
+              {' '}
+              <DieIcon className="die-icon inline" />
+              {' '}
+              d’une compétence, d’une sauvegarde ou d’une
               caractéristique sur la fiche pour la lancer.
             </p>
 
@@ -95,7 +100,9 @@ export default function DiceTray({ open, onToggle }) {
             {log.length > 1 && (
               <details className="dice-log">
                 <summary>
-                  Historique des jets <span>{log.length - 1}</span>
+                  Historique des jets
+                  {' '}
+                  <span>{log.length - 1}</span>
                 </summary>
                 <div className="dice-log-list">
                   {log.slice(1).map((roll) => (

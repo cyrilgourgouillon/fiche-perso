@@ -1,128 +1,134 @@
 import { useEffect, useMemo, useState } from 'react';
 import Modal from '../common/Modal';
-import { CLASS_FEATURES, INVENTORY, MAGIC_ITEMS, QUESTS, SPELLS, WEAPONS } from '../../data/sheetLists';
+import {
+  CLASS_FEATURES, INVENTORY, MAGIC_ITEMS, QUESTS, SPELLS, WEAPONS,
+} from '../../data/sheetLists';
 import { ABILITIES, SKILLS } from '../../data/abilities';
 import { QUEST_STATUSES } from '../../data/questStatuses';
 import { SECTIONS, foldField, sectionAnchor } from '../../data/sections';
 import { normalizeTileLayout } from '../../data/tileLayout';
 import { listRowCount } from '../../services/sheetRows';
-import { abilityModifier, formatModifier, savingThrowBonus, skillBonus } from '../../services/characterMath';
+import { range } from '../../utils/range';
+import {
+  abilityModifier, formatModifier, savingThrowBonus, skillBonus,
+} from '../../services/characterMath';
 import { parseDiceExpression } from '../../services/dice';
+import {
+  fuzzyScore, matchingEntries, normalized, scopedSearch, SECTION_FILTERS,
+} from '../../services/search';
 import { useSheet } from '../../context/SheetContext';
 import { useDice } from '../../context/DiceContext';
 
-const normalized = (value) => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
 const withoutIcon = (label) => label.replace(/^\S+\s/, '');
 const badge = (label, value, tone = 'category') => ({ label, value, tone });
 const SEARCH_HISTORY_KEY = 'fiche-perso-search-history';
 
+type SearchBadge = {
+  label: string;
+  value: string;
+  tone?: string;
+};
+
+type QuickAction = ((
+  | { type: 'expression'; value: string; title: string; detail: string }
+  | { type: 'skill'; skill: (typeof SKILLS)[number]; title: string; detail: string }
+  | { type: 'save'; ability: (typeof ABILITIES)[number]; title: string; detail: string }
+  | {
+    type: 'add';
+    section: string;
+    names: string[];
+    buttonLabel: string;
+    fieldPrefix: string;
+    fieldSuffix?: string;
+    fieldPattern?: RegExp;
+    prefillValue?: string;
+    title: string;
+    detail: string;
+  }
+  | {
+    type: 'coin';
+    names: string[];
+    amount: string;
+    coin: string;
+    title: string;
+    detail: string;
+  }
+  | { type: 'goto'; section: string; title: string; detail: string }
+  | { type: 'tool'; tool: string; names: string[]; title: string; detail: string }
+) & {
+  searchText?: string;
+  skill?: (typeof SKILLS)[number];
+  ability?: (typeof ABILITIES)[number];
+  value?: string;
+  section?: string;
+  buttonLabel?: string;
+  fieldPrefix?: string;
+  fieldSuffix?: string;
+  fieldPattern?: RegExp;
+  prefillValue?: string;
+  amount?: string;
+  coin?: string;
+  tool?: string;
+});
+
+type AddRowsOptions = {
+  largeTextFields?: string[];
+  previewFields?: string[];
+  hideDetail?: boolean;
+};
+
 const ADD_ACTIONS = [
-  { section: 'armes', names: ['arme', 'armes', 'weapon', 'weapons'], buttonLabel: 'Ajouter une arme', fieldPrefix: 'arme', fieldSuffix: '_nom', title: 'Ajouter une arme', detail: 'Nouvelle entrée · Armes' },
-  { section: 'capacites', names: ['capacite', 'capacites', 'competence de classe', 'class feature'], buttonLabel: 'Ajouter une capacité', fieldPrefix: 'capacite', fieldPattern: /^capacite\d+$/, title: 'Ajouter une capacité', detail: 'Nouvelle entrée · Capacités' },
-  { section: 'sorts', names: ['sort', 'sorts', 'spell', 'spells'], buttonLabel: 'Ajouter un sort', fieldPrefix: 'sort', fieldSuffix: '_nom', title: 'Ajouter un sort', detail: 'Nouvelle entrée · Sorts' },
-  { section: 'equipement', names: ['equipement', 'equipment', 'objet', 'objets', 'inventaire', 'item', 'items'], buttonLabel: 'Ajouter un objet', fieldPrefix: 'inventaire', fieldSuffix: '_nom', title: 'Ajouter un objet', detail: 'Nouvelle entrée · Équipement' },
-  { section: 'equipement', names: ['lien', 'lien magique', 'liens magiques', 'objet magique', 'objets magiques', 'magic item', 'magic items'], buttonLabel: 'Ajouter un lien magique', fieldPrefix: 'lien_magique', fieldPattern: /^lien_magique\d+$/, title: 'Ajouter un lien magique', detail: 'Nouvelle entrée · Équipement' },
-  { section: 'quetes', names: ['quete', 'quetes', 'quest', 'quests'], buttonLabel: 'Ajouter une quête', fieldPrefix: 'quete', fieldSuffix: '_titre', title: 'Ajouter une quête', detail: 'Nouvelle entrée · Quêtes' },
+  {
+    section: 'armes', names: ['arme', 'armes', 'weapon', 'weapons'], buttonLabel: 'Ajouter une arme', fieldPrefix: 'arme', fieldSuffix: '_nom', title: 'Ajouter une arme', detail: 'Nouvelle entrée · Armes',
+  },
+  {
+    section: 'capacites', names: ['capacite', 'capacites', 'competence de classe', 'class feature'], buttonLabel: 'Ajouter une capacité', fieldPrefix: 'capacite', fieldPattern: /^capacite\d+$/, title: 'Ajouter une capacité', detail: 'Nouvelle entrée · Capacités',
+  },
+  {
+    section: 'sorts', names: ['sort', 'sorts', 'spell', 'spells'], buttonLabel: 'Ajouter un sort', fieldPrefix: 'sort', fieldSuffix: '_nom', title: 'Ajouter un sort', detail: 'Nouvelle entrée · Sorts',
+  },
+  {
+    section: 'equipement', names: ['equipement', 'equipment', 'objet', 'objets', 'inventaire', 'item', 'items'], buttonLabel: 'Ajouter un objet', fieldPrefix: 'inventaire', fieldSuffix: '_nom', title: 'Ajouter un objet', detail: 'Nouvelle entrée · Équipement',
+  },
+  {
+    section: 'equipement', names: ['lien', 'lien magique', 'liens magiques', 'objet magique', 'objets magiques', 'magic item', 'magic items'], buttonLabel: 'Ajouter un lien magique', fieldPrefix: 'lien_magique', fieldPattern: /^lien_magique\d+$/, title: 'Ajouter un lien magique', detail: 'Nouvelle entrée · Équipement',
+  },
+  {
+    section: 'quetes', names: ['quete', 'quetes', 'quest', 'quests'], buttonLabel: 'Ajouter une quête', fieldPrefix: 'quete', fieldSuffix: '_titre', title: 'Ajouter une quête', detail: 'Nouvelle entrée · Quêtes',
+  },
 ];
 
 const COIN_ACTION = {
-  type: 'coin',
+  type: 'coin' as const,
   names: ['piece', 'pieces', 'monnaie', 'gold', 'coin', 'coins'],
+  amount: '1',
+  coin: 'po',
   title: 'Ajuster les pièces',
   detail: 'Ajouter une quantité à la bourse',
 };
 
 const TOOL_ACTIONS = [
-  { tool: 'sections', names: ['section', 'sections', 'navigation'], title: 'Ouvrir la navigation', detail: 'Parcourir les sections de la fiche' },
-  { tool: 'dice', names: ['des', 'de', 'dice', 'lancer'], title: 'Ouvrir les dés', detail: 'Afficher le plateau de dés' },
-  { tool: 'quick-reference', names: ['reference', 'rappel', 'aide rapide'], title: 'Ouvrir le rappel rapide', detail: 'Afficher les références rapides' },
-  { tool: 'appearance', names: ['apparence', 'portrait'], title: 'Ouvrir l’apparence', detail: 'Modifier le portrait du personnage' },
-  { tool: 'settings', names: ['parametre', 'parametres', 'reglages'], title: 'Ouvrir les paramètres', detail: 'Configurer la fiche' },
-  { tool: 'shortcuts', names: ['raccourci', 'raccourcis', 'clavier'], title: 'Ouvrir les raccourcis clavier', detail: 'Afficher les commandes clavier' },
+  {
+    tool: 'sections', names: ['section', 'sections', 'navigation'], title: 'Ouvrir la navigation', detail: 'Parcourir les sections de la fiche',
+  },
+  {
+    tool: 'dice', names: ['des', 'de', 'dice', 'lancer'], title: 'Ouvrir les dés', detail: 'Afficher le plateau de dés',
+  },
+  {
+    tool: 'quick-reference', names: ['reference', 'rappel', 'aide rapide'], title: 'Ouvrir le rappel rapide', detail: 'Afficher les références rapides',
+  },
+  {
+    tool: 'appearance', names: ['apparence', 'portrait'], title: 'Ouvrir l’apparence', detail: 'Modifier le portrait du personnage',
+  },
+  {
+    tool: 'settings', names: ['parametre', 'parametres', 'reglages'], title: 'Ouvrir les paramètres', detail: 'Configurer la fiche',
+  },
+  {
+    tool: 'shortcuts', names: ['raccourci', 'raccourcis', 'clavier'], title: 'Ouvrir les raccourcis clavier', detail: 'Afficher les commandes clavier',
+  },
 ];
 
-const SECTION_FILTERS = SECTIONS.flatMap(({ id, label }) => {
-  const aliases = {
-    armes: ['arme', 'armes', 'weapon', 'weapons'],
-    capacites: ['capacite', 'capacites'],
-    emplacements_sorts: ['emplacement', 'emplacements'],
-    sorts: ['sort', 'sorts', 'spell', 'spells'],
-    pieces: ['piece', 'pieces', 'monnaie'],
-    equipement: ['equipement', 'objet', 'objets', 'inventaire', 'item', 'items'],
-    maitrises: ['maitrise', 'maitrises'],
-    quetes: ['quete', 'quetes', 'quest', 'quests'],
-    caracteristiques: ['caracteristique', 'caracteristiques', 'competence', 'competences'],
-  }[id] || [normalized(label)];
-  return aliases.map((alias) => ({ alias, section: id }));
-});
-
-function fuzzyScore(query, candidate) {
-  const needle = normalized(query).trim();
-  const haystack = normalized(candidate);
-  if (!needle || !haystack) return Infinity;
-  if (haystack.includes(needle)) return haystack.startsWith(needle) ? 0 : 1;
-
-  const words = haystack.split(/[^a-z0-9]+/).filter(Boolean);
-  const tokens = needle.split(/[^a-z0-9]+/).filter(Boolean);
-  let total = 0;
-  for (const token of tokens) {
-    let best = Infinity;
-    for (const word of words) {
-      if (word.includes(token)) {
-        best = 1;
-        break;
-      }
-      if (Math.abs(word.length - token.length) > 2) continue;
-      let previous = Array.from({ length: word.length + 1 }, (_, index) => index);
-      for (let row = 1; row <= token.length; row += 1) {
-        const current = [row];
-        for (let column = 1; column <= word.length; column += 1) {
-          current[column] = Math.min(
-            current[column - 1] + 1,
-            previous[column] + 1,
-            previous[column - 1] + (token[row - 1] === word[column - 1] ? 0 : 1),
-          );
-        }
-        previous = current;
-      }
-      best = Math.min(best, previous[word.length]);
-    }
-    const tolerance = token.length <= 4 ? 1 : 2;
-    if (best > tolerance) return Infinity;
-    total += best;
-  }
-  return total + 2;
-}
-
-function matchingEntries(entries, query, limit = 8) {
-  return entries
-    .map((entry) => {
-      const score = fuzzyScore(query, entry.searchText);
-      const needle = normalized(query).trim();
-      const matchingText = entry.largeText?.find(({ normalized: body }) => body.includes(needle));
-      return {
-        entry: matchingText
-          ? { ...entry, matchContext: sentenceContainingMatch(matchingText.text, needle) }
-          : entry,
-        score: Number.isFinite(score) ? score : matchingText ? 4 : Infinity,
-      };
-    })
-    .filter(({ score }) => Number.isFinite(score))
-    .sort((left, right) => left.score - right.score)
-    .slice(0, limit)
-    .map(({ entry }) => entry);
-}
-
-function sentenceContainingMatch(text, needle) {
-  const sentence = text.split(/(?<=[.!?])\s+|\n+/u)
-    .find((part) => normalized(part).includes(needle))?.trim() || text.trim();
-  if (sentence.length <= 180) return sentence;
-  const matchIndex = normalized(sentence).indexOf(needle);
-  const start = Math.max(0, Math.min(matchIndex - 70, sentence.length - 177));
-  return `${start > 0 ? '…' : ''}${sentence.slice(start, start + 177).trim()}${start + 177 < sentence.length ? '…' : ''}`;
-}
-
-function resolveAddAction(rawValue) {
+function resolveAddAction(rawValue): QuickAction | null {
   const value = normalized(rawValue.trim());
   const candidates = [...ADD_ACTIONS, COIN_ACTION]
     .flatMap((action) => action.names.map((name) => ({ action, name })))
@@ -142,7 +148,11 @@ function resolveAddAction(rawValue) {
   return null;
 }
 
-function addActionPrefix(rawValue) {
+function addActionPrefix(rawValue): {
+  action: typeof ADD_ACTIONS[number] | typeof COIN_ACTION;
+  label: string;
+  remainder: string;
+} | null {
   const value = normalized(rawValue.trim());
   const candidates = [...ADD_ACTIONS, COIN_ACTION]
     .flatMap((action) => action.names.map((name) => ({ action, name })))
@@ -167,7 +177,10 @@ function rawLengthForNormalizedPrefix(value, normalizedPrefix) {
   return 0;
 }
 
-function recognizedAddValueLength(actionPrefix, entries) {
+function recognizedAddValueLength(
+  actionPrefix: NonNullable<ReturnType<typeof addActionPrefix>>,
+  entries: Array<{ section: string; title: string }>,
+) {
   const rawValue = actionPrefix.remainder.trim();
   const value = normalized(rawValue);
   if (!value) return 0;
@@ -177,7 +190,7 @@ function recognizedAddValueLength(actionPrefix, entries) {
 
   let recognizedLength = 0;
   entries
-    .filter((entry) => entry.section === actionPrefix.action.section)
+    .filter((entry) => entry.section === ('section' in actionPrefix.action ? actionPrefix.action.section : undefined))
     .forEach((entry) => {
       const title = normalized(entry.title);
       if (title.startsWith(value)) {
@@ -233,10 +246,17 @@ function sheetSearchEntries(data) {
       targetSelector: `[data-skill="${skill.key}"]`,
     });
   });
-  const addRows = (list, section, titleField, detailFields = [], getBadges = () => [], options = {}) => {
-    for (let row = 0; row < listRowCount(data, list); row += 1) {
+  const addRows = (
+    list,
+    section: string,
+    titleField = 'nom',
+    detailFields: string[] = [],
+    getBadges: (row: number) => SearchBadge[] = () => [],
+    options: AddRowsOptions = {},
+  ) => {
+    range(listRowCount(data, list)).forEach((row) => {
       const title = String(data[list.field(row, titleField)] || '').trim();
-      if (!title) continue;
+      if (!title) return;
       const detail = detailFields.map((field) => data[list.field(row, field)]).filter(Boolean).join(' · ');
       const largeTextFields = options.largeTextFields || [];
       const searchableDetail = detailFields
@@ -260,7 +280,7 @@ function sheetSearchEntries(data) {
         section,
         row,
       });
-    }
+    });
   };
   addRows(SPELLS, 'sorts', 'nom', ['notes'], (row) => {
     const level = SPELLS.field(row, 'niveau');
@@ -281,9 +301,10 @@ function sheetSearchEntries(data) {
   ], { hideDetail: true, previewFields: ['description'], largeTextFields: ['description'] });
   addRows(QUESTS, 'quetes', 'titre', ['pnj', 'lieu', 'recompense', 'description', 'notes'], (row) => {
     const status = QUEST_STATUSES.find(({ value }) => value === data[QUESTS.field(row, 'statut')]);
-    return [
-      ...(status?.value ? [badge('Statut', status.label, status.value === 'terminee' ? 'positive' : status.value === 'echouee' || status.value === 'abandonnee' ? 'negative' : 'score')] : []),
-    ];
+    let tone = 'score';
+    if (status?.value === 'terminee') tone = 'positive';
+    if (status?.value === 'echouee' || status?.value === 'abandonnee') tone = 'negative';
+    return status?.value ? [badge('Statut', status.label, tone)] : [];
   }, { hideDetail: true, previewFields: ['pnj', 'lieu', 'recompense', 'description', 'notes'], largeTextFields: ['description', 'notes'] });
   return entries;
 }
@@ -293,7 +314,23 @@ function quickCommandMatch(query) {
   return match ? { command: match[1].toLowerCase(), value: match[2] } : null;
 }
 
-function parseQuickAction(query, data) {
+function searchContextHint(isQuickCommand, quickCommand, scoped) {
+  if (isQuickCommand) {
+    if (quickCommand?.command === 't') {
+      return 'Choisissez une compétence, une caractéristique ou une expression de dés.';
+    }
+    if (quickCommand?.command === 'g') return 'Choisissez une section à ouvrir.';
+    if (quickCommand?.command === 'o') return 'Choisissez l’outil à ouvrir.';
+    return '';
+  }
+  if (scoped.section) {
+    const section = SECTIONS.find(({ id }) => id === scoped.section);
+    return `Recherche limitée à ${section?.label || 'cette section'}.`;
+  }
+  return 'Résultats classés par pertinence ; utilisez les flèches pour les parcourir.';
+}
+
+function parseQuickAction(query, data): QuickAction | null {
   const match = /^\s*>\s*([tag]):\s*(.+)$/i.exec(query);
   if (!match) return null;
   const [, rawCommand, rawValue] = match;
@@ -303,16 +340,26 @@ function parseQuickAction(query, data) {
 
   if (command === 't') {
     const expression = parseDiceExpression(rawValue);
-    if (expression) return { type: 'expression', value: rawValue.trim(), title: `Lancer ${rawValue.trim()}`, detail: 'Expression de dés' };
+    if (expression) {
+      return {
+        type: 'expression', value: rawValue.trim(), title: `Lancer ${rawValue.trim()}`, detail: 'Expression de dés',
+      };
+    }
     const skill = SKILLS.find(({ key, label }) => normalized(key) === value || normalized(label) === value || (value === 'acrobatie' && key === 'acrobaties'));
-    if (skill) return { type: 'skill', skill, title: `Lancer ${skill.label}`, detail: `Test de compétence · ${formatModifier(skillBonus(data, skill))}` };
+    if (skill) {
+      return {
+        type: 'skill', skill, title: `Lancer ${skill.label}`, detail: `Test de compétence · ${formatModifier(skillBonus(data, skill))}`,
+      };
+    }
     const ability = ABILITIES.find(({ key, label }) => normalized(key) === value || normalized(withoutIcon(label)) === value);
-    if (ability) return {
-      type: 'save',
-      ability,
-      title: `Jet de sauvegarde · ${withoutIcon(ability.label)}`,
-      detail: `Sauvegarde · ${formatModifier(savingThrowBonus(data, ability.key))}`,
-    };
+    if (ability) {
+      return {
+        type: 'save',
+        ability,
+        title: `Jet de sauvegarde · ${withoutIcon(ability.label)}`,
+        detail: `Sauvegarde · ${formatModifier(savingThrowBonus(data, ability.key))}`,
+      };
+    }
   }
 
   if (command === 'a') {
@@ -320,15 +367,18 @@ function parseQuickAction(query, data) {
   }
 
   if (command === 'g') {
-    const section = SECTIONS.find(({ id, label }) =>
-      normalized(id) === value || normalized(label) === value
+    const section = SECTIONS.find(({ id, label }) => normalized(id) === value || normalized(label) === value
       || SECTION_FILTERS.some((filter) => filter.section === id && filter.alias === value));
-    if (section) return { type: 'goto', section: section.id, title: `Aller à ${section.label}`, detail: 'Ouvrir cette section' };
+    if (section) {
+      return {
+        type: 'goto', section: section.id, title: `Aller à ${section.label}`, detail: 'Ouvrir cette section',
+      };
+    }
   }
   return null;
 }
 
-function quickActionSuggestions(query, data, visibleSections) {
+function quickActionSuggestions(query, data, visibleSections): QuickAction[] {
   const match = /^\s*>\s*([tago]):\s*(.*)$/i.exec(query);
   if (!match) return [];
   const [, rawCommand, rawValue] = match;
@@ -338,16 +388,16 @@ function quickActionSuggestions(query, data, visibleSections) {
   if (command === 't') {
     const expression = parseQuickAction(query, data);
     if (expression?.type === 'expression') return [expression];
-    const options = [
+    const options: QuickAction[] = [
       ...SKILLS.map((skill) => ({
-        type: 'skill',
+        type: 'skill' as const,
         skill,
         title: `Lancer ${skill.label}`,
         detail: `Compétence · ${formatModifier(skillBonus(data, skill))}`,
         searchText: `${skill.key} ${skill.label}`,
       })),
       ...ABILITIES.map((ability) => ({
-        type: 'save',
+        type: 'save' as const,
         ability,
         title: `Jet de sauvegarde · ${withoutIcon(ability.label)}`,
         detail: `Sauvegarde · ${formatModifier(savingThrowBonus(data, ability.key))}`,
@@ -363,18 +413,18 @@ function quickActionSuggestions(query, data, visibleSections) {
   if (command === 'a') {
     const exact = resolveAddAction(rawValue);
     if (exact) return [exact];
-    const options = [
-      ...ADD_ACTIONS.map((action) => ({ type: 'add', ...action, searchText: `${action.title} ${action.names.join(' ')}` })),
+    const options: QuickAction[] = [
+      ...ADD_ACTIONS.map((action) => ({ type: 'add' as const, ...action, searchText: `${action.title} ${action.names.join(' ')}` })),
       { ...COIN_ACTION, searchText: `${COIN_ACTION.title} ${COIN_ACTION.names.join(' ')}` },
     ];
     return value ? matchingEntries(options, value, 8) : options;
   }
 
   if (command === 'g') {
-    const options = SECTIONS
+    const options: QuickAction[] = SECTIONS
       .filter(({ id }) => visibleSections.has(id))
       .map(({ id, label }) => ({
-        type: 'goto',
+        type: 'goto' as const,
         section: id,
         title: `Aller à ${label}`,
         detail: 'Ouvrir cette section',
@@ -383,23 +433,17 @@ function quickActionSuggestions(query, data, visibleSections) {
     return value ? matchingEntries(options, value, 8) : options.slice(0, 8);
   }
 
-  const options = TOOL_ACTIONS.map((tool) => ({
-    type: 'tool',
+  const options: QuickAction[] = TOOL_ACTIONS.map((tool) => ({
+    type: 'tool' as const,
     ...tool,
     searchText: `${tool.title} ${tool.names.join(' ')}`,
   }));
   return value ? matchingEntries(options, value, 8) : options;
 }
 
-function scopedSearch(query) {
-  const match = /^([^:]+):\s*(.*)$/.exec(query.trim());
-  if (!match) return { section: null, term: query.trim() };
-  const prefix = normalized(match[1]);
-  const filter = SECTION_FILTERS.find(({ alias }) => alias === prefix);
-  return filter ? { section: filter.section, term: match[2].trim() } : { section: null, term: query.trim() };
-}
-
-function SearchExample({ prefix, children, filter = false, entries = [] }) {
+function SearchExample({
+  prefix, children, filter = false, entries = [],
+}) {
   const addPrefix = !filter && prefix === 'a' ? addActionPrefix(children) : null;
   const recognizedLength = addPrefix ? recognizedAddValueLength(addPrefix, entries) : 0;
   const leadingSpace = addPrefix?.remainder.match(/^\s*/u)?.[0] || '';
@@ -434,11 +478,9 @@ function highlightedQuery(query, quickSuggestions, entries) {
     const recognizedLength = actionPrefix ? recognizedAddValueLength(actionPrefix, entries) : 0;
     const leadingSpace = actionPrefix?.remainder.match(/^\s*/u)?.[0] || '';
     const recognizedEnd = leadingSpace.length + recognizedLength;
-    const argumentState = !argument.trim()
-      ? 'pending'
-      : quickSuggestions.length
-        ? 'valid'
-        : 'invalid';
+    let argumentState = 'invalid';
+    if (!argument.trim()) argumentState = 'pending';
+    else if (quickSuggestions.length) argumentState = 'valid';
     return (
       <>
         <span className="search-token-marker">&gt;</span>
@@ -487,8 +529,14 @@ function highlightedQuery(query, quickSuggestions, entries) {
 export default function SheetSearch({ open, onToggle }) {
   const { data, apply } = useSheet();
   const { roll, rollExpression } = useDice();
-  const layout = normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths);
-  const visibleSections = new Set([...layout.top, ...layout.left, ...layout.right, ...layout.bottom]);
+  const layout = useMemo(
+    () => normalizeTileLayout(data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths),
+    [data.tile_layout, data.tile_order, data.tile_sides, data.tile_widths],
+  );
+  const visibleSections = useMemo(
+    () => new Set([...layout.top, ...layout.left, ...layout.right, ...layout.bottom]),
+    [layout],
+  );
   const [query, setQuery] = useState('');
   const [searchHelpOpen, setSearchHelpOpen] = useState(true);
   const [pendingTarget, setPendingTarget] = useState(null);
@@ -526,11 +574,8 @@ export default function SheetSearch({ open, onToggle }) {
   const groupedResults = sectionResults.length
     ? [...contentGroups, { section: 'sections', label: 'Sections', entries: sectionResults }]
     : contentGroups;
-  const keyboardResults = isQuickCommand
-    ? quickSuggestions
-    : searchResults.length
-      ? searchResults
-      : [];
+  let keyboardResults = searchResults;
+  if (isQuickCommand) keyboardResults = quickSuggestions;
 
   useEffect(() => {
     try {
@@ -577,24 +622,24 @@ export default function SheetSearch({ open, onToggle }) {
   useEffect(() => {
     if (!pendingTarget) return undefined;
     const frame = window.requestAnimationFrame(() => {
-      const target = document.querySelector(pendingTarget.selector);
+      const target = document.querySelector<HTMLElement>(pendingTarget.selector);
       if (pendingTarget.action === 'add') {
         if (pendingTarget.stage === 'add') {
-          const addButton = [...(target?.querySelectorAll('.add-row') || [])]
+          const addButton = [...(target?.querySelectorAll<HTMLButtonElement>('.add-row') || [])]
             .find((button) => normalized(button.textContent).includes(normalized(pendingTarget.buttonLabel)));
           if (!addButton) {
             setPendingTarget(null);
             return;
           }
           addButton.click();
-          setPendingTarget((current) => current ? {
+          setPendingTarget((current) => (current ? {
             ...current,
             stage: current.prefillValue ? 'fill' : 'focus',
-          } : current);
+          } : current));
           return;
         }
 
-        const fields = [...document.querySelectorAll(`[data-field^="${pendingTarget.fieldPrefix}"]`)];
+        const fields = [...document.querySelectorAll<HTMLElement>(`[data-field^="${pendingTarget.fieldPrefix}"]`)];
         const field = fields.filter((item) => {
           const name = item.getAttribute('data-field');
           return pendingTarget.fieldPattern
@@ -604,11 +649,11 @@ export default function SheetSearch({ open, onToggle }) {
         if (field && pendingTarget.stage === 'fill') {
           const fieldName = field.getAttribute('data-field');
           apply((current) => ({ ...current, [fieldName]: pendingTarget.prefillValue }));
-          setPendingTarget((current) => current ? { ...current, stage: 'focus', fieldName } : current);
+          setPendingTarget((current) => (current ? { ...current, stage: 'focus', fieldName } : current));
           return;
         }
         const focusField = pendingTarget.fieldName
-          ? document.querySelector(`[data-field="${pendingTarget.fieldName}"]`)
+          ? document.querySelector<HTMLElement>(`[data-field="${pendingTarget.fieldName}"]`)
           : field;
         if (focusField) {
           const top = focusField.getBoundingClientRect().top + window.scrollY - 100;
@@ -623,7 +668,7 @@ export default function SheetSearch({ open, onToggle }) {
       setPendingTarget(null);
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [pendingTarget]);
+  }, [apply, pendingTarget]);
 
   const openSearchResult = (entry) => {
     window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section: entry.section } }));
@@ -643,16 +688,20 @@ export default function SheetSearch({ open, onToggle }) {
     onToggle();
   };
 
-  const runQuickAction = (action = quickAction) => {
+  const runQuickAction = (action: QuickAction | null = quickAction) => {
     if (!action) return;
     if (action.type === 'expression') rollExpression(action.value);
     if (action.type === 'skill') roll(action.skill.label, skillBonus(data, action.skill));
     if (action.type === 'save') roll(`${withoutIcon(action.ability.label)} · Sauvegarde`, savingThrowBonus(data, action.ability.key));
     if (action.type === 'add') {
-      const { section, buttonLabel, fieldPrefix, fieldSuffix, fieldPattern } = action;
+      const {
+        section, buttonLabel, fieldPrefix, fieldSuffix, fieldPattern,
+      } = action;
       window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section } }));
       apply((current) => ({ ...current, [foldField(section)]: 'false' }));
-      setPendingTarget({ selector: `#${sectionAnchor(section)}`, action: 'add', stage: 'add', buttonLabel, fieldPrefix, fieldSuffix, fieldPattern, prefillValue: action.prefillValue });
+      setPendingTarget({
+        selector: `#${sectionAnchor(section)}`, action: 'add', stage: 'add', buttonLabel, fieldPrefix, fieldSuffix, fieldPattern, prefillValue: action.prefillValue,
+      });
     }
     if (action.type === 'coin') {
       const amount = Number.parseInt(action.amount, 10);
@@ -713,7 +762,7 @@ export default function SheetSearch({ open, onToggle }) {
       </button>
       <Modal
         id="sheet-search-panel"
-        open={open}
+        isOpen={open}
         onClose={onToggle}
         title="Rechercher et commandes rapides"
         headerActions={<kbd>Échap</kbd>}
@@ -773,31 +822,73 @@ export default function SheetSearch({ open, onToggle }) {
                 {searchHelpOpen && (
                   <>
                     <div className="search-help-legend" aria-label="Légende des couleurs">
-                      <span><i className="is-command" aria-hidden="true" />Commande reconnue</span>
-                      <span><i className="is-valid" aria-hidden="true" />Action correspondante</span>
-                      <span><i className="is-invalid" aria-hidden="true" />Aucune correspondance</span>
-                      <span><i className="is-query" aria-hidden="true" />Texte recherché</span>
+                      <span>
+                        <i className="is-command" aria-hidden="true" />
+                        Commande reconnue
+                      </span>
+                      <span>
+                        <i className="is-valid" aria-hidden="true" />
+                        Action correspondante
+                      </span>
+                      <span>
+                        <i className="is-invalid" aria-hidden="true" />
+                        Aucune correspondance
+                      </span>
+                      <span>
+                        <i className="is-query" aria-hidden="true" />
+                        Texte recherché
+                      </span>
                     </div>
                     <div id="search-help-content" className="search-help-groups">
                       <section className="search-help-group" aria-labelledby="search-help-plain-title">
                         <h3 id="search-help-plain-title">Recherche en texte libre</h3>
                         <ul>
-                          <li><span>Rechercher dans la fiche</span><code className="search-token-query">acrobaties</code></li>
+                          <li>
+                            <span>Rechercher dans la fiche</span>
+                            <code className="search-token-query">acrobaties</code>
+                          </li>
                         </ul>
                       </section>
                       <section className="search-help-group" aria-labelledby="search-help-filter-title">
                         <h3 id="search-help-filter-title">Recherche avec filtre de section</h3>
                         <ul>
-                          <li><span>Limiter la recherche à une section</span><SearchExample prefix="sort" filter>boule de feu</SearchExample><SearchExample prefix="quête" filter>dragon</SearchExample></li>
+                          <li>
+                            <span>Limiter la recherche à une section</span>
+                            <SearchExample prefix="sort" filter>boule de feu</SearchExample>
+                            <SearchExample prefix="quête" filter>dragon</SearchExample>
+                          </li>
                         </ul>
                       </section>
                       <section className="search-help-group" aria-labelledby="search-help-commands-title">
                         <h3 id="search-help-commands-title">Commandes</h3>
                         <ul>
-                          <li><span>Lancer une compétence, une sauvegarde ou des dés</span><SearchExample prefix="t">acrobaties</SearchExample><SearchExample prefix="t">force</SearchExample><SearchExample prefix="t">d20+4</SearchExample><SearchExample prefix="t">2d6+3</SearchExample></li>
-                          <li><span>Ajouter un élément</span><SearchExample prefix="a" entries={entries}>quête</SearchExample><SearchExample prefix="a" entries={entries}>sort boule de feu</SearchExample><SearchExample prefix="a" entries={entries}>arme</SearchExample><SearchExample prefix="a" entries={entries}>capacité</SearchExample><SearchExample prefix="a" entries={entries}>équipement</SearchExample><SearchExample prefix="a" entries={entries}>lien magique</SearchExample><SearchExample prefix="a" entries={entries}>pièce 10 po</SearchExample></li>
-                          <li><span>Accéder à une section</span><SearchExample prefix="g">sorts</SearchExample><SearchExample prefix="g">caractéristiques</SearchExample></li>
-                          <li><span>Ouvrir un outil</span><SearchExample prefix="o">dés</SearchExample><SearchExample prefix="o">référence</SearchExample></li>
+                          <li>
+                            <span>Lancer une compétence, une sauvegarde ou des dés</span>
+                            <SearchExample prefix="t">acrobaties</SearchExample>
+                            <SearchExample prefix="t">force</SearchExample>
+                            <SearchExample prefix="t">d20+4</SearchExample>
+                            <SearchExample prefix="t">2d6+3</SearchExample>
+                          </li>
+                          <li>
+                            <span>Ajouter un élément</span>
+                            <SearchExample prefix="a" entries={entries}>quête</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>sort boule de feu</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>arme</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>capacité</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>équipement</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>lien magique</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>pièce 10 po</SearchExample>
+                          </li>
+                          <li>
+                            <span>Accéder à une section</span>
+                            <SearchExample prefix="g">sorts</SearchExample>
+                            <SearchExample prefix="g">caractéristiques</SearchExample>
+                          </li>
+                          <li>
+                            <span>Ouvrir un outil</span>
+                            <SearchExample prefix="o">dés</SearchExample>
+                            <SearchExample prefix="o">référence</SearchExample>
+                          </li>
                         </ul>
                       </section>
                     </div>
@@ -807,23 +898,16 @@ export default function SheetSearch({ open, onToggle }) {
             </div>
             {query.trim() && (!isQuickCommand || (quickCommand && quickCommand.command !== 'a')) && (
               <p className="search-context-hint" aria-live="polite">
-                {isQuickCommand
-                  ? quickCommand?.command === 't'
-                    ? 'Choisissez une compétence, une caractéristique ou une expression de dés.'
-                    : quickCommand?.command === 'g'
-                      ? 'Choisissez une section à ouvrir.'
-                      : quickCommand?.command === 'o'
-                        ? 'Choisissez l’outil à ouvrir.'
-                        : ''
-                  : scoped.section
-                    ? `Recherche limitée à ${SECTIONS.find(({ id }) => id === scoped.section)?.label || 'cette section'}.`
-                    : 'Résultats classés par pertinence ; utilisez les flèches pour les parcourir.'}
+                {searchContextHint(isQuickCommand, quickCommand, scoped)}
               </p>
             )}
             {isQuickCommand && !quickCommand && query.trim() !== '>' && (
               <p className="search-context-hint search-command-error" role="status" aria-live="polite">
                 <span className="search-command-error-icon" aria-hidden="true">!</span>
-                <span><strong>Commande inconnue</strong><small>Utilisez &gt;t:, &gt;a:, &gt;g: ou &gt;o:.</small></span>
+                <span>
+                  <strong>Commande inconnue</strong>
+                  <small>Utilisez &gt;t:, &gt;a:, &gt;g: ou &gt;o:.</small>
+                </span>
               </p>
             )}
             {(isQuickCommand ? Boolean(quickCommand) : Boolean(query.trim())) && (
@@ -845,7 +929,7 @@ export default function SheetSearch({ open, onToggle }) {
                     {quickSuggestions.length === 0 && quickCommand?.command === 'o' && <p className="search-empty-state" role="status">Aucun outil ne correspond à cette recherche.</p>}
                   </div>
                 )}
-                {groupedResults.length ? groupedResults.map((group) => (
+                {groupedResults.map((group) => (
                   <div className="sheet-search-result-group" data-section={group.section} role="group" aria-label={group.label} key={group.section}>
                     <h3>{group.label}</h3>
                     {group.entries.map((entry) => {
@@ -881,7 +965,10 @@ export default function SheetSearch({ open, onToggle }) {
                       );
                     })}
                   </div>
-                )) : (!isQuickCommand && query.trim() ? <p className="search-empty-state" role="status">Aucun résultat pour cette recherche.</p> : null)}
+                ))}
+                {!groupedResults.length && !isQuickCommand && query.trim() && (
+                  <p className="search-empty-state" role="status">Aucun résultat pour cette recherche.</p>
+                )}
               </div>
             )}
           </div>

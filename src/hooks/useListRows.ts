@@ -1,5 +1,7 @@
 import { useSheet } from '../context/SheetContext';
-import { isRowEmpty, listRowCount, withRowAdded, withRowRemoved } from '../services/sheetRows';
+import {
+  isRowEmpty, listRowCount, withRowAdded, withRowRemoved,
+} from '../services/sheetRows';
 
 /**
  * Rows of a growable list (see `data/sheetLists.js`). The count is stored as a

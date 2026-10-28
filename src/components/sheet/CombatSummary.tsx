@@ -1,5 +1,7 @@
 import { ABILITIES, SKILLS } from '../../data/abilities';
-import { CLASS_FEATURES, CLASS_FEATURES_USED, SPELLS, WEAPONS } from '../../data/sheetLists';
+import {
+  CLASS_FEATURES, CLASS_FEATURES_USED, SPELLS, WEAPONS,
+} from '../../data/sheetLists';
 import { range } from '../../utils/range';
 import { listRowCount } from '../../services/sheetRows';
 import { spellSlotField, spellSlotRows } from '../../services/spellSlots';
@@ -34,9 +36,11 @@ const included = (data, includeField, contentField) => {
   return Boolean(text(data[contentField]));
 };
 const flagged = (data, field) => data[field] === 'true';
-function SummarySection({ title, className = '', children, emptyMessage, hasContent = true }) {
+function SummarySection({
+  title, className = '', children, emptyMessage, hasContent = true,
+}) {
   return (
-    <section className={'summary-card ' + className}>
+    <section className={`summary-card ${className}`}>
       <h3>{title}</h3>
       {hasContent ? children : <p className="summary-empty">{emptyMessage}</p>}
     </section>
@@ -45,11 +49,11 @@ function SummarySection({ title, className = '', children, emptyMessage, hasCont
 
 function DeathMarks({ name, label, tone }) {
   return (
-    <div className={'summary-death-group ' + tone}>
+    <div className={`summary-death-group ${tone}`}>
       <span>{label}</span>
       <div role="group" aria-label={label}>
         {range(3).map((index) => (
-          <Checkbox key={index} name={name + '_' + (index + 1)} aria-label={`${label}, ${index + 1}`} />
+          <Checkbox key={index} name={`${name}_${index + 1}`} aria-label={`${label}, ${index + 1}`} />
         ))}
       </div>
     </div>
@@ -96,19 +100,18 @@ export default function CombatSummary({ onBack }) {
   const hasRecordedSpells = range(listRowCount(data, SPELLS))
     .some((row) => Boolean(text(data[SPELLS.field(row, 'nom')])));
   const slots = spellSlotRows(data).filter((slot) => slot.total > 0);
-  const hasSpellcasting =
-    hasRecordedSpells ||
-    ['caracteristique_incantation', 'modificateur_incantation', 'dd_sauvegarde', 'bonus_attaque_sort']
-      .some((field) => Boolean(text(data[field]))) ||
-    Object.entries(data).some(([field, value]) => /^emplacement_sort_\d+_\d+$/.test(field) && value === 'true') ||
-    Object.entries(data).some(([field, value]) => /^emplacements_sorts_niveau_\d+$/.test(field) && Boolean(text(value)));
+  const hasSpellcasting = hasRecordedSpells
+    || ['caracteristique_incantation', 'modificateur_incantation', 'dd_sauvegarde', 'bonus_attaque_sort']
+      .some((field) => Boolean(text(data[field])))
+    || Object.entries(data).some(([field, value]) => /^emplacement_sort_\d+_\d+$/.test(field) && value === 'true')
+    || Object.entries(data).some(([field, value]) => /^emplacements_sorts_niveau_\d+$/.test(field) && Boolean(text(value)));
   const spellAbility = ABILITIES.find((ability) => ability.key === spellcastingAbility(data));
   const identity = [
-    'Niveau ' + valueOr(data.niveau, '1'),
+    `Niveau ${valueOr(data.niveau, '1')}`,
     text(data.espece),
     [text(data.classe), text(data.sous_classe)].filter(Boolean).join(' / '),
   ].filter(Boolean).join(' · ');
-  const hitPoints = valueOr(data.points_vie_actuel) + ' / ' + valueOr(data.points_vie_max);
+  const hitPoints = `${valueOr(data.points_vie_actuel)} / ${valueOr(data.points_vie_max)}`;
 
   return (
     <article className="combat-summary">
@@ -133,18 +136,40 @@ export default function CombatSummary({ onBack }) {
         <div className="summary-stat summary-hit-points">
           <span>Points de vie</span>
           <strong>{hitPoints}</strong>
-          {text(data.points_vie_temp) && <small>{data.points_vie_temp} temporaires</small>}
+          {text(data.points_vie_temp) && (
+          <small>
+            {data.points_vie_temp}
+            {' '}
+            temporaires
+          </small>
+          )}
           <HpQuickAdjustments />
         </div>
         <div className="summary-stat">
-          <span>CA</span><strong>{valueOr(data.classe_armure)}</strong>
+          <span>CA</span>
+          <strong>{valueOr(data.classe_armure)}</strong>
           {flagged(data, 'bouclier') && <small>Bouclier actif</small>}
         </div>
-        <div className="summary-stat"><span>Initiative</span><strong>{displayModifier(data.initiative, derivedInitiative(data))}</strong></div>
-        <div className="summary-stat"><span>Vitesse</span><strong>{valueOr(data.vitesse)}</strong></div>
-        <div className="summary-stat"><span>Maîtrise</span><strong>{formatModifier(proficiencyBonus(data))}</strong></div>
-        <div className="summary-stat"><span>Perception passive</span><strong>{valueOr(data.perception_passive, String(derivedPassivePerception(data)))}</strong></div>
-        <div className="summary-stat"><span>Inspiration</span><strong>{flagged(data, 'inspiration') ? 'Oui' : 'Non'}</strong></div>
+        <div className="summary-stat">
+          <span>Initiative</span>
+          <strong>{displayModifier(data.initiative, derivedInitiative(data))}</strong>
+        </div>
+        <div className="summary-stat">
+          <span>Vitesse</span>
+          <strong>{valueOr(data.vitesse)}</strong>
+        </div>
+        <div className="summary-stat">
+          <span>Maîtrise</span>
+          <strong>{formatModifier(proficiencyBonus(data))}</strong>
+        </div>
+        <div className="summary-stat">
+          <span>Perception passive</span>
+          <strong>{valueOr(data.perception_passive, String(derivedPassivePerception(data)))}</strong>
+        </div>
+        <div className="summary-stat">
+          <span>Inspiration</span>
+          <strong>{flagged(data, 'inspiration') ? 'Oui' : 'Non'}</strong>
+        </div>
       </div>
 
       <div className="summary-columns">
@@ -192,7 +217,10 @@ export default function CombatSummary({ onBack }) {
                   </div>
                   {text(feature.description) && <div className="summary-entry-detail">{text(feature.description)}</div>}
                   {(feature.shortRest || feature.longRest) && (
-                    <small>Récupération : {[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}</small>
+                    <small>
+                      Récupération :
+                      {[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}
+                    </small>
                   )}
                 </li>
               ))}
@@ -216,7 +244,13 @@ export default function CombatSummary({ onBack }) {
                   </div>
                   <div className="summary-entry-detail">
                     {text(weapon.damage) || 'Dégâts non renseignés'}
-                    {text(weapon.notes) && <span> · {text(weapon.notes)}</span>}
+                    {text(weapon.notes) && (
+                    <span>
+                      {' '}
+                      ·
+                      {text(weapon.notes)}
+                    </span>
+                    )}
                   </div>
                 </li>
               ))}
@@ -228,9 +262,18 @@ export default function CombatSummary({ onBack }) {
           {hasSpellcasting && (
             <SummarySection title="Incantation" className="summary-spell-meta">
               <div className="summary-spell-stats">
-                <div><span>Caractéristique</span><strong>{spellAbility?.label.replace(/^\S+\s*/, '') || '—'}</strong></div>
-                <div><span>Modificateur</span><strong>{formatModifier(spellcastingModifier(data))}</strong></div>
-                <div><span>DD</span><strong>{valueOr(data.dd_sauvegarde, String(derivedSpellSaveDC(data)))}</strong></div>
+                <div>
+                  <span>Caractéristique</span>
+                  <strong>{spellAbility?.label.replace(/^\S+\s*/, '') || '—'}</strong>
+                </div>
+                <div>
+                  <span>Modificateur</span>
+                  <strong>{formatModifier(spellcastingModifier(data))}</strong>
+                </div>
+                <div>
+                  <span>DD</span>
+                  <strong>{valueOr(data.dd_sauvegarde, String(derivedSpellSaveDC(data)))}</strong>
+                </div>
                 <div>
                   <span>Attaque</span>
                   <strong>{displayModifier(data.bonus_attaque_sort, derivedSpellAttackBonus(data))}</strong>
@@ -242,25 +285,26 @@ export default function CombatSummary({ onBack }) {
           {slots.length > 0 && (
             <SummarySection title="Emplacements de sorts" className="summary-slot-card">
               <div className="summary-slots">
-                {slots.map((slot) => {
-                  return (
-                    <div
-                      key={slot.spellLevel}
-                      className="summary-slot-level"
-                    >
-                      <span>Niveau {slot.spellLevel}</span>
-                      <div className="summary-slot-boxes">
-                        {range(slot.total).map((slotIndex) => (
-                          <Checkbox
-                            key={slotIndex}
-                            name={spellSlotField(slot.spellLevel, slotIndex)}
-                            aria-label={`Emplacement de sort niveau ${slot.spellLevel}, ${slotIndex + 1}`}
-                          />
-                        ))}
-                      </div>
+                {slots.map((slot) => (
+                  <div
+                    key={slot.spellLevel}
+                    className="summary-slot-level"
+                  >
+                    <span>
+                      Niveau
+                      {slot.spellLevel}
+                    </span>
+                    <div className="summary-slot-boxes">
+                      {range(slot.total).map((slotIndex) => (
+                        <Checkbox
+                          key={slotIndex}
+                          name={spellSlotField(slot.spellLevel, slotIndex)}
+                          aria-label={`Emplacement de sort niveau ${slot.spellLevel}, ${slotIndex + 1}`}
+                        />
+                      ))}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </SummarySection>
           )}
@@ -276,13 +320,19 @@ export default function CombatSummary({ onBack }) {
                 <li key={index}>
                   <div className="summary-entry-top">
                     <strong>{text(spell.name)}</strong>
-                    <span>{spell.cantrip ? 'Mineur' : 'Niv. ' + valueOr(spell.level)}</span>
+                    <span>{spell.cantrip ? 'Mineur' : `Niv. ${valueOr(spell.level)}`}</span>
                   </div>
                   <div className="summary-entry-detail">
                     {[text(spell.time), text(spell.range), spell.concentration && 'Concentration', spell.ritual && 'Rituel']
                       .filter(Boolean)
                       .join(' · ') || 'Détails non renseignés'}
-                    {text(spell.notes) && <span className="summary-spell-notes"> · {text(spell.notes)}</span>}
+                    {text(spell.notes) && (
+                    <span className="summary-spell-notes">
+                      {' '}
+                      ·
+                      {text(spell.notes)}
+                    </span>
+                    )}
                   </div>
                 </li>
               ))}

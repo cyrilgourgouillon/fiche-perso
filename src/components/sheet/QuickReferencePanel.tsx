@@ -1,4 +1,4 @@
-﻿import { useSheet } from '../../context/SheetContext';
+import { useSheet } from '../../context/SheetContext';
 import { ABILITIES, SKILLS } from '../../data/abilities';
 import RollButton from '../dice/RollButton';
 import Modal from '../common/Modal';
@@ -27,22 +27,22 @@ export default function QuickReferencePanel({ open, onToggle }) {
 
   return (
     <div className="quick-reference-widget">
-        <button
-          type="button"
-          className="sheet-tools-launcher quick-reference-launcher"
-          aria-expanded={open}
-          aria-controls="quick-reference-content"
-          onClick={onToggle}
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z" />
-            <path d="M4 6h13M8 9h8M8 12h5M8 16h8" />
-          </svg>
-          <span>Carac. &amp; comp.</span>
-        </button>
+      <button
+        type="button"
+        className="sheet-tools-launcher quick-reference-launcher"
+        aria-expanded={open}
+        aria-controls="quick-reference-content"
+        onClick={onToggle}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21V5.5Z" />
+          <path d="M4 6h13M8 9h8M8 12h5M8 16h8" />
+        </svg>
+        <span>Carac. &amp; comp.</span>
+      </button>
       <Modal
         id="quick-reference-dialog"
-        open={open}
+        isOpen={open}
         onClose={onToggle}
         presentation="popup"
         eyebrow="Référence rapide"

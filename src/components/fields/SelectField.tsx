@@ -1,7 +1,9 @@
 import { useSheetField } from '../../context/SheetContext';
 
 /** `fallback` is the option to show while the field is untouched. */
-export default function SelectField({ name, options, className = 'ef', fallback = '', ...props }) {
+export default function SelectField({
+  name, options, className = 'ef', fallback = '', ...props
+}) {
   const [value, setValue] = useSheetField(name);
   return (
     <select

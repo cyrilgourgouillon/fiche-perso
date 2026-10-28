@@ -35,7 +35,9 @@ export const rollCheck = ({ label, bonus = 0, mode = 'normal' }) => {
   const dice = twice ? [rollDie(D20), rollDie(D20)] : [rollDie(D20)];
   const kept = [mode === 'desavantage' ? Math.min(...dice) : Math.max(...dice)];
 
-  return { label, sides: D20, mode, dice, kept, modifier: bonus, total: total(kept, bonus) };
+  return {
+    label, sides: D20, mode, dice, kept, modifier: bonus, total: total(kept, bonus),
+  };
 };
 
 const DICE_EXPRESSION = /^\s*(\d*)\s*d\s*(\d+)\s*(?:([+-])\s*(\d+))?\s*$/i;
@@ -75,8 +77,7 @@ export const rollExpression = (input) => {
  * A plausible total for the tumbling animation: the same dice as `roll`, thrown
  * again, so the number that flickers has the right magnitude.
  */
-export const randomTotalLike = (roll) =>
-  roll.kept.reduce((running) => running + rollDie(roll.sides), 0) + roll.modifier;
+export const randomTotalLike = (roll) => roll.kept.reduce((running) => running + rollDie(roll.sides), 0) + roll.modifier;
 
 /** Delays between tumbles, slowing down like a die losing momentum. */
 export const TUMBLE_DELAYS_MS = [45, 45, 50, 55, 65, 80, 100, 130, 175, 230];

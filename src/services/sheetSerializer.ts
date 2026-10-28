@@ -15,29 +15,37 @@ const FORMAT_VERSION = '2.0';
 const FALLBACK_FILE_NAME = 'kresk';
 const ILLEGAL_FILE_NAME_CHARS = /[\\/:*?"<>|]/g;
 const ARRAY_LISTS = [
-  { key: 'weapons', path: ['weapons'], list: WEAPONS, fields: WEAPONS.fields, rowPattern: /^arme(\d+)_/ },
-  { key: 'spells', path: ['spells', 'known'], list: SPELLS, fields: SPELLS.fields, rowPattern: /^sort(\d+)_/ },
+  {
+    key: 'weapons', path: ['weapons'], list: WEAPONS, fields: WEAPONS.fields, rowPattern: /^arme(\d+)_/,
+  },
+  {
+    key: 'spells', path: ['spells', 'known'], list: SPELLS, fields: SPELLS.fields, rowPattern: /^sort(\d+)_/,
+  },
   {
     key: 'classFeatures',
     path: ['classFeatures'],
     list: CLASS_FEATURES,
     fields: ['titre', 'description', 'repos_court', 'repos_long', 'utilisee', 'combat'],
     rowPattern: /^capacite(?:_utilisee)?(\d+)/,
-    field: (row, name) =>
-      name === 'titre'
-        ? CLASS_FEATURES.field(row)
-        : name === 'utilisee'
-          ? CLASS_FEATURES_USED.field(row)
-          : CLASS_FEATURES.field(row, name),
+    field: (row, name) => {
+      if (name === 'titre') return CLASS_FEATURES.field(row);
+      if (name === 'utilisee') return CLASS_FEATURES_USED.field(row);
+      return CLASS_FEATURES.field(row, name);
+    },
   },
-  { key: 'inventory', path: ['equipment', 'inventory'], list: INVENTORY, fields: INVENTORY.fields, rowPattern: /^inventaire(\d+)_/ },
-  { key: 'quests', path: ['quests'], list: QUESTS, fields: QUESTS.fields, rowPattern: /^quete(\d+)_/ },
+  {
+    key: 'inventory', path: ['equipment', 'inventory'], list: INVENTORY, fields: INVENTORY.fields, rowPattern: /^inventaire(\d+)_/,
+  },
+  {
+    key: 'quests', path: ['quests'], list: QUESTS, fields: QUESTS.fields, rowPattern: /^quete(\d+)_/,
+  },
 ];
 const SIMPLE_ARRAY_LISTS = [
-  { key: 'magicItems', path: ['equipment', 'magicItems'], list: MAGIC_ITEMS, rowPattern: /^lien_magique(\d+)$/ },
+  {
+    key: 'magicItems', path: ['equipment', 'magicItems'], list: MAGIC_ITEMS, rowPattern: /^lien_magique(\d+)$/,
+  },
 ];
-const LIST_FIELD_PATTERN =
-  /^(?:arme\d+_|sort\d+_|capacite\d+(?:_|$)|capacite_utilisee\d+$|inventaire\d+_|quete\d+_|lien_magique\d+$|trait\d+$|(?:armes|sorts|capacites|inventaire|quetes|liens_magiques)_lignes$)/;
+const LIST_FIELD_PATTERN = /^(?:arme\d+_|sort\d+_|capacite\d+(?:_|$)|capacite_utilisee\d+$|inventaire\d+_|quete\d+_|lien_magique\d+$|trait\d+$|(?:armes|sorts|capacites|inventaire|quetes|liens_magiques)_lignes$)/;
 const TRAIT_FIELD_PATTERN = /^trait(\d+)$/;
 const SPELL_SLOT_PATTERN = /^emplacement_sort_(\d+)_(\d+)$/;
 const SPELL_SLOT_OVERRIDE_PATTERN = /^emplacements_sorts_niveau_(\d+)$/;
@@ -156,6 +164,8 @@ addFieldMap(['settings'], {
   quest_status_filter: 'questStatusFilter',
 });
 
+const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
 const setPath = (target, path, value) => {
   let current = target;
   path.slice(0, -1).forEach((key) => {
@@ -179,8 +189,6 @@ const getPath = (target, path) => {
 
 export const DEFAULT_TEXTAREA_MODE = 'edit';
 export const DEFAULT_REDUCE_MOTION = 'false';
-
-const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
 const serializedRowCount = (data, list, rowPattern) => {
   const highestStoredRow = Object.keys(data).reduce((highest, key) => {
@@ -222,15 +230,15 @@ export const serializeSheet = (data) => {
     setPath(modules, ['other', key], value);
   });
 
-  ARRAY_LISTS.forEach(({ path, list, fields, field = list.field, rowPattern }) => {
-    setPath(modules, path, Array.from({ length: serializedRowCount(data, list, rowPattern) }, (_, row) =>
-      Object.fromEntries(
-        fields.flatMap((name) => {
-          const fieldName = field(row, name);
-          return fieldName in normalized ? [[name, normalized[fieldName]]] : [];
-        }),
-      ),
-    ));
+  ARRAY_LISTS.forEach(({
+    path, list, fields, field = list.field, rowPattern,
+  }) => {
+    setPath(modules, path, Array.from({ length: serializedRowCount(data, list, rowPattern) }, (_, row) => Object.fromEntries(
+      fields.flatMap((name) => {
+        const fieldName = field(row, name);
+        return fieldName in normalized ? [[name, normalized[fieldName]]] : [];
+      }),
+    )));
   });
 
   SIMPLE_ARRAY_LISTS.forEach(({ path, list, rowPattern }) => {
@@ -244,9 +252,7 @@ export const serializeSheet = (data) => {
     .map(([key]) => key.match(TRAIT_FIELD_PATTERN))
     .filter(Boolean)
     .map((match) => Number(match[1]));
-  setPath(modules, ['character', 'traits'], Array.from({ length: Math.max(0, ...traitRows) }, (_, index) =>
-    normalized[`trait${index + 1}`] || '',
-  ));
+  setPath(modules, ['character', 'traits'], Array.from({ length: Math.max(0, ...traitRows) }, (_, index) => normalized[`trait${index + 1}`] || ''));
 
   const spellSlots = [];
   const slotNumbers = new Map();
@@ -337,9 +343,7 @@ export const normalizeClassFeatureNotes = (data) => {
     if (separator < 0) return;
 
     const legacyTitle = data[key].slice(0, separator).trim();
-    const row = [...featureRows.entries()].find(([, title]) =>
-      typeof title === 'string' && title.trim().toLocaleLowerCase() === legacyTitle.toLocaleLowerCase(),
-    )?.[0];
+    const row = [...featureRows.entries()].find(([, title]) => typeof title === 'string' && title.trim().toLocaleLowerCase() === legacyTitle.toLocaleLowerCase())?.[0];
     if (row !== undefined) moveNote(row, featureRows.get(row), data[key].slice(separator + 1));
   });
 
@@ -349,7 +353,9 @@ export const normalizeClassFeatureNotes = (data) => {
 const flattenArrayLists = (character, lists) => {
   const flattened = { ...character };
 
-  ARRAY_LISTS.forEach(({ key, list, fields, field = list.field }) => {
+  ARRAY_LISTS.forEach(({
+    key, list, fields, field = list.field,
+  }) => {
     if (!(key in lists)) return;
     if (!Array.isArray(lists[key])) throw new TypeError(`Expected "${key}" to be an array`);
     const rows = lists[key];
@@ -413,7 +419,9 @@ const flattenModules = (modules) => {
     });
   }
 
-  ARRAY_LISTS.forEach(({ path, list, fields, field = list.field }) => {
+  ARRAY_LISTS.forEach(({
+    path, list, fields, field = list.field,
+  }) => {
     const rows = getPath(modules, path);
     if (rows === undefined) return;
     if (!Array.isArray(rows)) throw new TypeError(`Expected "${path.join('.')}" to be an array`);

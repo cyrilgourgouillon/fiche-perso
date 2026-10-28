@@ -1,6 +1,5 @@
 import { useSheet } from '../../context/SheetContext';
-import { AVATAR_RACES, avatarRaceFor } from './PixelAvatar';
-import PixelAvatar from './PixelAvatar';
+import PixelAvatar, { AVATAR_RACES, avatarRaceFor } from './PixelAvatar';
 
 const SHIRT_STYLES = [
   { value: 'tunic', label: 'Tunique' },
@@ -55,7 +54,9 @@ const COLORS = [
   { value: 'white', label: 'Blanc', color: '#f3f1e9' },
 ];
 
-function StyleChoices({ label, field, options, selected, onChange, className = '', asSelect = false }) {
+function StyleChoices({
+  label, field, options, selected, onChange, className = '', asSelect = false,
+}) {
   return (
     <fieldset className={`avatar-choice-group ${className}`.trim()}>
       <legend>{label}</legend>
@@ -89,7 +90,9 @@ function StyleChoices({ label, field, options, selected, onChange, className = '
   );
 }
 
-function ColorChoices({ label, field, selected, onChange }) {
+function ColorChoices({
+  label, field, selected, onChange,
+}) {
   return (
     <fieldset className="avatar-choice-group avatar-color-group">
       <legend>{label}</legend>

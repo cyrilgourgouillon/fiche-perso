@@ -18,22 +18,22 @@ export default function ShortcutsHelp({ open, onToggle, onClose }) {
       </div>
       <Modal
         id="keyboard-shortcuts-dialog"
-        open={open}
+        isOpen={open}
         onClose={onClose}
         eyebrow="Guide rapide"
         title="Raccourcis clavier"
         closeLabel="Fermer les raccourcis"
         className="app-modal--shortcuts"
       >
-            <ul className="keyboard-shortcut-list">
-              {KEYBOARD_SHORTCUTS.map(({ key, action }) => (
-                <li key={key}>
-                  <span>{action}</span>
-                  <kbd>{key}</kbd>
-                </li>
-              ))}
-            </ul>
-            <p className="shortcuts-note">Les raccourcis lettre, / et ? sont inactifs pendant la saisie. Ctrl / ⌘ + K et Ctrl / ⌘ + &gt; restent actifs.</p>
+        <ul className="keyboard-shortcut-list">
+          {KEYBOARD_SHORTCUTS.map(({ key, action }) => (
+            <li key={key}>
+              <span>{action}</span>
+              <kbd>{key}</kbd>
+            </li>
+          ))}
+        </ul>
+        <p className="shortcuts-note">Les raccourcis lettre, / et ? sont inactifs pendant la saisie. Ctrl / ⌘ + K et Ctrl / ⌘ + &gt; restent actifs.</p>
       </Modal>
     </>
   );
