@@ -7,8 +7,10 @@ import { useArmedAction } from '../../hooks/useArmedAction';
  * button, the second deletes. Leaving the button disarms it again, so a filled
  * quest is never lost to a stray tap.
  */
-export default function RemoveRowButton({ label, onClick, confirm = false }) {
-  const { armed, trigger, disarm } = useArmedAction(onClick, { enabled: confirm });
+export default function RemoveRowButton({
+  label, onClick, confirm: requiresConfirmation = false,
+}) {
+  const { armed, trigger, disarm } = useArmedAction(onClick, { enabled: requiresConfirmation });
   const title = armed ? `Confirmer : ${label.toLowerCase()}` : label;
 
   return (

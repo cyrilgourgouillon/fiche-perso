@@ -38,7 +38,9 @@ export default function CombatPanel() {
   return (
     <StaticPanel id={sectionAnchor('combat')} title="Combat">
       <div className="combat-row">
-        {COMBAT_FIELDS.map(({ label, name, className, hint }) => (
+        {COMBAT_FIELDS.map(({
+          label, name, className, hint,
+        }) => (
           <div className="combat-block" key={name}>
             <div className="lbl">{label}</div>
             <TextField

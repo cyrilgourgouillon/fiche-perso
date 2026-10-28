@@ -46,7 +46,9 @@ const SPELL_FLAGS = [
 ];
 
 export default function SpellsPanel() {
-  const { rowCount, removable, isRowEmpty, addRow, removeRow } = useListRows(SPELLS);
+  const {
+    rowCount, removable, isRowEmpty, addRow, removeRow,
+  } = useListRows(SPELLS);
   const { data, update } = useSheet();
   const [nameFilter, setNameFilter] = useState('');
   const [levelFilter, setLevelFilter] = useState('all');
@@ -79,7 +81,7 @@ export default function SpellsPanel() {
     <Panel id="sorts" title="Sorts Mineurs & Sorts Préparés">
       <div className="spell-meta-grid">
         <div>
-          <div className="meta-label">Caractéristique d'incantation</div>
+          <div className="meta-label">Caractéristique d&apos;incantation</div>
           <SelectField
             name="caracteristique_incantation"
             options={SPELLCASTING_ABILITIES}
@@ -100,7 +102,7 @@ export default function SpellsPanel() {
           </div>
         ))}
       </div>
-      <p className="combat-include-help">Cochez "Résumé combat" pour ajouter un sort au résumé de combat.</p>
+      <p className="combat-include-help">Cochez &quot;Résumé combat&quot; pour ajouter un sort au résumé de combat.</p>
       <div className="spell-filter-row" role="group" aria-label="Filtres de sorts">
         <label className="spell-filter-search">
           <span>Rechercher</span>
@@ -114,10 +116,28 @@ export default function SpellsPanel() {
             {range(9).map((level) => <option value={String(level + 1)} key={level}>{level + 1}</option>)}
           </select>
         </label>
-        <label><input type="checkbox" checked={ritualOnly} onChange={(event) => setRitualOnly(event.target.checked)} /> Rituel</label>
-        <label><input type="checkbox" checked={concentrationOnly} onChange={(event) => setConcentrationOnly(event.target.checked)} /> Concentration</label>
-        <label><input type="checkbox" checked={combatOnly} onChange={(event) => setCombatOnly(event.target.checked)} /> Combat</label>
-        <span className="spell-filter-count">{visibleSpells.length} / {rowCount}</span>
+        <label>
+          <input type="checkbox" checked={ritualOnly} onChange={(event) => setRitualOnly(event.target.checked)} />
+          {' '}
+          Rituel
+        </label>
+        <label>
+          <input type="checkbox" checked={concentrationOnly} onChange={(event) => setConcentrationOnly(event.target.checked)} />
+          {' '}
+          Concentration
+        </label>
+        <label>
+          <input type="checkbox" checked={combatOnly} onChange={(event) => setCombatOnly(event.target.checked)} />
+          {' '}
+          Combat
+        </label>
+        <span className="spell-filter-count">
+          {visibleSpells.length}
+          {' '}
+          /
+          {' '}
+          {rowCount}
+        </span>
       </div>
       <ul className="capacite-list spell-list">
         {visibleSpells.map((index) => (
@@ -127,10 +147,10 @@ export default function SpellsPanel() {
             remove={
               removable
                 ? {
-                    label: `Supprimer le sort ${index + 1}`,
-                    confirm: !isRowEmpty(index),
-                    onClick: () => removeRow(index),
-                  }
+                  label: `Supprimer le sort ${index + 1}`,
+                  requiresConfirmation: !isRowEmpty(index),
+                  onClick: () => removeRow(index),
+                }
                 : undefined
             }
           >
@@ -171,7 +191,9 @@ export default function SpellsPanel() {
               </label>
               {SPELL_FLAGS.map(({ field, letter }) => (
                 <label key={field}>
-                  <Checkbox name={SPELLS.field(index, field)} /> {letter}
+                  <Checkbox name={SPELLS.field(index, field)} />
+                  {' '}
+                  {letter}
                 </label>
               ))}
               <CombatIncludeToggle

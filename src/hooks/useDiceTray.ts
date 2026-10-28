@@ -32,7 +32,9 @@ export function useDiceTray() {
   const clear = useCallback(() => setLog([]), []);
 
   return useMemo(
-    () => ({ log, lastRoll: log[0] || null, mode, setMode, roll, rollDice, rollExpression, clear }),
+    () => ({
+      log, lastRoll: log[0] || null, mode, setMode, roll, rollDice, rollExpression, clear,
+    }),
     [log, mode, roll, rollDice, rollExpression, clear],
   );
 }

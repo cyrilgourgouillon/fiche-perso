@@ -13,7 +13,11 @@ import {
 const withRandomValues = (values, callback) => {
   const originalRandom = Math.random;
   let index = 0;
-  Math.random = () => values[index++ % values.length];
+  Math.random = () => {
+    const value = values[index % values.length];
+    index += 1;
+    return value;
+  };
   try {
     callback();
   } finally {

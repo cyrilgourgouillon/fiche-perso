@@ -1,7 +1,9 @@
 import { useSheet } from '../../context/SheetContext';
 
 /** Existing filled entries are included until the player explicitly changes the flag. */
-export default function CombatIncludeCheckbox({ name, defaultChecked = false, defaultField, ...props }) {
+export default function CombatIncludeCheckbox({
+  name, defaultChecked = false, defaultField, ...props
+}) {
   const { data, update } = useSheet();
   const initialValue = defaultField ? data[defaultField]?.trim() : defaultChecked;
   const checked = data[name] === undefined ? Boolean(initialValue) : data[name] === 'true';

@@ -1,4 +1,4 @@
-﻿/** Shared d20 outline for every dice action in the sheet. */
+/** Shared d20 outline for every dice action in the sheet. */
 export default function DieIcon({ className = 'die-icon' }) {
   return (
     <svg

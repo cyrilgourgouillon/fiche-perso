@@ -1,4 +1,4 @@
-﻿import AddRowButton from '../fields/AddRowButton';
+import AddRowButton from '../fields/AddRowButton';
 import Panel from './Panel';
 import RemoveRowButton from '../fields/RemoveRowButton';
 import TextAreaField from '../fields/TextAreaField';

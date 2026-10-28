@@ -1,4 +1,4 @@
-﻿import RemoveRowButton from './RemoveRowButton';
+import RemoveRowButton from './RemoveRowButton';
 import TextField from './TextField';
 import { range } from '../../utils/range';
 
@@ -18,7 +18,7 @@ export default function FieldTable({
           {columns.map((column) => (
             <th key={column.field}>{column.header}</th>
           ))}
-          {onRemoveRow && <th className="row-actions" />}
+          {onRemoveRow && <th className="row-actions" aria-label="Actions" />}
         </tr>
       </thead>
       <tbody>

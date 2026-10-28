@@ -229,11 +229,15 @@ test('should reject invalid JSON and malformed collections when importing a shee
     /Expected "character.identity.name" to contain an object/,
   );
   assert.throws(
-    () => parseSheet(JSON.stringify({ metadata: {}, character: {}, life: {}, weapons: {} })),
+    () => parseSheet(JSON.stringify({
+      metadata: {}, character: {}, life: {}, weapons: {},
+    })),
     /Expected "weapons" to be an array/,
   );
   assert.throws(
-    () => parseSheet(JSON.stringify({ metadata: {}, character: {}, life: {}, spellSlots: { levels: {} } })),
+    () => parseSheet(JSON.stringify({
+      metadata: {}, character: {}, life: {}, spellSlots: { levels: {} },
+    })),
     /Expected "spellSlots.levels" to be an array/,
   );
 });

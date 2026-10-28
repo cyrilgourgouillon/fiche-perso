@@ -2,7 +2,7 @@ import { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 interface ModalProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
   title: string;
   eyebrow?: string;
@@ -16,7 +16,7 @@ interface ModalProps {
 }
 
 export default function Modal({
-  open,
+  isOpen,
   onClose,
   title,
   eyebrow,
@@ -35,12 +35,12 @@ export default function Modal({
     if (presentation !== 'modal') return;
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) {
+    if (isOpen && !dialog.open) {
       dialog.showModal();
       if (initialFocus) dialog.querySelector<HTMLElement>(initialFocus)?.focus({ preventScroll: true });
     }
-    if (!open && dialog.open) dialog.close();
-  }, [open, presentation]);
+    if (!isOpen && dialog.open) dialog.close();
+  }, [isOpen, initialFocus, presentation]);
 
   const content = (
     <div className="app-modal-content">
@@ -59,7 +59,7 @@ export default function Modal({
   );
 
   if (presentation === 'popup') {
-    if (!open) return null;
+    if (!isOpen) return null;
     return (
       <section
         id={id}
@@ -74,6 +74,8 @@ export default function Modal({
   }
 
   return createPortal(
+    // The native dialog handles Escape; backdrop clicks are an additional dismissal method.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <dialog
       ref={dialogRef}
       id={id}

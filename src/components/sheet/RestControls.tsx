@@ -21,7 +21,7 @@ const RESTS = [
 ];
 
 const marked = (value) => value === true || value === 'true';
-const displayValue = (value) => value === undefined || value === '' ? '—' : value;
+const displayValue = (value) => (value === undefined || value === '' ? '—' : value);
 
 function restChanges(data, nextData, rest) {
   const changes = [];
@@ -110,17 +110,23 @@ export default function RestControls() {
   return (
     <>
       <div className="rest-row">
-      {RESTS.map(({ icon, name, effect, transform }) => (
-        <button
-          key={name}
-          type="button"
-          className="sheet-button rest-button"
-          title={`${name} : ${effect}`}
-          onClick={() => setSelectedRest({ icon, name, effect, transform, rest: name === 'Repos court' ? 'court' : 'long' })}
-        >
-          {icon} {name}
-        </button>
-      ))}
+        {RESTS.map(({
+          icon, name, effect, transform,
+        }) => (
+          <button
+            key={name}
+            type="button"
+            className="sheet-button rest-button"
+            title={`${name} : ${effect}`}
+            onClick={() => setSelectedRest({
+              icon, name, effect, transform, rest: name === 'Repos court' ? 'court' : 'long',
+            })}
+          >
+            {icon}
+            {' '}
+            {name}
+          </button>
+        ))}
       </div>
       {completedRest && createPortal(
         <div
@@ -136,7 +142,7 @@ export default function RestControls() {
         document.querySelector('main'),
       )}
       <Modal
-        open={Boolean(selectedRest)}
+        isOpen={Boolean(selectedRest)}
         onClose={() => setSelectedRest(null)}
         title={selectedRest ? `${selectedRest.icon} ${selectedRest.name}` : ''}
         eyebrow="Confirmation"
@@ -156,8 +162,10 @@ export default function RestControls() {
                   <li key={`${label}-${index}`}>
                     <span>{label}</span>
                     <strong>
-                      <span className="rest-change-before">{before}</span>{' '}
-                      <span aria-hidden="true">→</span>{' '}
+                      <span className="rest-change-before">{before}</span>
+                      {' '}
+                      <span aria-hidden="true">→</span>
+                      {' '}
                       <span className="rest-change-after">{after}</span>
                     </strong>
                   </li>

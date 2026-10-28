@@ -5,7 +5,7 @@ interface ListItemProps {
   contentClassName?: string;
   remove?: {
     label: string;
-    confirm?: boolean;
+    requiresConfirmation?: boolean;
     onClick: () => void;
   };
 }
@@ -21,7 +21,7 @@ export default function ListItem({
       {remove && (
         <RemoveRowButton
           label={remove.label}
-          confirm={remove.confirm}
+          confirm={remove.requiresConfirmation}
           onClick={remove.onClick}
         />
       )}

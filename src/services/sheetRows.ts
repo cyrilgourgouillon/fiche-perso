@@ -15,8 +15,7 @@ export const listRowCount = (data, list) => {
 };
 
 /** A row counts as empty when every field is blank (an unticked box included). */
-export const isRowEmpty = (data, list, row) =>
-  list.rowFields(row).every((key) => !data[key] || data[key] === 'false');
+export const isRowEmpty = (data, list, row) => list.rowFields(row).every((key) => !data[key] || data[key] === 'false');
 
 export const withRowAdded = (data, list) => ({
   ...data,

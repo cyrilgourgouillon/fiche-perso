@@ -2,13 +2,12 @@ import { serializeSheet, sheetFileName } from './sheetSerializer';
 
 const JSON_MIME_TYPE = 'application/json;charset=utf-8';
 
-export const readFileAsText = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsText(file);
-  });
+export const readFileAsText = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = () => reject(reader.error);
+  reader.readAsText(file);
+});
 
 /** Triggers a browser download of the sheet and returns the file name used. */
 export const downloadSheet = (data) => {

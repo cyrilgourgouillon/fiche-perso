@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import AddRowButton from '../fields/AddRowButton';
 import Panel from './Panel';
 import QuestCard from './QuestCard';
@@ -5,10 +6,11 @@ import { QUESTS } from '../../data/sheetLists';
 import { useListRows } from '../../hooks/useListRows';
 import { range } from '../../utils/range';
 import { useSheet } from '../../context/SheetContext';
-import { useEffect } from 'react';
 
 export default function QuestsPanel() {
-  const { rowCount, removable, isRowEmpty, addRow, removeRow } = useListRows(QUESTS);
+  const {
+    rowCount, removable, isRowEmpty, addRow, removeRow,
+  } = useListRows(QUESTS);
   const { data, update } = useSheet();
   const statusFilter = data.quest_status_filter || 'all';
   useEffect(() => {
@@ -35,7 +37,13 @@ export default function QuestsPanel() {
           <option value="echouee">Échouées</option>
           <option value="abandonnee">Abandonnées</option>
         </select>
-        <span>{quests.length} / {rowCount}</span>
+        <span>
+          {quests.length}
+          {' '}
+          /
+          {' '}
+          {rowCount}
+        </span>
       </div>
       <div className="quest-list">
         {quests.map((index) => (

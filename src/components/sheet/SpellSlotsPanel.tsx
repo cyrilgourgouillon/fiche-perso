@@ -1,7 +1,9 @@
 import Checkbox from '../fields/Checkbox';
 import Panel from './Panel';
 import { useSheet } from '../../context/SheetContext';
-import { PACT_MAGIC_FIELD, spellSlotField, spellSlotOverrideField, spellSlotRows, usesPactMagic } from '../../services/spellSlots';
+import {
+  PACT_MAGIC_FIELD, spellSlotField, spellSlotOverrideField, spellSlotRows, usesPactMagic,
+} from '../../services/spellSlots';
 import { range } from '../../utils/range';
 
 export default function SpellSlotsPanel() {
@@ -17,16 +19,26 @@ export default function SpellSlotsPanel() {
         {pactMagic
           ? 'Magie de pacte : tous les emplacements sont du niveau du pacte et reviennent au repos court. '
           : 'Progression de lanceur complet par défaut. '}
-        Ajustez le nombre d’emplacements par niveau si nécessaire ; laissez vide pour revenir à la valeur par défaut.{' '}
+        Ajustez le nombre d’emplacements par niveau si nécessaire ; laissez vide pour revenir à la valeur par défaut.
+        {' '}
         Cochez un emplacement lorsqu’il est dépensé.
       </p>
       <div className="spell-slots">
-        {spellSlotRows(data).map(({ spellLevel, total, defaultTotal, spent }) => (
+        {spellSlotRows(data).map(({
+          spellLevel, total, defaultTotal, spent,
+        }) => (
           <div className="slot-row" key={spellLevel}>
             <div className="slot-label">
-              <label htmlFor={spellSlotOverrideField(spellLevel)}>Niveau {spellLevel}</label>
+              <label htmlFor={spellSlotOverrideField(spellLevel)}>
+                Niveau
+                {spellLevel}
+              </label>
               <span>
-                Dépensés : {spent}/{total}
+                Dépensés :
+                {' '}
+                {spent}
+                /
+                {total}
               </span>
             </div>
             <div className="slot-override">
@@ -44,9 +56,9 @@ export default function SpellSlotsPanel() {
                 aria-label={`Nombre d’emplacements de sorts de niveau ${spellLevel}`}
               />
               {data[spellSlotOverrideField(spellLevel)] !== undefined && data[spellSlotOverrideField(spellLevel)] !== '' && (
-                <button type="button" onClick={() => update(spellSlotOverrideField(spellLevel), '')}>
-                  Défaut
-                </button>
+              <button type="button" onClick={() => update(spellSlotOverrideField(spellLevel), '')}>
+                Défaut
+              </button>
               )}
             </div>
             <div className="slot-boxes">

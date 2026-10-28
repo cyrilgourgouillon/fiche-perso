@@ -10,8 +10,9 @@ export function useSheetFile({ data, onImport, notify }) {
 
   const importFile = useCallback(
     async (event) => {
-      const file = event.target.files?.[0];
-      event.target.value = '';
+      const input = event.currentTarget;
+      const file = input.files?.[0];
+      input.value = '';
       if (!file) return;
       try {
         onImport(parseSheet(await readFileAsText(file)));
@@ -25,5 +26,7 @@ export function useSheetFile({ data, onImport, notify }) {
 
   const exportFile = useCallback(() => notify(`✓ ${downloadSheet(data)} téléchargé`, 'success'), [data, notify]);
 
-  return { inputRef, openPicker, importFile, exportFile };
+  return {
+    inputRef, openPicker, importFile, exportFile,
+  };
 }

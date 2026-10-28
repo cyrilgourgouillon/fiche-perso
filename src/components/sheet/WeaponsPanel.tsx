@@ -9,11 +9,13 @@ import { useListRows } from '../../hooks/useListRows';
 import { range } from '../../utils/range';
 
 export default function WeaponsPanel() {
-  const { rowCount, removable, isRowEmpty, addRow, removeRow } = useListRows(WEAPONS);
+  const {
+    rowCount, removable, isRowEmpty, addRow, removeRow,
+  } = useListRows(WEAPONS);
 
   return (
     <Panel id="armes" title="Armes">
-      <p className="combat-include-help">Cochez "R&eacute;sum&eacute; combat" pour ajouter une arme au r&eacute;sum&eacute; de combat.</p>
+      <p className="combat-include-help">Cochez &quot;R&eacute;sum&eacute; combat&quot; pour ajouter une arme au r&eacute;sum&eacute; de combat.</p>
       <ul className="capacite-list weapon-list">
         {range(rowCount).map((index) => (
           <ListItem
@@ -22,10 +24,10 @@ export default function WeaponsPanel() {
             remove={
               removable
                 ? {
-                    label: `Supprimer l'arme ${index + 1}`,
-                    confirm: !isRowEmpty(index),
-                    onClick: () => removeRow(index),
-                  }
+                  label: `Supprimer l'arme ${index + 1}`,
+                  requiresConfirmation: !isRowEmpty(index),
+                  onClick: () => removeRow(index),
+                }
                 : undefined
             }
           >
@@ -34,7 +36,7 @@ export default function WeaponsPanel() {
                 name={WEAPONS.field(index, 'nom')}
                 className="ef spell-name"
                 placeholder="Nom de l'arme"
-                aria-label={`Nom de l'arme ${index + 1}`}
+                aria-label={`Nom de l&apos;arme ${index + 1}`}
               />
               <CombatIncludeToggle
                 name={WEAPONS.field(index, 'combat')}
@@ -45,7 +47,7 @@ export default function WeaponsPanel() {
 
             <div className="weapon-facts">
               <div>
-                <label htmlFor={`weapon-bonus-${index + 1}`}>Bonus d'attaque</label>
+                <label htmlFor={`weapon-bonus-${index + 1}`}>Bonus d&apos;attaque</label>
                 <TextField
                   id={`weapon-bonus-${index + 1}`}
                   name={WEAPONS.field(index, 'bonus')}

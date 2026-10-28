@@ -17,7 +17,9 @@ export default function Toolbar({
       </div>
       {fileActions && <FileActionsPanel {...fileActions} />}
       <button id="btn-settings" type="button" onClick={onOpenSettings}>
-        <span aria-hidden="true">⚙</span> Paramètres
+        <span aria-hidden="true">⚙</span>
+        {' '}
+        Paramètres
       </button>
       <button id="btn-combat" type="button" onClick={onToggleCombatSummary}>
         <span aria-hidden="true">{combatSummaryOpen ? '↩' : '⚔'}</span>

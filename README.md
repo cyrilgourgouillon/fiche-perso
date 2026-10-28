@@ -30,13 +30,14 @@ ou importée au format JSON. L’interface est entièrement en français.
 ```bash
 npm install
 npm run dev      # http://localhost:5173/fiche-perso/
+npm run lint
 npm test
 npm run build
 npm run preview
 ```
 
-Les dépendances sont React 19 et Vite. Les tests utilisent le runner natif de Node.js. Aucun
-linter ni formateur n’est configuré pour le moment.
+Les dépendances sont React 19 et Vite. ESLint applique les règles Airbnb adaptées à TypeScript
+et React. Les tests utilisent le runner natif de Node.js.
 
 ## Organisation du code
 

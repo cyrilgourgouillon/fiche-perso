@@ -62,9 +62,12 @@ export function normalizeTileLayout(
       if (isWide) {
         migrated.wide.push(id);
       } else {
-        const side: 'left' | 'right' = legacySides?.[id] === 'left' || legacySides?.[id] === 'right'
-          ? legacySides[id]
-          : DEFAULT_TILE_LAYOUT.left.includes(id) ? 'left' : 'right';
+        let side: 'left' | 'right';
+        if (legacySides?.[id] === 'left' || legacySides?.[id] === 'right') {
+          side = legacySides[id];
+        } else {
+          side = DEFAULT_TILE_LAYOUT.left.includes(id) ? 'left' : 'right';
+        }
         migrated[side].push(id);
       }
     });
@@ -80,7 +83,9 @@ export function normalizeTileLayout(
   const groups: Array<TileGroup | 'wide'> = explicitPlacements
     ? ['top', 'left', 'right', 'bottom']
     : ['wide', 'left', 'right'];
-  const normalized: TileLayout = { top: [], left: [], right: [], bottom: [] };
+  const normalized: TileLayout = {
+    top: [], left: [], right: [], bottom: [],
+  };
   const seen = new Set();
   groups.forEach((group) => {
     if (!Array.isArray(source[group])) return;

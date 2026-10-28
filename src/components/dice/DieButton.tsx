@@ -8,7 +8,10 @@ export default function DieButton({ sides, shape, onClick }) {
       title={`Lancer un d${sides}`}
       aria-label={`Lancer un d${sides}`}
     >
-      <span className="die-label">d{sides}</span>
+      <span className="die-label">
+        d
+        {sides}
+      </span>
     </button>
   );
 }

@@ -23,10 +23,14 @@ export default function App() {
   const [toolbarHidden, setToolbarHidden] = useState(false);
   const [activeTool, setActiveTool] = useState(null);
   const [showShortcuts, setShowShortcuts] = useState(false);
-  const toggleTool = (tool) => setActiveTool((current) => current === tool ? null : tool);
+  const toggleTool = (tool) => setActiveTool((current) => (current === tool ? null : tool));
   const [status, notify] = useStatusMessage();
-  const { data, update, apply, theme, setTheme, replace } = useCharacterSheet({ notify });
-  const { inputRef, openPicker, importFile, exportFile } = useSheetFile({
+  const {
+    data, update, apply, theme, setTheme, replace,
+  } = useCharacterSheet({ notify });
+  const {
+    inputRef, openPicker, importFile, exportFile,
+  } = useSheetFile({
     data,
     onImport: replace,
     notify,
@@ -157,7 +161,7 @@ export default function App() {
           <span id="save-status" data-tone={status.tone} className={status.message ? 'show' : undefined} role="status">
             {status.message}
           </span>
-          {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet onOpenAppearance={() => setActiveTool("appearance")} />}
+          {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet onOpenAppearance={() => setActiveTool('appearance')} />}
           <div className="sheet-tools" role="group" aria-label="Outils de la fiche">
             {!showCombatSummary && (
               <SheetSearch open={activeTool === 'search'} onToggle={() => toggleTool('search')} />
@@ -185,7 +189,7 @@ export default function App() {
             )}
           </div>
           <SettingsModal
-            open={activeTool === 'settings'}
+            isOpen={activeTool === 'settings'}
             onClose={() => setActiveTool(null)}
             theme={theme}
             onThemeChange={setTheme}

@@ -16,7 +16,10 @@ export default function AbilitiesPanel() {
         <aside className="ability-controls">
           <div className="inspiration-control">
             <div className="control-label">💡 Inspiration</div>
-            <label className={`inspiration-box ${isFlagged(data, 'inspiration') ? 'active' : ''}`}>
+            <label
+              aria-label="Inspiration"
+              className={`inspiration-box ${isFlagged(data, 'inspiration') ? 'active' : ''}`}
+            >
               <Checkbox name="inspiration" />
             </label>
           </div>

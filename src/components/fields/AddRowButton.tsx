@@ -2,7 +2,9 @@
 export default function AddRowButton({ label, onClick }) {
   return (
     <button type="button" className="add-row" onClick={onClick}>
-      + {label}
+      +
+      {' '}
+      {label}
     </button>
   );
 }

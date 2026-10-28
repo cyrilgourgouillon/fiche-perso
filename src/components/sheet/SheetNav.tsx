@@ -54,9 +54,7 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
       .filter(Boolean);
   }, [layout]);
   const foldableSections = useMemo(() => sections.filter(({ foldable }) => foldable !== false), [sections]);
-  const collapsedCount = foldableSections.filter(({ id }) =>
-    isFlagged(data, foldField(id)),
-  ).length;
+  const collapsedCount = foldableSections.filter(({ id }) => isFlagged(data, foldField(id))).length;
   const [activeSection, setActiveSection] = useState(sections[0]?.id ?? '');
 
   useEffect(() => {
@@ -83,21 +81,21 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
   }, [sections]);
   return (
     <div className="sheet-nav-widget">
-        <button
-          type="button"
-          className="sheet-tools-launcher sheet-nav-launcher"
-          aria-expanded={open}
-          aria-controls="sheet-navigation-dialog"
-          onClick={onToggle}
-        >
-          <svg className="nav-launcher-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M3.5 3.5h13v3h-13zM3.5 8.5h13v3h-13zM3.5 13.5h13v3h-13z" />
-          </svg>
-          <span>Sections</span>
-        </button>
+      <button
+        type="button"
+        className="sheet-tools-launcher sheet-nav-launcher"
+        aria-expanded={open}
+        aria-controls="sheet-navigation-dialog"
+        onClick={onToggle}
+      >
+        <svg className="nav-launcher-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M3.5 3.5h13v3h-13zM3.5 8.5h13v3h-13zM3.5 13.5h13v3h-13z" />
+        </svg>
+        <span>Sections</span>
+      </button>
       <Modal
         id="sheet-navigation-dialog"
-        open={open}
+        isOpen={open}
         onClose={onToggle}
         presentation="popup"
         eyebrow="Sections"
@@ -109,7 +107,11 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
           <div id="sheet-navigation-content">
             <div className="nav-intro">
               <span>Acces rapide aux rubriques</span>
-              <span className="nav-section-count">{sections.length} sections</span>
+              <span className="nav-section-count">
+                {sections.length}
+                {' '}
+                sections
+              </span>
             </div>
             <ul className="nav-links">
               {sections.map(({ id, label }, index) => (

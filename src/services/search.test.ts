@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { fuzzyScore, matchingEntries, normalized, scopedSearch } from './search';
+import {
+  fuzzyScore, matchingEntries, normalized, scopedSearch,
+} from './search';
 
 test('should normalize accents and case when comparing search text', () => {
   assert.equal(normalized('  Équipement  '), '  equipement  ');
