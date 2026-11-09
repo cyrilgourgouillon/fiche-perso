@@ -4,14 +4,18 @@ import {
 
 const RESET_DELAY_MS = 2500;
 
+type StatusTone = 'info' | 'success' | 'error' | 'warning';
+type Status = { message: string; tone: StatusTone };
+type NotifyStatus = (message: string, tone?: StatusTone) => void;
+
 /** Transient toolbar message: empty until something is notified, cleared again after a short delay. */
 export function useStatusMessage(resetDelayMs = RESET_DELAY_MS) {
-  const [status, setStatus] = useState({ message: '', tone: 'info' });
+  const [status, setStatus] = useState<Status>({ message: '', tone: 'info' });
   const timer = useRef(undefined);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
-  const notify = useCallback(
+  const notify = useCallback<NotifyStatus>(
     (message, tone = 'info') => {
       setStatus({ message, tone });
       window.clearTimeout(timer.current);
@@ -20,5 +24,5 @@ export function useStatusMessage(resetDelayMs = RESET_DELAY_MS) {
     [resetDelayMs],
   );
 
-  return [status, notify];
+  return [status, notify] as const;
 }

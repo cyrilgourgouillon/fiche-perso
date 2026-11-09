@@ -35,20 +35,14 @@ export default function HpQuickAdjustments() {
         <input id="hp-adjust-amount" className="ef" type="number" min="1" step="1" value={amount} onChange={(event) => setAmount(event.target.value)} />
       </div>
       <div className="hp-adjust-actions">
-        <button type="button" className="sheet-button hp-adjust-damage" onClick={() => adjust('damage')}>
+        <button type="button" className="sheet-button hp-adjust-damage" aria-label="Appliquer des dégâts" onClick={() => adjust('damage')}>
           <span aria-hidden="true">−</span>
-          {' '}
-          Dégâts
         </button>
-        <button type="button" className="sheet-button hp-adjust-heal" onClick={() => adjust('heal')}>
+        <button type="button" className="sheet-button hp-adjust-heal" aria-label="Soigner les points de vie" onClick={() => adjust('heal')}>
           <span aria-hidden="true">+</span>
-          {' '}
-          Soins
         </button>
-        <button type="button" className="sheet-button hp-adjust-temp" onClick={() => adjust('temp')}>
+        <button type="button" className="sheet-button hp-adjust-temp" aria-label="Définir les points de vie temporaires" onClick={() => adjust('temp')}>
           <span aria-hidden="true">✦</span>
-          {' '}
-          PV temp.
         </button>
       </div>
     </div>

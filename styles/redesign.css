@@ -1195,6 +1195,16 @@ td .ef {
   font-size: 13px;
 }
 
+.capacite-list li.has-bottom-right-control {
+  padding-bottom: 46px;
+}
+
+.capacite-list li.has-bottom-right-control > .combat-include-toggle {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+}
+
 .capacite-list li::before {
   position: absolute;
   top: 13px;
@@ -2120,7 +2130,7 @@ td .ef {
 .spell-content { display: grid; gap: 8px; }
 .spell-title-line {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 100px;
+  grid-template-columns: minmax(0, 1fr) 100px auto 30px;
   gap: 7px;
   align-items: center;
 }
@@ -2237,7 +2247,7 @@ td .ef {
 .weapon-content { display: grid; gap: 9px; }
 .weapon-title-line {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto 30px;
   align-items: center;
   gap: 9px;
 }
@@ -2259,6 +2269,68 @@ td .ef {
 .weapon-facts .ef { width: 100%; min-width: 0; }
 .weapon-notes-field .markdown-field { min-height: 72px; }
 .weapon-notes-field textarea.weapon-notes-input { min-height: 72px; resize: vertical; }
+.class-feature-title-line {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+.class-feature-title-line > .ef { min-width: 0; }
+.aidedd-search-button {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-color: color-mix(in srgb, var(--gold) 48%, var(--border));
+  border-radius: 9px;
+  color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 12%, white);
+  font-size: 15px;
+  letter-spacing: 0;
+  text-decoration: none;
+}
+.sheet-button.aidedd-search-button:hover:not(:disabled):not([aria-disabled='true']) {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 20%, white);
+}
+.aidedd-search-button[aria-disabled='true'] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.capacite-list li.folded .fold-caret { transform: rotate(-90deg); }
+
+.compact-list { gap: 6px; }
+.compact-list li,
+.compact-list li:last-child { padding: 8px 8px 8px 32px; }
+.compact-list li.has-bottom-right-control { padding-bottom: 46px; }
+.compact-list li.has-bottom-right-control > .combat-include-toggle { right: 8px; }
+.compact-list li::before { top: 10px; left: 10px; }
+.compact-list .spell-content,
+.compact-list .weapon-content { gap: 6px; }
+.compact-list .spell-flags { gap: 6px 10px; }
+.compact-list .spell-title-line .ef,
+.compact-list .spell-facts .ef,
+.compact-list .weapon-title-line .ef,
+.compact-list .weapon-facts .ef { min-height: 34px; }
+.compact-list .spell-facts label,
+.compact-list .spell-notes-field > label,
+.compact-list .weapon-facts label,
+.compact-list .weapon-notes-field > label { margin-bottom: 2px; }
+.compact-list .spell-notes-field .markdown-field,
+.compact-list .weapon-notes-field .markdown-field { height: 80px; min-height: 80px; }
+.compact-list .spell-notes-field textarea.spell-notes-input,
+.compact-list .weapon-notes-field textarea.weapon-notes-input {
+  height: 80px;
+  min-height: 80px;
+  padding: 7px 40px 30px 10px;
+}
+.compact-list .spell-notes-field .markdown-preview,
+.compact-list .weapon-notes-field .markdown-preview { padding: 7px 40px 30px 10px; }
+
 /* Clear, icon-led section navigation. */
 .sheet-tools .sheet-nav #sheet-navigation-content { display: grid; gap: 15px; }
 .sheet-tools .sheet-nav .nav-intro {
@@ -2575,6 +2647,15 @@ td .ef {
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+.quick-reference-skill-sort {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.quick-reference-skill-sort .skill-sort-select {
+  min-height: 34px;
+  max-width: 205px;
 }
 .quick-ability-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .quick-ability-card {
@@ -2976,7 +3057,7 @@ td .ef {
 .search-token-marker,
 .search-token-command,
 .search-token-filter { color: var(--search-token-command); font-weight: 750; }
-.search-token-separator { color: var(--ink-light); }
+.search-token-separator { color: var(--search-token-command); }
 .search-token-argument.is-valid { color: var(--search-token-valid); font-weight: 650; }
 .search-token-argument.is-invalid { color: var(--search-token-invalid); text-decoration: underline wavy color-mix(in srgb, var(--search-token-invalid) 55%, transparent); text-underline-offset: 3px; }
 .search-token-argument.is-user-text { color: #20231f; font-weight: 500; }
@@ -2984,6 +3065,18 @@ td .ef {
 .search-token-argument.is-pending { color: var(--ink-light); }
 .search-token-argument.is-query,
 .search-token-query { color: var(--search-token-query); }
+.global-search-panel .sheet-search-results button .search-token-marker,
+.global-search-panel .sheet-search-results button .search-token-command,
+.global-search-panel .sheet-search-results button .search-token-separator {
+  color: var(--search-token-command);
+  font-weight: 750;
+}
+.global-search-panel .sheet-search-results button .search-token-argument.is-valid { color: var(--search-token-valid); }
+.global-search-panel .sheet-search-results button .search-token-argument.is-invalid { color: var(--search-token-invalid); }
+.global-search-panel .sheet-search-results button .search-token-argument.is-user-text { color: #20231f; }
+.global-search-panel .sheet-search-results button .search-token-argument.is-recognized-value,
+.global-search-panel .sheet-search-results button .search-token-argument.is-query { color: var(--search-token-query); }
+.global-search-panel .sheet-search-results button .search-token-argument.is-pending { color: var(--ink-light); }
 .search-command-error { display: flex; align-items: center; gap: 11px; margin: 0 4px; padding: 12px 14px; border: 1px solid #ad322d; border-left: 4px solid #ad322d; border-radius: 10px; color: #70211e; background: #fff0ed; box-shadow: 0 4px 12px rgba(112, 33, 30, 0.12); font: 500 13px/1.4 var(--ui-font); }
 .search-command-error-icon { width: 25px; height: 25px; flex: 0 0 25px; display: grid; place-items: center; border-radius: 50%; color: white; background: #ad322d; font: 800 16px/1 var(--ui-font); }
 .search-command-error > span:last-child { display: grid; gap: 2px; }

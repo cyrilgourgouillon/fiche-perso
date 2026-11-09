@@ -3,14 +3,18 @@ import AddRowButton from '../fields/AddRowButton';
 import CombatIncludeToggle from '../fields/CombatIncludeToggle';
 import Checkbox from '../fields/Checkbox';
 import Panel from './Panel';
+import AideddSearchButton from '../common/AideddSearchButton';
 import ListItem from '../common/ListItem';
 import SelectField from '../fields/SelectField';
 import TextField from '../fields/TextField';
 import TextAreaField from '../fields/TextAreaField';
+import FoldButton from '../fields/FoldButton';
+import ListFoldControls from '../common/ListFoldControls';
 import { ABILITIES } from '../../data/abilities';
 import { SPELLS } from '../../data/sheetLists';
 import { useListRows } from '../../hooks/useListRows';
-import { useSheet } from '../../context/SheetContext';
+import { useListFolding } from '../../hooks/useListFolding';
+import { useSheet, useSheetFlag } from '../../context/SheetContext';
 import { isCantrip } from '../../services/spells';
 import { range } from '../../utils/range';
 import {
@@ -49,6 +53,7 @@ export default function SpellsPanel() {
   const {
     rowCount, removable, isRowEmpty, addRow, removeRow,
   } = useListRows(SPELLS);
+  const { foldedCount, foldAll, unfoldAll } = useListFolding(SPELLS, rowCount);
   const { data, update } = useSheet();
   const [nameFilter, setNameFilter] = useState('');
   const [levelFilter, setLevelFilter] = useState('all');
@@ -139,85 +144,116 @@ export default function SpellsPanel() {
           {rowCount}
         </span>
       </div>
-      <ul className="capacite-list spell-list">
+      <ListFoldControls foldedCount={foldedCount} rowCount={rowCount} foldAll={foldAll} unfoldAll={unfoldAll} />
+      <ul className={`capacite-list spell-list${data.compact_spells === 'true' ? ' compact-list' : ''}`}>
         {visibleSpells.map((index) => (
-          <ListItem
+          <SpellRow
             key={index}
-            contentClassName="capacite-content spell-content"
-            remove={
-              removable
-                ? {
-                  label: `Supprimer le sort ${index + 1}`,
-                  requiresConfirmation: !isRowEmpty(index),
-                  onClick: () => removeRow(index),
-                }
-                : undefined
-            }
-          >
-            <div className="spell-title-line">
-              <TextField
-                name={SPELLS.field(index, 'nom')}
-                className="ef spell-name"
-                placeholder="Nom du sort"
-                aria-label={`Nom du sort ${index + 1}`}
-              />
-              <TextField
-                name={SPELLS.field(index, 'niveau')}
-                className="ef center spell-level"
-                placeholder="Niv."
-                aria-label={`Niveau du sort ${index + 1}`}
-              />
-            </div>
-
-            <div className="spell-facts">
-              <div>
-                <label htmlFor={`spell-time-${index + 1}`}>Temps d’incantation</label>
-                <TextField id={`spell-time-${index + 1}`} name={SPELLS.field(index, 'temps')} className="ef" />
-              </div>
-              <div>
-                <label htmlFor={`spell-range-${index + 1}`}>Portée</label>
-                <TextField id={`spell-range-${index + 1}`} name={SPELLS.field(index, 'portee')} className="ef" />
-              </div>
-            </div>
-
-            <div className="capacite-options spell-flags">
-              <label className="spell-cantrip">
-                <input
-                  type="checkbox"
-                  checked={isCantrip(data, index)}
-                  onChange={(event) => update(SPELLS.field(index, 'cantrip'), String(event.target.checked))}
-                />
-                Cantrip / sort mineur
-              </label>
-              {SPELL_FLAGS.map(({ field, letter }) => (
-                <label key={field}>
-                  <Checkbox name={SPELLS.field(index, field)} />
-                  {' '}
-                  {letter}
-                </label>
-              ))}
-              <CombatIncludeToggle
-                name={SPELLS.field(index, 'combat')}
-                defaultField={SPELLS.field(index, 'nom')}
-                ariaLabel={`Inclure sort ${index + 1} dans le résumé de combat`}
-              />
-            </div>
-
-            <div className="spell-notes-field">
-              <label htmlFor={`spell-notes-${index + 1}`}>Notes et description</label>
-              <TextAreaField
-                id={`spell-notes-${index + 1}`}
-                name={SPELLS.field(index, 'notes')}
-                className="ef spell-notes-input"
-                placeholder="Description, effets, détails…"
-                aria-label={`Notes et description du sort ${index + 1}`}
-              />
-            </div>
-          </ListItem>
+            index={index}
+            removable={removable}
+            isRowEmpty={isRowEmpty}
+            removeRow={removeRow}
+          />
         ))}
       </ul>
       {visibleSpells.length === 0 && <p className="filter-empty">Aucun sort ne correspond à ces filtres.</p>}
       <AddRowButton label="Ajouter un sort" onClick={addRow} />
     </Panel>
+  );
+}
+
+function SpellRow({
+  index, removable, isRowEmpty, removeRow,
+}) {
+  const { data, update } = useSheet();
+  const [folded, setFolded] = useSheetFlag(SPELLS.field(index, 'replie'));
+  return (
+    <ListItem
+      className={
+        folded ? 'folded' : undefined
+      }
+      contentClassName="capacite-content spell-content"
+      bottomRight={(
+        <CombatIncludeToggle
+          name={SPELLS.field(index, 'combat')}
+          defaultField={SPELLS.field(index, 'nom')}
+          ariaLabel={`Inclure sort ${index + 1} dans le résumé de combat`}
+        />
+      )}
+      remove={
+        removable
+          ? {
+            label: `Supprimer le sort ${index + 1}`,
+            requiresConfirmation: !isRowEmpty(index),
+            onClick: () => removeRow(index),
+          }
+          : undefined
+      }
+    >
+      <div className="spell-title-line">
+        <TextField
+          name={SPELLS.field(index, 'nom')}
+          className="ef spell-name"
+          placeholder="Nom du sort"
+          aria-label={`Nom du sort ${index + 1}`}
+        />
+        <TextField
+          name={SPELLS.field(index, 'niveau')}
+          className="ef center spell-level"
+          placeholder="Niv."
+          aria-label={`Niveau du sort ${index + 1}`}
+        />
+        <AideddSearchButton fieldName={SPELLS.field(index, 'nom')} />
+        <FoldButton
+          folded={folded}
+          onToggle={() => setFolded(!folded)}
+          label={folded ? `D\u00e9plier le sort ${index + 1}` : `Replier le sort ${index + 1}`}
+        />
+      </div>
+
+      {!folded && (
+        <>
+          <div className="spell-facts">
+            <div>
+              <label htmlFor={`spell-time-${index + 1}`}>Temps d’incantation</label>
+              <TextField id={`spell-time-${index + 1}`} name={SPELLS.field(index, 'temps')} className="ef" />
+            </div>
+            <div>
+              <label htmlFor={`spell-range-${index + 1}`}>Portée</label>
+              <TextField id={`spell-range-${index + 1}`} name={SPELLS.field(index, 'portee')} className="ef" />
+            </div>
+          </div>
+
+          <div className="capacite-options spell-flags">
+            <label className="spell-cantrip">
+              <input
+                type="checkbox"
+                checked={isCantrip(data, index)}
+                onChange={(event) => update(SPELLS.field(index, 'cantrip'), String(event.target.checked))}
+              />
+              Cantrip / sort mineur
+            </label>
+            {SPELL_FLAGS.map(({ field, letter }) => (
+              <label key={field}>
+                <Checkbox name={SPELLS.field(index, field)} />
+                {' '}
+                {letter}
+              </label>
+            ))}
+          </div>
+
+          <div className="spell-notes-field">
+            <label htmlFor={`spell-notes-${index + 1}`}>Notes et description</label>
+            <TextAreaField
+              id={`spell-notes-${index + 1}`}
+              name={SPELLS.field(index, 'notes')}
+              className="ef spell-notes-input"
+              placeholder="Description, effets, détails…"
+              aria-label={`Notes et description du sort ${index + 1}`}
+            />
+          </div>
+        </>
+      )}
+    </ListItem>
   );
 }

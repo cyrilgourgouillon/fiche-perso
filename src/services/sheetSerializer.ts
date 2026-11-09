@@ -25,7 +25,7 @@ const ARRAY_LISTS = [
     key: 'classFeatures',
     path: ['classFeatures'],
     list: CLASS_FEATURES,
-    fields: ['titre', 'description', 'repos_court', 'repos_long', 'utilisee', 'combat'],
+    fields: ['titre', 'description', 'repos_court', 'repos_long', 'utilisee', 'combat', 'replie'],
     rowPattern: /^capacite(?:_utilisee)?(\d+)/,
     field: (row, name) => {
       if (name === 'titre') return CLASS_FEATURES.field(row);
@@ -160,8 +160,12 @@ addFieldMap(['settings'], {
   theme: 'theme',
   textarea_mode: 'textAreaMode',
   reduce_motion: 'reduceMotion',
+  compact_lists: 'compactLists',
+  compact_weapons: 'compactWeapons',
+  compact_spells: 'compactSpells',
   tile_layout: 'tileLayout',
   quest_status_filter: 'questStatusFilter',
+  tri_competences: 'skillSort',
 });
 
 const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -208,9 +212,19 @@ export const normalizeReducedMotion = (data) => ({
   reduce_motion: data.reduce_motion === 'true' ? 'true' : DEFAULT_REDUCE_MOTION,
 });
 
+export const normalizeCompactLists = (data) => {
+  const normalized = { ...data };
+  if (normalized.compact_lists !== undefined) {
+    if (normalized.compact_weapons === undefined) normalized.compact_weapons = normalized.compact_lists;
+    if (normalized.compact_spells === undefined) normalized.compact_spells = normalized.compact_lists;
+    delete normalized.compact_lists;
+  }
+  return normalized;
+};
+
 /** Converts the flat UI model to the array-based on-disk and stored format. */
 export const serializeSheet = (data) => {
-  const normalized = normalizeReducedMotion(normalizeTextAreaMode(data));
+  const normalized = normalizeCompactLists(normalizeReducedMotion(normalizeTextAreaMode(data)));
   const modules = {};
 
   Object.entries(normalized).forEach(([key, value]) => {
@@ -508,7 +522,7 @@ export const parseSheet = (text) => {
     data = isRecord(parsed.data) ? parsed.data : parsed;
   }
 
-  return normalizeReducedMotion(normalizeTextAreaMode(normalizeClassFeatureNotes(data)));
+  return normalizeCompactLists(normalizeReducedMotion(normalizeTextAreaMode(normalizeClassFeatureNotes(data))));
 };
 
 export const sheetFileName = (data) => {

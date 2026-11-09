@@ -1,7 +1,8 @@
 import { useSheet } from '../../context/SheetContext';
-import { ABILITIES, SKILLS } from '../../data/abilities';
+import { ABILITIES, SKILLS, sortSkills } from '../../data/abilities';
 import RollButton from '../dice/RollButton';
 import Modal from '../common/Modal';
+import SkillSortSelect from './SkillSortSelect';
 import {
   abilityModifier,
   formatModifier,
@@ -24,6 +25,7 @@ const abilityScore = (data, key) => Number(data[key] || 10);
 export default function QuickReferencePanel({ open, onToggle }) {
   const { data } = useSheet();
   const profBonus = proficiencyBonus(data);
+  const skills = sortSkills(SKILLS, data.tri_competences === 'ability' ? 'ability' : 'name');
 
   return (
     <div className="quick-reference-widget">
@@ -93,7 +95,7 @@ export default function QuickReferencePanel({ open, onToggle }) {
             <section className="quick-reference-section" aria-labelledby="quick-skills-heading">
               <h3 id="quick-skills-heading">Compétences</h3>
               <div className="quick-skill-grid">
-                {SKILLS.map((skill) => (
+                {skills.map((skill) => (
                   <div className="quick-skill-row" key={skill.key}>
                     <span className="quick-skill-name">{skill.label}</span>
                     <span className="quick-skill-ability" data-ability={skill.ability}>{ABILITY_SHORT[skill.ability]}</span>
@@ -101,6 +103,9 @@ export default function QuickReferencePanel({ open, onToggle }) {
                     <RollButton label={skill.label} bonus={skillBonus(data, skill)} />
                   </div>
                 ))}
+              </div>
+              <div className="quick-reference-skill-sort">
+                <SkillSortSelect />
               </div>
             </section>
           </div>
