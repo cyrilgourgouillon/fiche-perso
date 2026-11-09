@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ABILITIES, SKILLS } from '../../data/abilities';
 import {
   CLASS_FEATURES, CLASS_FEATURES_USED, SPELLS, WEAPONS,
@@ -23,7 +24,14 @@ import PixelAvatar from './PixelAvatar';
 import HpQuickAdjustments from './HpQuickAdjustments';
 import { isCantrip } from '../../services/spells';
 
-const text = (value) => (typeof value === 'string' ? value.trim() : '');
+/** Field text, trimmed. Imported sheets may hold numbers (kept) or objects (ignored). */
+const text = (value: unknown) => {
+  if (typeof value === 'string') return value.trim();
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  return '';
+};
+/** `'💪 Force'` → `'Force'`. */
+const withoutIcon = (label: string) => label.replace(/^\S+\s*/, '');
 const valueOr = (value, fallback = '—') => text(value) || fallback;
 const displayModifier = (value, fallback) => {
   const raw = text(value);
@@ -36,9 +44,19 @@ const included = (data, includeField, contentField) => {
   return Boolean(text(data[contentField]));
 };
 const flagged = (data, field) => data[field] === 'true';
+type SummarySectionProps = {
+  title: string;
+  className?: string;
+  children: ReactNode;
+  /** Shown when there is no content; without one, an empty card is not rendered at all. */
+  emptyMessage?: string;
+  hasContent?: boolean;
+};
+
 function SummarySection({
   title, className = '', children, emptyMessage, hasContent = true,
-}) {
+}: SummarySectionProps) {
+  if (!hasContent && !emptyMessage) return null;
   return (
     <section className={`summary-card ${className}`}>
       <h3>{title}</h3>
@@ -138,9 +156,7 @@ export default function CombatSummary({ onBack }) {
           <strong>{hitPoints}</strong>
           {text(data.points_vie_temp) && (
           <small>
-            {data.points_vie_temp}
-            {' '}
-            temporaires
+            {`${text(data.points_vie_temp)} temporaires`}
           </small>
           )}
           <HpQuickAdjustments />
@@ -178,7 +194,7 @@ export default function CombatSummary({ onBack }) {
             <div className="summary-abilities">
               {ABILITIES.map((ability) => (
                 <div key={ability.key}>
-                  <span>{ability.label.replace(/^\S+\s*/, '')}</span>
+                  <span>{withoutIcon(ability.label)}</span>
                   <strong>{formatModifier(savingThrowBonus(data, ability.key))}</strong>
                 </div>
               ))}
@@ -218,8 +234,7 @@ export default function CombatSummary({ onBack }) {
                   {text(feature.description) && <div className="summary-entry-detail">{text(feature.description)}</div>}
                   {(feature.shortRest || feature.longRest) && (
                     <small>
-                      Récupération :
-                      {[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}
+                      {`Récupération\u00a0: ${[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}`}
                     </small>
                   )}
                 </li>
@@ -245,11 +260,7 @@ export default function CombatSummary({ onBack }) {
                   <div className="summary-entry-detail">
                     {text(weapon.damage) || 'Dégâts non renseignés'}
                     {text(weapon.notes) && (
-                    <span>
-                      {' '}
-                      ·
-                      {text(weapon.notes)}
-                    </span>
+                    <span>{` · ${text(weapon.notes)}`}</span>
                     )}
                   </div>
                 </li>
@@ -264,7 +275,7 @@ export default function CombatSummary({ onBack }) {
               <div className="summary-spell-stats">
                 <div>
                   <span>Caractéristique</span>
-                  <strong>{spellAbility?.label.replace(/^\S+\s*/, '') || '—'}</strong>
+                  <strong>{spellAbility ? withoutIcon(spellAbility.label) : '—'}</strong>
                 </div>
                 <div>
                   <span>Modificateur</span>
@@ -282,6 +293,7 @@ export default function CombatSummary({ onBack }) {
             </SummarySection>
           )}
 
+          {/* shown whenever the sheet has a slot, whatever the class: the slot table is the source of truth */}
           {slots.length > 0 && (
             <SummarySection title="Emplacements de sorts" className="summary-slot-card">
               <div className="summary-slots">
@@ -328,11 +340,7 @@ export default function CombatSummary({ onBack }) {
                       .filter(Boolean)
                       .join(' · ') || 'Détails non renseignés'}
                     {text(spell.notes) && (
-                    <span className="summary-spell-notes">
-                      {' '}
-                      ·
-                      {text(spell.notes)}
-                    </span>
+                    <span className="summary-spell-notes">{` · ${text(spell.notes)}`}</span>
                     )}
                   </div>
                 </li>

@@ -253,8 +253,8 @@ export default function SettingsModal({
                     <button type="button" className="settings-add-tile" title="Ajouter en pleine largeur sous les colonnes" aria-label={`Ajouter ${label} sur deux colonnes en dessous`} onClick={() => add(id, 'bottom')}>2 col. &darr;</button>
                     {id !== 'caracteristiques' && (
                     <>
-                      <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; gauche" aria-label={`Ajouter ${label} sur une colonne &agrave; gauche`} onClick={() => add(id, 'left')}>1 col. &larr;</button>
-                      <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; droite" aria-label={`Ajouter ${label} sur une colonne &agrave; droite`} onClick={() => add(id, 'right')}>1 col. &rarr;</button>
+                      <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; gauche" aria-label={`Ajouter ${label} sur une colonne à gauche`} onClick={() => add(id, 'left')}>1 col. &larr;</button>
+                      <button type="button" className="settings-add-tile" title="Ajouter sur une colonne &agrave; droite" aria-label={`Ajouter ${label} sur une colonne à droite`} onClick={() => add(id, 'right')}>1 col. &rarr;</button>
                     </>
                     )}
                   </span>

@@ -1,11 +1,20 @@
 import { parseSheet, serializeSheet } from './sheetSerializer';
 
-const STORAGE_KEY = 'perso_sheet';
+export const STORAGE_KEY = 'perso_sheet';
+
+/** Parses a stored payload; an empty or unreadable one gives an empty sheet. */
+export const parseStoredSheet = (text: string | null) => {
+  try {
+    return parseSheet(text || '{}');
+  } catch {
+    return {};
+  }
+};
 
 /** Returns an empty sheet when nothing is stored or the payload is unreadable. */
 export const readStoredSheet = () => {
   try {
-    return parseSheet(localStorage.getItem(STORAGE_KEY) || '{}');
+    return parseStoredSheet(localStorage.getItem(STORAGE_KEY));
   } catch {
     return {};
   }

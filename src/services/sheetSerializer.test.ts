@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test, { describe } from 'node:test';
-import { parseSheet, serializeSheet } from './sheetSerializer';
+import { coerceFieldValues, parseSheet, serializeSheet } from './sheetSerializer';
 import { readStoredSheet, writeStoredSheet } from './sheetStorage';
 
 const sampleSheet = {
@@ -260,5 +260,39 @@ describe('sheetSerializer', () => {
       })),
       /Expected "spellSlots.levels" to be an array/,
     );
+  });
+
+  test('should serialize the same sheet to the same text unless a timestamp is asked for', () => {
+    assert.equal(serializeSheet(sampleSheet), serializeSheet(sampleSheet));
+    assert.equal('generatedAt' in asObject(sampleSheet).metadata, false);
+    assert.match(JSON.parse(serializeSheet(sampleSheet, { timestamp: true })).metadata.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  test('should turn imported numbers and booleans into text and drop unusable values', () => {
+    const parsed = parseSheet(JSON.stringify({
+      character: { identity: { characterName: 123, species: { nested: true } } },
+      life: { level: 5, inspiration: true, hitPoints: { current: null } },
+    }));
+
+    assert.equal(parsed.nom_personnage, '123');
+    assert.equal(parsed.niveau, '5');
+    assert.equal(parsed.inspiration, 'true');
+    assert.equal('espece' in parsed, false);
+    assert.equal('points_vie_actuel' in parsed, false);
+  });
+
+  test('should keep the structured layout settings when coercing values', () => {
+    const layout = {
+      top: ['header'], left: [], right: [], bottom: [],
+    };
+    assert.deepEqual(coerceFieldValues({
+      tile_layout: layout,
+      tile_order: ['header'],
+      niveau: 3,
+    }), {
+      tile_layout: layout,
+      tile_order: ['header'],
+      niveau: '3',
+    });
   });
 });

@@ -52,75 +52,46 @@
 
 .dice-modes {
   display: flex;
-  gap: 6px;
 }
 .dice-mode {
   flex: 1;
   padding: 5px 8px;
-  background: var(--parch-mid);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  color: var(--ink-light);
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    color 0.2s;
 }
 .dice-mode:hover {
   color: var(--red);
   border-color: var(--gold);
 }
 .dice-mode.active {
-  background: var(--red);
   border-color: var(--red);
-  color: var(--parch);
   font-weight: 700;
 }
 /* same colour language as the roll buttons */
 .dice-mode.active[data-mode='avantage'] {
-  background: var(--success);
   border-color: var(--success);
 }
 .dice-mode.active[data-mode='desavantage'] {
-  background: var(--failure);
   border-color: var(--failure);
 }
 .dice-mode:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
-.dice-help {
-  margin: 8px 0;
-  font-size: 14px;
-  line-height: 1.4;
-  color: var(--ink-light);
-}
 
 .dice-tray {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
   margin-bottom: 10px;
 }
 .die {
   position: relative;
-  width: 52px;
-  height: 52px;
   padding: 0;
   border: none;
   background: linear-gradient(160deg, var(--red-light), var(--red));
   color: var(--parch);
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: transform 0.15s;
 }
 .die:hover {
   transform: translateY(-2px) rotate(-4deg);
@@ -168,7 +139,6 @@
 
 .dice-expression {
   display: flex;
-  gap: 6px;
   align-items: center;
   margin-bottom: 10px;
 }
@@ -185,19 +155,12 @@
   align-items: baseline;
   gap: 8px;
   padding: 6px 10px;
-  background: var(--parch-dark);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--gold);
-  border-radius: 3px;
 }
 .roll-label {
   flex: 1;
   min-width: 0;
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--red);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -223,12 +186,10 @@
 }
 .roll-total {
   min-width: 34px;
-  font-family: 'Cinzel', serif;
   font-size: 22px;
   font-weight: 700;
   line-height: 1;
   text-align: right;
-  color: var(--ink);
 }
 .roll[data-critique='reussite'] {
   border-left-color: var(--yellow);
@@ -251,9 +212,6 @@
 }
 .roll-compact .roll-total {
   font-size: 16px;
-}
-.dice-log {
-  margin-top: 10px;
 }
 
 /* ── ROLL TOAST ──
@@ -321,10 +279,7 @@
   gap: 4px;
   min-width: min(260px, calc(100vw - 40px));
   padding: 18px 28px 16px;
-  background: var(--parch);
   background-image: radial-gradient(ellipse at 50% 0, var(--parch-mid), var(--parch) 70%);
-  border: 3px solid var(--gold);
-  border-radius: 6px;
   box-shadow:
     0 18px 50px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -333,7 +288,6 @@
   animation: dice-flash 4s ease-out forwards;
 }
 .dice-flash-label {
-  font-family: 'Cinzel', serif;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -342,11 +296,9 @@
   text-align: center;
 }
 .dice-flash-total {
-  font-family: 'Cinzel', serif;
   font-size: 68px;
   font-weight: 900;
   line-height: 1;
-  color: var(--ink);
 }
 
 /* while the die is still bouncing: the number flickers and the dice stay hidden */
@@ -401,7 +353,6 @@
 }
 .dice-flash-tag {
   margin-top: 2px;
-  font-family: 'Cinzel', serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 3px;
@@ -573,6 +524,13 @@
   }
 }
 
+/*
+ * Reduced motion (OS setting or the sheet's own toggle). The global rule in
+ * base.css shrinks every animation to 0.01ms with !important, which would make
+ * the toast fire animationend at once and unmount. So both paths re-declare the
+ * toast and its backdrop with a 4s static hold, also !important and more
+ * specific than the global '*' rule, and drop the decorative child animations.
+ */
 @media (prefers-reduced-motion: reduce) {
   .die:hover,
   .die:active {
@@ -582,26 +540,14 @@
   .dice-flash .dice-flash-total,
   .dice-flash .roll-detail,
   .dice-flash .dice-flash-tag {
-    animation: none;
+    animation: none !important;
   }
   .dice-flash[data-critique='reussite'] .dice-flash-total::before {
     display: none;
   }
   .dice-backdrop,
-  .dice-backdrop[data-critique='reussite'] {
-    animation: dice-flash-still 4s steps(1) forwards;
-  }
   .dice-flash {
-    animation: dice-flash-still 4s steps(1) forwards;
-  }
-  @keyframes dice-flash-still {
-    0%,
-    93% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
+    animation: dice-flash-still 4s steps(1) forwards !important;
   }
 }
 
@@ -620,6 +566,7 @@ html[data-reduce-motion='true'] .dice-flash {
   animation: dice-flash-still 4s steps(1) forwards !important;
 }
 
+/* fully shown for 93% of the 4s, then gone: the end fires animationend */
 @keyframes dice-flash-still {
   0%,
   93% {

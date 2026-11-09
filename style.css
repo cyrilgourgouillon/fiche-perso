@@ -5,7 +5,29 @@
  * first, shared components next, then responsive rules and the final redesign
  * layer that brings every panel onto the same visual system.
  */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&family=Marcellus&display=swap');
+/*
+ * Fonts, bundled locally from @fontsource (offline-capable, no render-blocking
+ * request). Only the latin and latin-ext subsets: enough for French and every
+ * Latin-script name; other scripts fall back to the next font in the stack.
+ */
+@import '@fontsource/dm-sans/latin-400.css';
+@import '@fontsource/dm-sans/latin-ext-400.css';
+@import '@fontsource/dm-sans/latin-500.css';
+@import '@fontsource/dm-sans/latin-ext-500.css';
+@import '@fontsource/dm-sans/latin-600.css';
+@import '@fontsource/dm-sans/latin-ext-600.css';
+@import '@fontsource/dm-sans/latin-700.css';
+@import '@fontsource/dm-sans/latin-ext-700.css';
+@import '@fontsource/literata/latin-400.css';
+@import '@fontsource/literata/latin-ext-400.css';
+@import '@fontsource/literata/latin-400-italic.css';
+@import '@fontsource/literata/latin-ext-400-italic.css';
+@import '@fontsource/literata/latin-500.css';
+@import '@fontsource/literata/latin-ext-500.css';
+@import '@fontsource/literata/latin-600.css';
+@import '@fontsource/literata/latin-ext-600.css';
+@import '@fontsource/marcellus/latin-400.css';
+@import '@fontsource/marcellus/latin-ext-400.css';
 
 /* palette and themes */
 @import './styles/tokens.css';
@@ -19,7 +41,6 @@
 @import './styles/layout.css';
 @import './styles/buttons.css';
 @import './styles/fields.css';
-@import './styles/tables.css';
 
 /* panels, in the order they appear on the sheet */
 @import './styles/header.css';

@@ -8,9 +8,17 @@ import { useSheetFlag } from '../../context/SheetContext';
  * storage and travels with the JSON export. A section missing from the data —
  * an older save, or a section added later — starts expanded.
  */
+interface PanelProps {
+  id: string;
+  title: React.ReactNode;
+  children: React.ReactNode;
+  as?: 'section' | 'div';
+  className?: string;
+}
+
 export default function Panel({
   id, title, children, as: Tag = 'section', className = 'panel',
-}) {
+}: PanelProps) {
   const [collapsed, setCollapsed] = useSheetFlag(foldField(id));
   const classes = [className, collapsed && 'collapsed'].filter(Boolean).join(' ');
 

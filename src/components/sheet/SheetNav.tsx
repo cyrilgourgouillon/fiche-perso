@@ -106,7 +106,7 @@ export default function SheetNav({ open, onToggle, onOpenSettings }) {
         <nav className="sheet-nav" aria-label="Navigation dans la fiche">
           <div id="sheet-navigation-content">
             <div className="nav-intro">
-              <span>Acces rapide aux rubriques</span>
+              <span>Accès rapide aux rubriques</span>
               <span className="nav-section-count">
                 {sections.length}
                 {' '}

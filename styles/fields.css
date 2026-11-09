@@ -7,37 +7,22 @@
  * an inline caret, so they never trigger the zoom.
  */
 .ef {
-  background: transparent;
-  border: none;
   border-bottom: 1px solid rgba(122, 92, 46, 0.4);
-  font-family: 'Crimson Pro', serif;
-  font-size: 16px;
-  color: var(--ink);
-  padding: 4px 6px;
   width: 100%;
   /* form controls otherwise refuse to shrink below their intrinsic size */
   min-width: 0;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
   outline: none;
   background-color: var(--parch-dark);
 }
 .ef:focus {
-  background: rgba(184, 134, 11, 0.08);
   border-bottom-color: var(--gold);
 }
 .ef.big {
-  font-size: 36px;
-  font-weight: 700;
   text-align: center;
   border-bottom: none;
-  color: var(--red);
 }
 /* same treatment as `.big`, one size down: sits in the same card rows */
 .ef.medium {
-  font-size: 24px;
-  font-weight: 700;
   text-align: center;
   border-bottom: none;
 }
@@ -46,29 +31,19 @@
 }
 textarea.ef {
   resize: vertical;
-  padding: 6px 8px;
-  font-size: 16px;
-  line-height: 1.6;
 }
 
 .markdown-field {
   box-sizing: border-box;
-  position: relative;
   min-width: 0;
-  min-height: 100px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  resize: vertical;
-  overflow: hidden;
-  border: 1px solid rgba(122, 92, 46, 0.3);
-  border-radius: 2px;
   background-color: var(--parch-dark);
   transition: border-color 0.2s, background 0.2s;
 }
 .markdown-field:focus-within {
   border-color: var(--gold);
-  background: rgba(184, 134, 11, 0.08);
 }
 .markdown-field.tall {
   min-height: 350px;
@@ -84,47 +59,20 @@ textarea.ef {
   flex: 1;
   min-height: 0;
   width: 100%;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 6px 40px 38px 8px;
-}
-.markdown-field > textarea.ef {
-  resize: none;
 }
 .markdown-field > textarea.ef:focus {
   background: transparent;
 }
 .markdown-toggle {
   position: absolute;
-  right: 22px;
-  bottom: 7px;
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid rgba(122, 92, 46, 0.24);
-  border-radius: 6px;
-  background: var(--parch-dark);
-  color: var(--ink);
   cursor: pointer;
-}
-.markdown-toggle svg {
-  width: 15px;
-  height: 15px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.7;
 }
 .markdown-toggle:hover,
 .markdown-toggle:focus-visible {
-  background: rgba(184, 134, 11, 0.08);
   border-color: var(--gold);
-  outline: none;
   box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.16);
 }
 .markdown-preview {

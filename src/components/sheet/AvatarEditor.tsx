@@ -102,7 +102,7 @@ function ColorChoices({
             key={color.value}
             type="button"
             className="avatar-color-button"
-            style={{ '--swatch': color.color }}
+            style={{ '--swatch': color.color } as React.CSSProperties}
             aria-label={color.label}
             aria-pressed={selected === color.value}
             title={color.label}
@@ -131,7 +131,7 @@ export default function AvatarEditor() {
       <div className="avatar-workshop-heading">
         <PixelAvatar data={data} />
         <div>
-          <h3>Petit héro, grande aventure</h3>
+          <h3>Petit héros, grande aventure</h3>
           <p>Compose ton aventurier en pixels.</p>
         </div>
       </div>

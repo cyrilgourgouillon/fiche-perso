@@ -1,23 +1,8 @@
 /* ── COMBAT STATS ── */
 .combat-row {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-.combat-block {
-  text-align: center;
-  background: var(--parch-dark);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 6px 4px;
 }
 .combat-block .lbl {
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--gold);
   margin-bottom: 3px;
 }
 

@@ -1,24 +1,17 @@
 /* ── INSPIRATION ── */
 .inspiration-box {
   position: relative;
-  width: 44px;
-  height: 44px;
-  border: 2px solid var(--gold);
   border-radius: 50%;
   margin: 4px auto 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--parch-dark);
   cursor: pointer;
   transition: all 0.2s;
 }
 .inspiration-box:focus-within {
   outline: 2px solid var(--red);
   outline-offset: 2px;
-}
-.inspiration-box.active {
-  background: var(--gold);
 }
 .inspiration-box.active::after {
   content: '✦';
@@ -42,10 +35,7 @@
   outline: none;
   width: 60px;
   text-align: center;
-  font-family: 'Cinzel', serif;
   font-size: 22px;
-  font-weight: 700;
-  color: var(--yellow);
   cursor: text;
   caret-color: var(--yellow);
 }

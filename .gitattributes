@@ -1,0 +1,4 @@
+# Keep LF everywhere, whatever core.autocrlf says: ESLint's linebreak-style rule
+# (Airbnb) rejects CRLF, which Git for Windows checks out by default.
+* text=auto eol=lf
+*.png binary

@@ -5,6 +5,7 @@ import {
   TILE_CATALOG,
   hiddenTiles,
   normalizeTileLayout,
+  type TileLayout,
 } from './tileLayout';
 
 describe('tileLayout', () => {
@@ -56,7 +57,7 @@ describe('tileLayout', () => {
   });
 
   test('should report catalog tiles not placed in the layout when some sections are hidden', () => {
-    const layout = {
+    const layout: TileLayout = {
       top: DEFAULT_TILE_LAYOUT.top,
       left: DEFAULT_TILE_LAYOUT.left,
       right: DEFAULT_TILE_LAYOUT.right,

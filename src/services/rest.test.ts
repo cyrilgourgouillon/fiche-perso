@@ -56,7 +56,8 @@ describe('rest', () => {
     assert.equal(rested.points_vie_temp, undefined);
     assert.equal(rested.des_vie, '5');
     assert.equal(rested.capacite_utilisee1, undefined);
-    assert.equal(rested.capacite_utilisee2, 'true');
+    // a long rest includes the benefits of a short one
+    assert.equal(rested.capacite_utilisee2, undefined);
     assert.equal(rested.emplacement_sort_1_1, undefined);
     assert.equal(rested.emplacement_sort_9_3, undefined);
     for (const field of Object.keys(deathSaves)) assert.equal(field in rested, false);

@@ -26,13 +26,11 @@ const RACES = [
   {
     value: 'tiefling', label: 'Tieffelin', skin: '#cb7772', hair: '#4a2949', feature: 'tiefling',
   },
-  {
-    value: 'paladin', label: 'Paladin', skin: '#edc092', hair: '#795331', feature: 'paladin',
-  },
 ];
 
 export const AVATAR_RACES = RACES.map(({ value, label }) => ({ value, label }));
 
+/** Species names (lower case, without accents) → sprite. */
 const RACE_ALIASES = {
   'half-elf': 'half-elf',
   'half-elfe': 'half-elf',
@@ -45,7 +43,6 @@ const RACE_ALIASES = {
   tieffelin: 'tiefling',
   nain: 'dwarf',
   elfe: 'elf',
-  paladin: 'paladin',
   gnome: 'gnome',
   humain: 'human',
   human: 'human',
@@ -53,57 +50,73 @@ const RACE_ALIASES = {
   dwarf: 'dwarf',
   orc: 'orc',
   tiefling: 'tiefling',
+  // Species without a sprite of their own, mapped to the closest silhouette:
+  // aasimar look human (their celestial glow has no pixel equivalent);
+  aasimar: 'human',
+  // dragonborn get the tiefling's horns and coloured skin, the nearest to a draconic head;
+  drakeide: 'tiefling',
+  dragonborn: 'tiefling',
+  // goliaths are bald, heavy-set humans in silhouette — tusks or a beard would be wrong.
+  goliath: 'human',
 };
 
+const isRace = (value: unknown) => RACES.some((race) => race.value === value);
+
+const speciesKey = (species: unknown) => String(species ?? '')
+  .trim()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLocaleLowerCase('fr')
+  .replace(/^demi[- ]/, 'demi-');
+
 export function avatarRaceFor(data) {
-  if (RACES.some(({ value }) => value === data.avatar_race)) return data.avatar_race;
-  const species = (data.espece || '').trim().toLocaleLowerCase('fr').replace(/^demi[- ]/, 'demi-');
-  const speciesRace = RACE_ALIASES[species];
-  return RACES.some(({ value }) => value === speciesRace) ? speciesRace : 'human';
+  if (isRace(data.avatar_race)) return data.avatar_race;
+  const speciesRace = RACE_ALIASES[speciesKey(data.espece)];
+  return isRace(speciesRace) ? speciesRace : 'human';
 }
+
+const SHIRT_COLORS = {
+  crimson: '#b84f48',
+  ocean: '#397a9a',
+  teal: '#438b78',
+  plum: '#775a91',
+  gold: '#d09a3d',
+  charcoal: '#4d5364',
+  brown: '#8b5e3c',
+  black: '#27272a',
+  white: '#f3f1e9',
+};
+
+const TROUSER_COLORS = {
+  crimson: '#a54642',
+  ocean: '#315d83',
+  teal: '#376b5c',
+  plum: '#654b7b',
+  gold: '#a8782e',
+  charcoal: '#3e4352',
+  brown: '#70472f',
+  black: '#26262a',
+  white: '#deddd7',
+};
+
+/** Green-skinned races get a green shadow under the nose; everyone else a warm one. */
+const GREEN_SKINS = new Set(['#7fa65d', '#95aa72']);
+
+const TROUSER_STYLES = new Set(['puffy', 'leggings', 'shorts', 'greaves', 'cargo']);
 
 /** A tiny, deliberately blocky portrait built from crisp SVG pixels. */
 export default function PixelAvatar({ data, className = '' }) {
   const race = RACES.find(({ value }) => value === avatarRaceFor(data)) || RACES[0];
-  const shirt = data.avatar_shirt_color || 'teal';
-  const trousers = data.avatar_trousers_color || 'plum';
-  const shirtColors = {
-    crimson: '#b84f48',
-    ocean: '#397a9a',
-    teal: '#438b78',
-    plum: '#775a91',
-    gold: '#d09a3d',
-    charcoal: '#4d5364',
-    brown: '#8b5e3c',
-    black: '#27272a',
-    white: '#f3f1e9',
-  };
-  const trouserColors = {
-    crimson: '#a54642',
-    ocean: '#315d83',
-    teal: '#376b5c',
-    plum: '#654b7b',
-    gold: '#a8782e',
-    charcoal: '#3e4352',
-    brown: '#70472f',
-    black: '#26262a',
-    white: '#deddd7',
-  };
-  const top = shirtColors[shirt] || shirtColors.teal;
-  const legs = trouserColors[trousers] || trouserColors.plum;
+  const top = SHIRT_COLORS[data.avatar_shirt_color] || SHIRT_COLORS.teal;
+  const legs = TROUSER_COLORS[data.avatar_trousers_color] || TROUSER_COLORS.plum;
   const topStyle = data.avatar_shirt_style || 'tunic';
   const trouserStyle = data.avatar_trousers_style || 'straight';
   const gender = data.avatar_gender || 'male';
   const weapon = data.avatar_weapon || 'none';
   const hatStyle = data.avatar_hat_style || 'none';
-  const hat = shirtColors[data.avatar_hat_color] || shirtColors.gold;
-  let skinShadow = '#bf8968';
-  if (race.skin === '#63a98f') {
-    skinShadow = '#43806e';
-  } else if (race.skin === '#7fa65d' || race.skin === '#95aa72') {
-    skinShadow = '#5e7948';
-  }
-  const hairShadow = race.hair;
+  const hat = SHIRT_COLORS[data.avatar_hat_color] || SHIRT_COLORS.gold;
+  const skinShadow = GREEN_SKINS.has(race.skin) ? '#5e7948' : '#bf8968';
+  const { hair } = race;
 
   return (
     <svg
@@ -115,12 +128,6 @@ export default function PixelAvatar({ data, className = '' }) {
     >
       <rect x="2" y="2" width="44" height="52" rx="8" fill="var(--avatar-back, #f0dfbd)" />
       <rect x="5" y="5" width="38" height="46" rx="5" fill="var(--avatar-back-inner, #f8edda)" />
-      {race.feature === 'paladin' && (
-      <>
-        <rect x="20" y="4" width="8" height="2" fill="#d7a83d" />
-        <rect x="23" y="2" width="2" height="6" fill="#d7a83d" />
-      </>
-      )}
 
       {/* ears and the head */}
       {race.feature === 'elf' && (
@@ -143,24 +150,15 @@ export default function PixelAvatar({ data, className = '' }) {
         <rect x="33" y="3" width="3" height="3" fill={race.hair} />
       </>
       )}
-      {race.feature === 'paladin' ? (
-        <>
-          <rect x="14" y="8" width="20" height="5" fill={hairShadow} />
-          <rect x="17" y="6" width="14" height="3" fill="#d09a3d" />
-        </>
-      ) : (
-        <>
-          <rect x="14" y="8" width="20" height="5" fill={hairShadow} />
-          <rect x="14" y="12" width="3" height="5" fill={hairShadow} />
-          <rect x="31" y="12" width="3" height="3" fill={hairShadow} />
-        </>
-      )}
+      <rect x="14" y="8" width="20" height="5" fill={hair} />
+      <rect x="14" y="12" width="3" height="5" fill={hair} />
+      <rect x="31" y="12" width="3" height="3" fill={hair} />
       {gender === 'female' && (
       <>
-        <rect x="13" y="14" width="4" height="9" fill={hairShadow} />
-        <rect x="31" y="14" width="4" height="9" fill={hairShadow} />
-        <rect x="14" y="21" width="3" height="3" fill={hairShadow} />
-        <rect x="31" y="21" width="3" height="3" fill={hairShadow} />
+        <rect x="13" y="14" width="4" height="9" fill={hair} />
+        <rect x="31" y="14" width="4" height="9" fill={hair} />
+        <rect x="14" y="21" width="3" height="3" fill={hair} />
+        <rect x="31" y="21" width="3" height="3" fill={hair} />
       </>
       )}
       {hatStyle === 'cap' && (
@@ -207,8 +205,8 @@ export default function PixelAvatar({ data, className = '' }) {
       )}
       {race.feature === 'beard' && gender !== 'female' && (
       <>
-        <rect x="17" y="21" width="14" height="5" fill={hairShadow} />
-        <rect x="20" y="25" width="8" height="2" fill={hairShadow} />
+        <rect x="17" y="21" width="14" height="5" fill={hair} />
+        <rect x="20" y="25" width="8" height="2" fill={hair} />
       </>
       )}
       {race.feature === 'halfling' && (
@@ -322,7 +320,7 @@ export default function PixelAvatar({ data, className = '' }) {
         <rect x="32" y="46" width="4" height="1" fill="#8b6b43" />
       </>
       )}
-      {(trouserStyle === 'straight' || !['puffy', 'leggings', 'shorts', 'greaves', 'cargo'].includes(trouserStyle)) && (
+      {!TROUSER_STYLES.has(trouserStyle) && (
       <>
         <rect x="14" y="42" width="8" height="9" fill={legs} />
         <rect x="26" y="42" width="8" height="9" fill={legs} />

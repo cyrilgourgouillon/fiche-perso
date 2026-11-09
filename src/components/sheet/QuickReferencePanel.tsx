@@ -5,6 +5,7 @@ import Modal from '../common/Modal';
 import SkillSortSelect from './SkillSortSelect';
 import {
   abilityModifier,
+  abilityScore,
   formatModifier,
   proficiencyBonus,
   savingThrowBonus,
@@ -19,8 +20,6 @@ const ABILITY_SHORT = {
   sagesse: 'SAG',
   charisme: 'CHA',
 };
-
-const abilityScore = (data, key) => Number(data[key] || 10);
 
 export default function QuickReferencePanel({ open, onToggle }) {
   const { data } = useSheet();
@@ -63,7 +62,7 @@ export default function QuickReferencePanel({ open, onToggle }) {
               <h3 id="quick-abilities-heading">Caractéristiques</h3>
               <div className="quick-ability-grid">
                 {ABILITIES.map((ability) => {
-                  const score = abilityScore(data, ability.key);
+                  const score = abilityScore(data[ability.key]);
                   const modifier = abilityModifier(data[ability.key]);
                   const save = savingThrowBonus(data, ability.key);
                   return (

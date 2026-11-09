@@ -168,7 +168,7 @@ addFieldMap(['settings'], {
   tri_competences: 'skillSort',
 });
 
-const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+const isRecord = (value: unknown): value is Record<string, any> => value !== null && typeof value === 'object' && !Array.isArray(value);
 
 const setPath = (target, path, value) => {
   let current = target;
@@ -222,8 +222,13 @@ export const normalizeCompactLists = (data) => {
   return normalized;
 };
 
-/** Converts the flat UI model to the array-based on-disk and stored format. */
-export const serializeSheet = (data) => {
+/**
+ * Converts the flat UI model to the array-based on-disk and stored format.
+ *
+ * The output is deterministic unless `timestamp` is set: local storage and a linked
+ * file (possibly versioned) only change when the sheet does. Downloads carry the date.
+ */
+export const serializeSheet = (data, { timestamp = false }: { timestamp?: boolean } = {}) => {
   const normalized = normalizeCompactLists(normalizeReducedMotion(normalizeTextAreaMode(data)));
   const modules = {};
 
@@ -305,7 +310,7 @@ export const serializeSheet = (data) => {
         classe: data.classe || '',
         niveau: data.niveau || '',
         theme: data.theme || DEFAULT_THEME,
-        generatedAt: new Date().toISOString(),
+        ...(timestamp ? { generatedAt: new Date().toISOString() } : {}),
         version: FORMAT_VERSION,
       },
       ...modules,
@@ -364,54 +369,62 @@ export const normalizeClassFeatureNotes = (data) => {
   return normalized;
 };
 
-const flattenArrayLists = (character, lists) => {
-  const flattened = { ...character };
-
-  ARRAY_LISTS.forEach(({
-    key, list, fields, field = list.field,
-  }) => {
-    if (!(key in lists)) return;
-    if (!Array.isArray(lists[key])) throw new TypeError(`Expected "${key}" to be an array`);
-    const rows = lists[key];
-    const rowCount = Math.max(1, rows.length);
-    const countField = `${list.key}_lignes`;
-    if (rowCount === list.defaultRows) delete flattened[countField];
-    else flattened[countField] = String(rowCount);
-    rows.forEach((row, index) => {
-      if (!isRecord(row)) throw new TypeError(`Expected "${key}[${index}]" to be an object`);
-      fields.forEach((name) => {
-        if (name in row) flattened[field(index, name)] = row[name];
-      });
-    });
-  });
-
-  SIMPLE_ARRAY_LISTS.forEach(({ key, list }) => {
-    if (!(key in lists)) return;
-    if (!Array.isArray(lists[key])) throw new TypeError(`Expected "${key}" to be an array`);
-    const rows = lists[key];
-    const rowCount = Math.max(1, rows.length);
-    const countField = `${list.key}_lignes`;
-    if (rowCount === list.defaultRows) delete flattened[countField];
-    else flattened[countField] = String(rowCount);
-    rows.forEach((value, index) => {
-      if (typeof value !== 'string') throw new TypeError(`Expected "${key}[${index}]" to be a string`);
-      flattened[list.field(index)] = value;
-    });
-  });
-
-  if ('traits' in lists) {
-    if (!Array.isArray(lists.traits)) throw new TypeError('Expected "traits" to be an array');
-    lists.traits.forEach((value, index) => {
-      if (typeof value !== 'string') throw new TypeError(`Expected "traits[${index}]" to be a string`);
-      flattened[`trait${index + 1}`] = value;
-    });
-  }
-
-  return flattened;
+/**
+ * Fields of one growable list in the flat model, with its row count — `undefined` when the
+ * list has its default size, so the count field is dropped. `where` names the list in errors.
+ */
+const objectRowFields = (rows, {
+  list, fields, field = list.field,
+}, where): Record<string, unknown> => {
+  if (!Array.isArray(rows)) throw new TypeError(`Expected "${where}" to be an array`);
+  const rowCount = Math.max(1, rows.length);
+  return Object.fromEntries([
+    [`${list.key}_lignes`, rowCount === list.defaultRows ? undefined : String(rowCount)],
+    ...rows.flatMap((row, index) => {
+      if (!isRecord(row)) throw new TypeError(`Expected "${where}[${index}]" to be an object`);
+      return fields.filter((name) => name in row).map((name) => [field(index, name), row[name]]);
+    }),
+  ]);
 };
 
+const stringRowFields = (rows, list, where): Record<string, unknown> => {
+  if (!Array.isArray(rows)) throw new TypeError(`Expected "${where}" to be an array`);
+  const rowCount = Math.max(1, rows.length);
+  return Object.fromEntries([
+    [`${list.key}_lignes`, rowCount === list.defaultRows ? undefined : String(rowCount)],
+    ...rows.map((value, index) => {
+      if (typeof value !== 'string') throw new TypeError(`Expected "${where}[${index}]" to be a string`);
+      return [list.field(index), value];
+    }),
+  ]);
+};
+
+const traitFields = (traits, where): Record<string, unknown> => {
+  if (!Array.isArray(traits)) throw new TypeError(`Expected "${where}" to be an array`);
+  return Object.fromEntries(traits.map((value, index) => {
+    if (typeof value !== 'string') throw new TypeError(`Expected "${where}[${index}]" to be a string`);
+    return [`trait${index + 1}`, value];
+  }));
+};
+
+/** Drops the fields set to `undefined` — row counts that went back to their default. */
+const withoutUndefined = (fields: Record<string, unknown>) => Object.fromEntries(
+  Object.entries(fields).filter(([, value]) => value !== undefined),
+);
+
+const flattenArrayLists = (character, lists) => withoutUndefined({
+  ...character,
+  ...Object.assign({}, ...ARRAY_LISTS
+    .filter((definition) => definition.key in lists)
+    .map((definition) => objectRowFields(lists[definition.key], definition, definition.key))),
+  ...Object.assign({}, ...SIMPLE_ARRAY_LISTS
+    .filter(({ key }) => key in lists)
+    .map(({ key, list }) => stringRowFields(lists[key], list, key))),
+  ...('traits' in lists ? traitFields(lists.traits, 'traits') : {}),
+});
+
 const flattenModules = (modules) => {
-  const flattened = {};
+  const flattened: Record<string, unknown> = {};
   SCALAR_FIELDS.forEach((path, key) => {
     const value = getPath(modules, path);
     if (value !== undefined) flattened[key] = value;
@@ -423,46 +436,16 @@ const flattenModules = (modules) => {
     if (value !== undefined && !isRecord(value)) throw new TypeError(`Expected "${module}" to be an object`);
   });
 
-  if (modules.character?.traits !== undefined && !Array.isArray(modules.character.traits)) {
-    throw new TypeError('Expected "character.traits" to be an array');
-  }
-  if (Array.isArray(modules.character?.traits)) {
-    modules.character.traits.forEach((value, index) => {
-      if (typeof value !== 'string') throw new TypeError(`Expected "character.traits[${index}]" to be a string`);
-      flattened[`trait${index + 1}`] = value;
-    });
-  }
+  if (modules.character?.traits !== undefined) Object.assign(flattened, traitFields(modules.character.traits, 'character.traits'));
 
-  ARRAY_LISTS.forEach(({
-    path, list, fields, field = list.field,
-  }) => {
-    const rows = getPath(modules, path);
-    if (rows === undefined) return;
-    if (!Array.isArray(rows)) throw new TypeError(`Expected "${path.join('.')}" to be an array`);
-    const rowCount = Math.max(1, rows.length);
-    const countField = `${list.key}_lignes`;
-    if (rowCount === list.defaultRows) delete flattened[countField];
-    else flattened[countField] = String(rowCount);
-    rows.forEach((row, index) => {
-      if (!isRecord(row)) throw new TypeError(`Expected "${path.join('.')}[${index}]" to be an object`);
-      fields.forEach((name) => {
-        if (name in row) flattened[field(index, name)] = row[name];
-      });
-    });
+  ARRAY_LISTS.forEach((definition) => {
+    const rows = getPath(modules, definition.path);
+    if (rows !== undefined) Object.assign(flattened, objectRowFields(rows, definition, definition.path.join('.')));
   });
 
   SIMPLE_ARRAY_LISTS.forEach(({ path, list }) => {
     const rows = getPath(modules, path);
-    if (rows === undefined) return;
-    if (!Array.isArray(rows)) throw new TypeError(`Expected "${path.join('.')}" to be an array`);
-    const rowCount = Math.max(1, rows.length);
-    const countField = `${list.key}_lignes`;
-    if (rowCount === list.defaultRows) delete flattened[countField];
-    else flattened[countField] = String(rowCount);
-    rows.forEach((value, index) => {
-      if (typeof value !== 'string') throw new TypeError(`Expected "${path.join('.')}[${index}]" to be a string`);
-      flattened[list.field(index)] = value;
-    });
+    if (rows !== undefined) Object.assign(flattened, stringRowFields(rows, list, path.join('.')));
   });
 
   const foldedSections = modules.settings?.sections;
@@ -502,8 +485,24 @@ const flattenModules = (modules) => {
 
   if (modules.other !== undefined && !isRecord(modules.other)) throw new TypeError('Expected "other" to be an object');
   if (isRecord(modules.other)) Object.assign(flattened, modules.other);
-  return flattened;
+  return withoutUndefined(flattened);
 };
+
+/** Settings stored as JSON structures rather than text — see `data/tileLayout.ts`. */
+const STRUCTURED_FIELDS = new Set(['tile_layout', 'tile_order', 'tile_sides', 'tile_widths']);
+
+/**
+ * The interface reads every field as text. A hand-edited or foreign file can hold
+ * numbers, booleans or nested objects: numbers and booleans become their text form
+ * (`5` → `'5'`, `true` → `'true'`), anything else is dropped instead of crashing a panel.
+ */
+export const coerceFieldValues = (data: Record<string, unknown>) => Object.fromEntries(Object.entries(data).flatMap(([key, value]): [string, unknown][] => {
+  if (typeof value === 'string') return [[key, value]];
+  if (typeof value === 'number' && Number.isFinite(value)) return [[key, String(value)]];
+  if (typeof value === 'boolean') return [[key, String(value)]];
+  if (STRUCTURED_FIELDS.has(key) && value !== null && typeof value === 'object') return [[key, value]];
+  return [];
+}));
 
 /** Accepts grouped v2, the previous in-progress v2 shape, legacy envelopes, and bare field maps. */
 export const parseSheet = (text) => {
@@ -522,10 +521,10 @@ export const parseSheet = (text) => {
     data = isRecord(parsed.data) ? parsed.data : parsed;
   }
 
-  return normalizeCompactLists(normalizeReducedMotion(normalizeTextAreaMode(normalizeClassFeatureNotes(data))));
+  return normalizeCompactLists(normalizeReducedMotion(normalizeTextAreaMode(normalizeClassFeatureNotes(coerceFieldValues(data)))));
 };
 
 export const sheetFileName = (data) => {
-  const name = (data.nom_personnage || FALLBACK_FILE_NAME).trim().replace(ILLEGAL_FILE_NAME_CHARS, '-');
+  const name = String(data.nom_personnage || FALLBACK_FILE_NAME).trim().replace(ILLEGAL_FILE_NAME_CHARS, '-');
   return `${name || FALLBACK_FILE_NAME}.json`;
 };

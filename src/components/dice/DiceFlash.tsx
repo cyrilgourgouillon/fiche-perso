@@ -9,6 +9,19 @@ const CRITICAL_LABELS = {
   echec: '☠ Échec critique',
 };
 
+/** Read by screen readers, invisible on screen. */
+const VISUALLY_HIDDEN = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  margin: -1,
+  padding: 0,
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+} as const;
+
 /**
  * The latest roll, thrown up in the middle of the screen and faded away. Rolls
  * usually start from a bonus far from the tray, so the result comes to the player.
@@ -36,17 +49,21 @@ function Toast({ roll, reduceMotion }) {
       <div
         className={settled ? 'dice-flash' : 'dice-flash tumbling'}
         data-critique={state}
-        role="status"
-        aria-live="polite"
         onAnimationEnd={(event) => {
           if (event.target === event.currentTarget) setVisible(false);
         }}
       >
-        <div className="dice-flash-label">{roll.label}</div>
-        <div className="dice-flash-total">{settled ? roll.total : face}</div>
-        <RollDice roll={roll} />
-        {/* rendered from the start, so settling does not resize the card */}
-        {critical && <div className="dice-flash-tag">{CRITICAL_LABELS[critical]}</div>}
+        {/* the flickering faces are decoration: assistive tech only hears the settled result below */}
+        <div aria-hidden="true" style={{ display: 'contents' }}>
+          <div className="dice-flash-label">{roll.label}</div>
+          <div className="dice-flash-total">{settled ? roll.total : face}</div>
+          <RollDice roll={roll} />
+          {/* rendered from the start, so settling does not resize the card */}
+          {critical && <div className="dice-flash-tag">{CRITICAL_LABELS[critical]}</div>}
+        </div>
+        <p role="status" style={VISUALLY_HIDDEN}>
+          {settled ? `${roll.label} : ${roll.total}${critical ? `, ${CRITICAL_LABELS[critical]}` : ''}` : ''}
+        </p>
       </div>
     </>
   );

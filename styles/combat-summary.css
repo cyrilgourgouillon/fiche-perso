@@ -96,7 +96,7 @@ main[data-view='combat-summary'] .dice-flash {
 }
 
 .summary-stat > span {
-  color: var(--gold-light);
+  color: var(--gold-text);
   font-family: var(--ui-font);
   font-size: 9px;
   font-weight: 800;
@@ -149,7 +149,7 @@ main[data-view='combat-summary'] .dice-flash {
   margin-bottom: 9px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
-  color: var(--gold-light);
+  color: var(--gold-text);
   font-family: var(--ui-font);
   font-size: 10px;
   font-weight: 800;
@@ -299,7 +299,7 @@ main[data-view='combat-summary'] .dice-flash {
 .summary-entry-list small {
   display: block;
   margin-top: 2px;
-  color: var(--gold-light);
+  color: var(--gold-text);
   font-family: var(--ui-font);
   font-size: 9px;
 }
@@ -367,35 +367,11 @@ main[data-view='combat-summary'] .dice-flash {
   cursor: pointer;
 }
 
-.name-with-combat {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.name-with-combat .ef { flex: 1; }
-
-.name-with-combat input[type='checkbox'],
-.combat-include-option input {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--red);
-  cursor: pointer;
-}
-
-.name-with-combat input[type='checkbox'] { flex: 0 0 17px; }
-
 .combat-include-help {
   margin: -4px 0 7px;
   color: var(--ink-light);
   font-family: var(--ui-font);
   font-size: 11px;
-}
-
-.capacite-options .combat-include-option {
-  color: var(--red);
-  font-weight: 700;
 }
 
 @media (max-width: 900px) {
@@ -404,12 +380,6 @@ main[data-view='combat-summary'] .dice-flash {
 }
 
 @media (max-width: 700px) {
-  #toolbar {
-    grid-template-columns: minmax(0, 1fr) auto auto auto;
-    grid-template-areas: 'brand brand status status' 'theme combat load save';
-  }
-
-  #btn-combat { grid-area: combat; }
 
   .combat-summary {
     width: calc(100% - 20px);
@@ -559,8 +529,6 @@ main[data-view='combat-summary'] .dice-flash {
 .summary-attack-actions { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; }
 
 @media print { .summary-hit-points .hp-quick-adjust { display: none !important; } }
-
-.summary-hit-points .hp-quick-adjust { width: 100%; justify-content: center; gap: 3px; margin: 5px 0 0; }
 .summary-hit-points .hp-quick-adjust > label { display: none; }
 .summary-hit-points .hp-quick-adjust input { width: 38px; min-height: 28px; padding-inline: 2px; font-size: 11px; }
 .summary-hit-points .hp-quick-adjust .sheet-button { min-height: 28px; padding: 4px 5px; font-size: 9px; }

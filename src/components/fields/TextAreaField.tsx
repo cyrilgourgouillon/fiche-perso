@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkBreaks from 'remark-breaks';
+import { Suspense, lazy, useState } from 'react';
 import { useSheet, useSheetField } from '../../context/SheetContext';
+
+const MarkdownPreview = lazy(() => import('./MarkdownPreview'));
 
 export default function TextAreaField({ name, className = 'ef', ...props }) {
   const { data } = useSheet();
@@ -21,7 +21,12 @@ export default function TextAreaField({ name, className = 'ef', ...props }) {
         tabIndex={preview ? -1 : props.tabIndex}
       />
       <div className={`ef ${fieldVariants} markdown-preview`} aria-hidden={!preview}>
-        {value ? <ReactMarkdown remarkPlugins={[remarkBreaks]}>{value}</ReactMarkdown> : <span className="markdown-placeholder">{props.placeholder}</span>}
+        {/* the preview is laid over the text area, so leaving it empty while editing changes no layout */}
+        {preview && (
+          <Suspense fallback={<span className="markdown-placeholder">{value}</span>}>
+            <MarkdownPreview value={value} placeholder={props.placeholder} />
+          </Suspense>
+        )}
       </div>
       <button
         type="button"
