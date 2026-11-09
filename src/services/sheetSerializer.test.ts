@@ -10,6 +10,9 @@ const sampleSheet = {
   theme: 'fighter',
   textarea_mode: 'visual',
   reduce_motion: 'true',
+  compact_weapons: 'true',
+  compact_spells: 'false',
+  tri_competences: 'ability',
   force: '20',
   save_force: 'true',
   points_vie_max: '49',
@@ -27,12 +30,15 @@ const sampleSheet = {
   notes: 'Notes de campagne',
   arme1_nom: 'Pique',
   arme1_degats: '1d10 perforant',
+  arme1_replie: 'true',
   capacite1: 'Second souffle',
+  capacite1_replie: 'true',
   capacite_utilisee1: 'false',
   capacite1_repos_court: 'true',
   capacites_lignes: '1',
   sort1_nom: 'Bouclier',
   sort1_niveau: '1',
+  sort1_replie: 'false',
   inventaire1_nom: 'Potion',
   inventaire1_quantite: '2',
   lien_magique1: 'Hache en argent',
@@ -66,7 +72,7 @@ describe('sheetSerializer', () => {
     assert.deepEqual(serialized.characteristics.skills.perception, { proficient: 'true' });
     assert.deepEqual(serialized.combat.armorClass, '16');
     assert.deepEqual(serialized.spells.casting.ability, 'intelligence');
-    assert.deepEqual(serialized.spells.known, [{ niveau: '1', nom: 'Bouclier' }]);
+    assert.deepEqual(serialized.spells.known, [{ niveau: '1', nom: 'Bouclier', replie: 'false' }]);
     assert.deepEqual(serialized.spellSlots, {
       pactMagic: 'true',
       levels: [
@@ -75,9 +81,11 @@ describe('sheetSerializer', () => {
         { level: 3, override: '' },
       ],
     });
-    assert.deepEqual(serialized.weapons, [{ nom: 'Pique', degats: '1d10 perforant' }]);
+    assert.deepEqual(serialized.weapons, [{ nom: 'Pique', degats: '1d10 perforant', replie: 'true' }]);
     assert.deepEqual(serialized.classFeatures, [
-      { titre: 'Second souffle', repos_court: 'true', utilisee: 'false' },
+      {
+        titre: 'Second souffle', repos_court: 'true', utilisee: 'false', replie: 'true',
+      },
     ]);
     assert.deepEqual(serialized.equipment.inventory, [{ nom: 'Potion', quantite: '2' }]);
     assert.deepEqual(serialized.equipment.magicItems, ['Hache en argent']);
@@ -87,6 +95,9 @@ describe('sheetSerializer', () => {
     assert.deepEqual(serialized.character.traits, ['Endurance implacable']);
     assert.equal(serialized.settings.theme, 'fighter');
     assert.equal(serialized.settings.textAreaMode, 'visual');
+    assert.equal(serialized.settings.compactWeapons, 'true');
+    assert.equal(serialized.settings.compactSpells, 'false');
+    assert.equal(serialized.settings.skillSort, 'ability');
     assert.equal(serialized.settings.sections.notes.folded, 'false');
     assert.equal(serialized.notes.notes, 'Notes de campagne');
   });
@@ -102,6 +113,14 @@ describe('sheetSerializer', () => {
     };
     assert.deepEqual(parseSheet(JSON.stringify(legacyEnvelope)), sampleSheet);
     assert.deepEqual(parseSheet(JSON.stringify(sampleSheet)), sampleSheet);
+  });
+
+  test('should migrate the previous shared compact setting to both component settings', () => {
+    const parsed = parseSheet(JSON.stringify({ compact_lists: 'true' }));
+
+    assert.equal(parsed.compact_weapons, 'true');
+    assert.equal(parsed.compact_spells, 'true');
+    assert.equal('compact_lists' in parsed, false);
   });
 
   test('should import the earlier v2 envelope when parsing in-progress sheet data', () => {

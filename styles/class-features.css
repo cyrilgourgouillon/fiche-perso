@@ -33,10 +33,12 @@
 .capacite-content {
   min-width: 0;
   flex: 1;
+  display: grid;
+  gap: 8px;
 }
 .capacite-content > input.ef {
   width: 100%;
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 .capacite-content .markdown-field {
   margin-bottom: 5px;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CharacterSheet from './components/sheet/layout/CharacterSheet';
 import CombatSummary from './components/sheet/CombatSummary';
 import DiceTray from './components/dice/DiceTray';
@@ -25,6 +25,7 @@ export default function App() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const toggleTool = (tool) => setActiveTool((current) => (current === tool ? null : tool));
   const [status, notify] = useStatusMessage();
+  const statusRef = useRef<HTMLSpanElement>(null);
   const {
     data, update, apply, theme, setTheme, replace,
   } = useCharacterSheet({ notify });
@@ -36,6 +37,19 @@ export default function App() {
     notify,
   });
   const linkedFile = useLinkedFile({ data, onLoad: replace, notify });
+
+  useEffect(() => {
+    const statusElement = statusRef.current;
+    if (!statusElement) return;
+
+    if (!status.message) {
+      if (statusElement.matches(':popover-open')) statusElement.hidePopover();
+      return;
+    }
+
+    if (statusElement.matches(':popover-open')) statusElement.hidePopover();
+    statusElement.showPopover();
+  }, [status.message]);
 
   useEffect(() => {
     if (data.reduce_motion === 'true') {
@@ -158,13 +172,20 @@ export default function App() {
               linkedFile,
             } : null}
           />
-          <span id="save-status" data-tone={status.tone} className={status.message ? 'show' : undefined} role="status">
+          <span
+            ref={statusRef}
+            id="save-status"
+            popover="manual"
+            data-tone={status.tone}
+            className={status.message ? 'show' : undefined}
+            role="status"
+          >
             {status.message}
           </span>
           {showCombatSummary ? <CombatSummary onBack={() => setShowCombatSummary(false)} /> : <CharacterSheet onOpenAppearance={() => setActiveTool('appearance')} />}
           <div className="sheet-tools" role="group" aria-label="Outils de la fiche">
             {!showCombatSummary && (
-              <SheetSearch open={activeTool === 'search'} onToggle={() => toggleTool('search')} />
+              <SheetSearch open={activeTool === 'search'} onToggle={() => toggleTool('search')} notify={notify} />
             )}
             {!showCombatSummary && (
               <QuickReferencePanel open={activeTool === 'quick-reference'} onToggle={() => toggleTool('quick-reference')} />

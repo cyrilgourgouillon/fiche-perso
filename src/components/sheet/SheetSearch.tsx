@@ -7,7 +7,7 @@ import { ABILITIES, SKILLS } from '../../data/abilities';
 import { QUEST_STATUSES } from '../../data/questStatuses';
 import { SECTIONS, foldField, sectionAnchor } from '../../data/sections';
 import { normalizeTileLayout } from '../../data/tileLayout';
-import { listRowCount } from '../../services/sheetRows';
+import { listRowCount, withRowRemoved } from '../../services/sheetRows';
 import { range } from '../../utils/range';
 import {
   abilityModifier, formatModifier, savingThrowBonus, skillBonus,
@@ -42,14 +42,34 @@ type QuickAction = ((
     fieldSuffix?: string;
     fieldPattern?: RegExp;
     prefillValue?: string;
+    prefillQuantity?: string;
+    title: string;
+    detail: string;
+  }
+  | {
+    type: 'inventory-add';
+    row: number;
+    itemName: string;
+    amount: number;
+    quantity: number;
     title: string;
     detail: string;
   }
   | {
     type: 'coin';
+    direction: 'add' | 'remove';
     names: string[];
     amount: string;
     coin: string;
+    title: string;
+    detail: string;
+  }
+  | {
+    type: 'inventory';
+    row: number;
+    itemName: string;
+    amount: number;
+    quantity: number;
     title: string;
     detail: string;
   }
@@ -66,8 +86,11 @@ type QuickAction = ((
   fieldSuffix?: string;
   fieldPattern?: RegExp;
   prefillValue?: string;
+  prefillQuantity?: string;
   amount?: string;
   coin?: string;
+  row?: number;
+  itemName?: string;
   tool?: string;
 });
 
@@ -100,12 +123,15 @@ const ADD_ACTIONS = [
 
 const COIN_ACTION = {
   type: 'coin' as const,
+  direction: 'add' as const,
   names: ['piece', 'pieces', 'monnaie', 'gold', 'coin', 'coins'],
   amount: '1',
   coin: 'po',
-  title: 'Ajuster les pièces',
+  title: 'Ajouter des pièces',
   detail: 'Ajouter une quantité à la bourse',
 };
+
+const EQUIPMENT_NAMES = ['equipement', 'equipment', 'objet', 'objets', 'inventaire', 'item', 'items'];
 
 const TOOL_ACTIONS = [
   {
@@ -128,21 +154,136 @@ const TOOL_ACTIONS = [
   },
 ];
 
-function resolveAddAction(rawValue): QuickAction | null {
+function resolveCoinAction(rawValue, direction: 'add' | 'remove'): QuickAction | null {
   const value = normalized(rawValue.trim());
-  const candidates = [...ADD_ACTIONS, COIN_ACTION]
+  const match = [...COIN_ACTION.names]
+    .sort((left, right) => right.length - left.length)
+    .find((name) => value === name || value.startsWith(`${name} `));
+  if (!match) return null;
+
+  const remainder = rawValue.trim().slice(match.length).trim();
+  const coinMatch = /^(\d+)?\s*(pc|pa|pe|po|pp)?$/i.exec(remainder);
+  if (!coinMatch) return null;
+  const amount = Number(coinMatch[1] || '1');
+  if (!Number.isSafeInteger(amount) || amount < 1) return null;
+  return {
+    ...COIN_ACTION,
+    direction,
+    amount: String(amount),
+    coin: (coinMatch[2] || 'po').toLowerCase(),
+    title: direction === 'add' ? 'Ajouter des pièces' : 'Retirer des pièces',
+    detail: direction === 'add' ? 'Ajouter une quantité à la bourse' : 'Retirer une quantité de la bourse',
+  };
+}
+
+function inventoryValue(rawValue) {
+  const trimmedValue = rawValue.trim();
+  const value = normalized(trimmedValue);
+  const prefix = [...EQUIPMENT_NAMES]
+    .sort((left, right) => right.length - left.length)
+    .find((name) => value === name || value.startsWith(`${name} `));
+  return prefix ? trimmedValue.slice(prefix.length).trim() : trimmedValue;
+}
+
+function inventoryAction(data, row: number, itemName: string, amount: number): QuickAction {
+  const quantity = Math.max(0, Number.parseInt(data[INVENTORY.field(row, 'quantite')], 10) || 0);
+  return {
+    type: 'inventory',
+    row,
+    itemName,
+    amount,
+    quantity,
+    title: `Retirer ${amount > 1 ? `${amount} × ` : ''}${itemName}`,
+    detail: `Quantité en stock : ${quantity}`,
+  };
+}
+
+function resolveInventoryAction(rawValue, data): QuickAction | null {
+  const value = inventoryValue(rawValue);
+  if (!value) return null;
+  const rows = range(listRowCount(data, INVENTORY))
+    .map((row) => ({
+      row,
+      itemName: String(data[INVENTORY.field(row, 'nom')] || '').trim(),
+      quantity: Math.max(0, Number.parseInt(data[INVENTORY.field(row, 'quantite')], 10) || 0),
+    }))
+    .filter(({ itemName, quantity }) => itemName && quantity > 0);
+  const exact = rows.find(({ itemName }) => normalized(itemName) === normalized(value));
+  if (exact) return inventoryAction(data, exact.row, exact.itemName, 1);
+
+  const amountMatch = /^(.*?)\s+(\d+)$/u.exec(value);
+  const name = amountMatch?.[1]?.trim() || value;
+  const amount = amountMatch ? Number(amountMatch[2]) : 1;
+  if (!Number.isSafeInteger(amount) || amount < 1 || !name) return null;
+  const match = rows.find(({ itemName }) => normalized(itemName) === normalized(name));
+  return match ? inventoryAction(data, match.row, match.itemName, amount) : null;
+}
+
+function resolveInventoryAddAction(rawValue, data): QuickAction | null {
+  const value = inventoryValue(rawValue);
+  if (!value || value === normalized(rawValue.trim())) return null;
+
+  const rows = range(listRowCount(data, INVENTORY))
+    .map((row) => ({
+      row,
+      itemName: String(data[INVENTORY.field(row, 'nom')] || '').trim(),
+      quantity: Math.max(0, Number.parseInt(data[INVENTORY.field(row, 'quantite')], 10) || 0),
+    }))
+    .filter(({ itemName }) => itemName);
+  const exact = rows.find(({ itemName }) => normalized(itemName) === normalized(value));
+  const amountMatch = /^(.*?)\s+(\d+)$/u.exec(value);
+  const itemName = exact?.itemName || amountMatch?.[1]?.trim() || value;
+  let amount = 1;
+  if (!exact && amountMatch) amount = Number(amountMatch[2]);
+  if (!Number.isSafeInteger(amount) || amount < 1 || !itemName) return null;
+
+  const row = rows.find(({ itemName: candidate }) => normalized(candidate) === normalized(itemName));
+  if (row) {
+    return {
+      type: 'inventory-add',
+      row: row.row,
+      itemName: row.itemName,
+      amount,
+      quantity: row.quantity,
+      title: `Ajouter ${amount > 1 ? `${amount} × ` : ''}${row.itemName}`,
+      detail: `Quantité en stock : ${row.quantity}`,
+    };
+  }
+
+  return {
+    type: 'add',
+    section: 'equipement',
+    names: ['equipement'],
+    buttonLabel: 'Ajouter un objet',
+    fieldPrefix: 'inventaire',
+    fieldSuffix: '_nom',
+    prefillValue: itemName,
+    prefillQuantity: String(amount),
+    title: `Ajouter ${amount > 1 ? `${amount} × ` : ''}${itemName}`,
+    detail: 'Nouvel objet · Équipement',
+  };
+}
+
+function hasInvalidInventoryQuantity(rawValue) {
+  const value = inventoryValue(rawValue);
+  if (normalized(value) === normalized(rawValue.trim())) return false;
+  const quantityMatch = /^(.*?)\s+(\d+)$/u.exec(value);
+  if (!quantityMatch) return false;
+  const quantity = Number(quantityMatch[2]);
+  return !quantityMatch[1].trim() || !Number.isSafeInteger(quantity) || quantity < 1;
+}
+
+function resolveAddAction(rawValue): QuickAction | null {
+  const coinAction = resolveCoinAction(rawValue, 'add');
+  if (coinAction) return coinAction;
+
+  const value = normalized(rawValue.trim());
+  const candidates = ADD_ACTIONS
     .flatMap((action) => action.names.map((name) => ({ action, name })))
     .sort((left, right) => right.name.length - left.name.length);
   const match = candidates.find(({ name }) => value === name || value.startsWith(`${name} `));
   if (match) {
     const remainder = rawValue.trim().slice(match.name.length).trim();
-    if (match.action === COIN_ACTION) {
-      const coinMatch = /^(\d+)?\s*(pc|pa|pe|po|pp)?$/i.exec(remainder);
-      if (!coinMatch) return null;
-      const amount = Number(coinMatch[1] || '1');
-      if (!Number.isSafeInteger(amount) || amount < 1) return null;
-      return { ...COIN_ACTION, amount: String(amount), coin: (coinMatch[2] || 'po').toLowerCase() };
-    }
     return { type: 'add', ...match.action, prefillValue: remainder };
   }
   return null;
@@ -185,7 +326,9 @@ function recognizedAddValueLength(
   const value = normalized(rawValue);
   if (!value) return 0;
   if (actionPrefix.action === COIN_ACTION) {
-    return resolveAddAction(`${actionPrefix.label}${actionPrefix.remainder}`)?.type === 'coin' ? rawValue.length : 0;
+    return resolveCoinAction(`${actionPrefix.label}${actionPrefix.remainder}`, 'remove')?.type === 'coin'
+      ? rawValue.length
+      : 0;
   }
 
   let recognizedLength = 0;
@@ -310,7 +453,7 @@ function sheetSearchEntries(data) {
 }
 
 function quickCommandMatch(query) {
-  const match = /^\s*>\s*([tago]):\s*(.*)$/i.exec(query);
+  const match = /^\s*>\s*([tagor]):\s*(.*)$/i.exec(query);
   return match ? { command: match[1].toLowerCase(), value: match[2] } : null;
 }
 
@@ -321,6 +464,7 @@ function searchContextHint(isQuickCommand, quickCommand, scoped) {
     }
     if (quickCommand?.command === 'g') return 'Choisissez une section à ouvrir.';
     if (quickCommand?.command === 'o') return 'Choisissez l’outil à ouvrir.';
+    if (quickCommand?.command === 'r') return 'Choisissez des pièces ou un objet de l’inventaire à retirer.';
     return '';
   }
   if (scoped.section) {
@@ -331,7 +475,7 @@ function searchContextHint(isQuickCommand, quickCommand, scoped) {
 }
 
 function parseQuickAction(query, data): QuickAction | null {
-  const match = /^\s*>\s*([tag]):\s*(.+)$/i.exec(query);
+  const match = /^\s*>\s*([targ]):\s*(.+)$/i.exec(query);
   if (!match) return null;
   const [, rawCommand, rawValue] = match;
   const command = rawCommand.toLowerCase();
@@ -363,7 +507,12 @@ function parseQuickAction(query, data): QuickAction | null {
   }
 
   if (command === 'a') {
-    return resolveAddAction(rawValue);
+    if (hasInvalidInventoryQuantity(rawValue)) return null;
+    return resolveInventoryAddAction(rawValue, data) || resolveAddAction(rawValue);
+  }
+
+  if (command === 'r') {
+    return resolveCoinAction(rawValue, 'remove') || resolveInventoryAction(rawValue, data);
   }
 
   if (command === 'g') {
@@ -379,7 +528,7 @@ function parseQuickAction(query, data): QuickAction | null {
 }
 
 function quickActionSuggestions(query, data, visibleSections): QuickAction[] {
-  const match = /^\s*>\s*([tago]):\s*(.*)$/i.exec(query);
+  const match = /^\s*>\s*([tagor]):\s*(.*)$/i.exec(query);
   if (!match) return [];
   const [, rawCommand, rawValue] = match;
   const command = rawCommand.toLowerCase();
@@ -411,6 +560,9 @@ function quickActionSuggestions(query, data, visibleSections): QuickAction[] {
   }
 
   if (command === 'a') {
+    if (hasInvalidInventoryQuantity(rawValue)) return [];
+    const resolvedInventoryAction = resolveInventoryAddAction(rawValue, data);
+    if (resolvedInventoryAction) return [resolvedInventoryAction];
     const exact = resolveAddAction(rawValue);
     if (exact) return [exact];
     const options: QuickAction[] = [
@@ -418,6 +570,40 @@ function quickActionSuggestions(query, data, visibleSections): QuickAction[] {
       { ...COIN_ACTION, searchText: `${COIN_ACTION.title} ${COIN_ACTION.names.join(' ')}` },
     ];
     return value ? matchingEntries(options, value, 8) : options;
+  }
+
+  if (command === 'r') {
+    const exact = resolveCoinAction(rawValue, 'remove')
+      || resolveInventoryAction(rawValue, data);
+    if (exact) return [exact];
+    const coinOption: QuickAction = {
+      ...COIN_ACTION,
+      direction: 'remove',
+      title: 'Retirer des pièces',
+      detail: 'Retirer une quantité de la bourse',
+      searchText: `Retirer des pièces ${COIN_ACTION.names.join(' ')}`,
+    };
+    const inventoryQuery = inventoryValue(rawValue);
+    const quantityMatch = /^(.*?)\s+(\d+)$/u.exec(inventoryQuery);
+    const requestedAmount = quantityMatch ? Number(quantityMatch[2]) : 1;
+    if (quantityMatch && (!Number.isSafeInteger(requestedAmount) || requestedAmount < 1 || !quantityMatch[1].trim())) {
+      return [];
+    }
+    const searchValue = quantityMatch ? quantityMatch[1].trim() : inventoryQuery;
+    const inventoryOptions = range(listRowCount(data, INVENTORY))
+      .map((row) => ({
+        row,
+        itemName: String(data[INVENTORY.field(row, 'nom')] || '').trim(),
+        quantity: Math.max(0, Number.parseInt(data[INVENTORY.field(row, 'quantite')], 10) || 0),
+      }))
+      .filter(({ itemName, quantity }) => itemName && quantity > 0)
+      .map(({ row, itemName }) => ({
+        ...inventoryAction(data, row, itemName, requestedAmount),
+        searchText: itemName,
+      }));
+    const options = [coinOption, ...inventoryOptions];
+    const searchTerm = searchValue || (inventoryQuery ? value : '');
+    return searchTerm ? matchingEntries(options, searchTerm, 8) : options.slice(0, 8);
   }
 
   if (command === 'g') {
@@ -441,10 +627,63 @@ function quickActionSuggestions(query, data, visibleSections): QuickAction[] {
   return value ? matchingEntries(options, value, 8) : options;
 }
 
+function QuickActionExample({ action, entries }) {
+  let prefix: string;
+  let argument: string;
+  switch (action.type) {
+    case 'expression':
+      prefix = 't';
+      argument = action.value;
+      break;
+    case 'skill':
+      prefix = 't';
+      argument = action.skill.label;
+      break;
+    case 'save':
+      prefix = 't';
+      argument = withoutIcon(action.ability.label);
+      break;
+    case 'add': {
+      const [name] = action.names;
+      prefix = 'a';
+      argument = `${name}${action.prefillValue ? ` ${action.prefillValue}` : ''}${action.prefillQuantity && action.prefillQuantity !== '1' ? ` ${action.prefillQuantity}` : ''}`;
+      break;
+    }
+    case 'inventory-add':
+      prefix = 'a';
+      argument = `équipement ${action.itemName}${action.amount > 1 ? ` ${action.amount}` : ''}`;
+      break;
+    case 'coin': {
+      const [name] = action.names;
+      prefix = action.direction === 'add' ? 'a' : 'r';
+      argument = `${name} ${action.amount} ${action.coin}`;
+      break;
+    }
+    case 'inventory':
+      prefix = 'r';
+      argument = `${action.itemName}${action.amount > 1 ? ` ${action.amount}` : ''}`;
+      break;
+    case 'goto':
+      prefix = 'g';
+      argument = SECTIONS.find(({ id }) => id === action.section)?.label || action.section;
+      break;
+    case 'tool': {
+      const [name] = action.names;
+      prefix = 'o';
+      argument = name;
+      break;
+    }
+    default:
+      return null;
+  }
+
+  return <SearchExample prefix={prefix} entries={entries}>{argument}</SearchExample>;
+}
+
 function SearchExample({
   prefix, children, filter = false, entries = [],
 }) {
-  const addPrefix = !filter && prefix === 'a' ? addActionPrefix(children) : null;
+  const addPrefix = !filter && (prefix === 'a' || prefix === 'r') ? addActionPrefix(children) : null;
   const recognizedLength = addPrefix ? recognizedAddValueLength(addPrefix, entries) : 0;
   const leadingSpace = addPrefix?.remainder.match(/^\s*/u)?.[0] || '';
   return (
@@ -471,8 +710,10 @@ function highlightedQuery(query, quickSuggestions, entries) {
     const [, commandText] = commandMatch;
     const commandParts = /^([^:\s]*)(?::(\s*)([\s\S]*))?$/u.exec(commandText);
     const [, rawCommand = '', spacing = '', argument = ''] = commandParts || [];
-    const recognizedCommand = /^[tago]$/i.test(rawCommand);
-    const actionPrefix = rawCommand.toLowerCase() === 'a' && resolveAddAction(argument)
+    const command = rawCommand.toLowerCase();
+    const recognizedCommand = /^[tagor]$/i.test(rawCommand);
+    const actionPrefix = ((command === 'a' && resolveAddAction(argument))
+      || (command === 'r' && (resolveCoinAction(argument, 'remove') || addActionPrefix(argument))))
       ? addActionPrefix(argument)
       : null;
     const recognizedLength = actionPrefix ? recognizedAddValueLength(actionPrefix, entries) : 0;
@@ -526,7 +767,7 @@ function highlightedQuery(query, quickSuggestions, entries) {
   );
 }
 
-export default function SheetSearch({ open, onToggle }) {
+export default function SheetSearch({ open, onToggle, notify }) {
   const { data, apply } = useSheet();
   const { roll, rollExpression } = useDice();
   const layout = useMemo(
@@ -606,7 +847,7 @@ export default function SheetSearch({ open, onToggle }) {
   useEffect(() => {
     const trimmedQuery = query.trim();
     const isCommandMode = trimmedQuery.startsWith('>');
-    const hasRecognizedCommand = /^>\s*[tago]\s*:/i.test(trimmedQuery);
+    const hasRecognizedCommand = /^>\s*[tagor]\s*:/i.test(trimmedQuery);
     setSearchHelpOpen(!trimmedQuery || (isCommandMode && !hasRecognizedCommand));
     setActiveResultIndex(0);
   }, [query]);
@@ -632,6 +873,9 @@ export default function SheetSearch({ open, onToggle }) {
             return;
           }
           addButton.click();
+          if (pendingTarget.fieldPrefix === 'inventaire' && !pendingTarget.prefillValue) {
+            notify('✓ Nouvelle ligne d’inventaire créée', 'success');
+          }
           setPendingTarget((current) => (current ? {
             ...current,
             stage: current.prefillValue ? 'fill' : 'focus',
@@ -648,7 +892,16 @@ export default function SheetSearch({ open, onToggle }) {
         }).at(-1);
         if (field && pendingTarget.stage === 'fill') {
           const fieldName = field.getAttribute('data-field');
-          apply((current) => ({ ...current, [fieldName]: pendingTarget.prefillValue }));
+          apply((current) => ({
+            ...current,
+            [fieldName]: pendingTarget.prefillValue,
+            ...(pendingTarget.prefillQuantity
+              ? { [fieldName.replace(/_nom$/u, '_quantite')]: pendingTarget.prefillQuantity }
+              : {}),
+          }));
+          if (pendingTarget.fieldPrefix === 'inventaire') {
+            notify(`✓ Ajout réussi à l’inventaire : ${pendingTarget.prefillQuantity || '1'} × ${pendingTarget.prefillValue}`, 'success');
+          }
           setPendingTarget((current) => (current ? { ...current, stage: 'focus', fieldName } : current));
           return;
         }
@@ -668,7 +921,7 @@ export default function SheetSearch({ open, onToggle }) {
       setPendingTarget(null);
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [apply, pendingTarget]);
+  }, [apply, notify, pendingTarget]);
 
   const openSearchResult = (entry) => {
     window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section: entry.section } }));
@@ -700,20 +953,68 @@ export default function SheetSearch({ open, onToggle }) {
       window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section } }));
       apply((current) => ({ ...current, [foldField(section)]: 'false' }));
       setPendingTarget({
-        selector: `#${sectionAnchor(section)}`, action: 'add', stage: 'add', buttonLabel, fieldPrefix, fieldSuffix, fieldPattern, prefillValue: action.prefillValue,
+        selector: `#${sectionAnchor(section)}`,
+        action: 'add',
+        stage: 'add',
+        buttonLabel,
+        fieldPrefix,
+        fieldSuffix,
+        fieldPattern,
+        prefillValue: action.prefillValue,
+        prefillQuantity: action.prefillQuantity,
       });
+    }
+    if (action.type === 'inventory-add') {
+      const nextQuantity = action.quantity + action.amount;
+      if (!Number.isSafeInteger(nextQuantity)) {
+        notify(`⚠ Quantité trop élevée pour ${action.itemName}`, 'warning');
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section: 'equipement' } }));
+      apply((current) => ({
+        ...current,
+        [INVENTORY.field(action.row, 'quantite')]: String(nextQuantity),
+        [foldField('equipement')]: 'false',
+      }));
+      notify(`✓ Ajout réussi : ${action.amount} × ${action.itemName}`, 'success');
+      setPendingTarget({ selector: `#${sectionAnchor('equipement')}` });
     }
     if (action.type === 'coin') {
       const amount = Number.parseInt(action.amount, 10);
       if (Number.isSafeInteger(amount) && amount > 0) {
+        let changedAmount = amount;
         apply((current) => {
           const stored = Number.parseInt(current[action.coin], 10);
           const currentAmount = Number.isSafeInteger(stored) && stored >= 0 ? stored : 0;
-          const nextAmount = currentAmount + amount;
+          if (action.direction === 'remove') changedAmount = Math.min(amount, currentAmount);
+          const nextAmount = action.direction === 'remove'
+            ? Math.max(0, currentAmount - amount)
+            : currentAmount + amount;
           return Number.isSafeInteger(nextAmount) ? { ...current, [action.coin]: String(nextAmount) } : current;
         });
+        const verb = action.direction === 'remove' ? 'Retrait' : 'Ajout';
+        notify(`✓ ${verb} réussi : ${changedAmount} ${action.coin}`, 'success');
         setPendingTarget({ selector: `#${sectionAnchor('pieces')}`, focus: true });
       }
+    }
+    if (action.type === 'inventory') {
+      if (action.amount > action.quantity) {
+        notify(`⚠ Quantité insuffisante : ${action.itemName} en stock (${action.quantity})`, 'warning');
+        return;
+      }
+      window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section: 'equipement' } }));
+      apply((current) => {
+        const nextQuantity = action.quantity - action.amount;
+        const next = nextQuantity === 0
+          ? withRowRemoved(current, INVENTORY, action.row)
+          : {
+            ...current,
+            [INVENTORY.field(action.row, 'quantite')]: String(nextQuantity),
+          };
+        return { ...next, [foldField('equipement')]: 'false' };
+      });
+      notify(`✓ Retrait réussi : ${action.amount} × ${action.itemName}`, 'success');
+      setPendingTarget({ selector: `#${sectionAnchor('equipement')}` });
     }
     if (action.type === 'goto') {
       window.dispatchEvent(new CustomEvent('sheet-search-reset', { detail: { section: action.section } }));
@@ -725,7 +1026,7 @@ export default function SheetSearch({ open, onToggle }) {
     }
     setQuery('');
     setExpandedResults({});
-    if (action.type !== 'add' && action.type !== 'coin' && action.type !== 'goto') setPendingTarget(null);
+    if (action.type !== 'add' && action.type !== 'inventory-add' && action.type !== 'coin' && action.type !== 'inventory' && action.type !== 'goto') setPendingTarget(null);
     if (action.type !== 'tool') onToggle();
   };
 
@@ -876,8 +1177,14 @@ export default function SheetSearch({ open, onToggle }) {
                             <SearchExample prefix="a" entries={entries}>arme</SearchExample>
                             <SearchExample prefix="a" entries={entries}>capacité</SearchExample>
                             <SearchExample prefix="a" entries={entries}>équipement</SearchExample>
+                            <SearchExample prefix="a" entries={entries}>équipement Potion 3</SearchExample>
                             <SearchExample prefix="a" entries={entries}>lien magique</SearchExample>
                             <SearchExample prefix="a" entries={entries}>pièce 10 po</SearchExample>
+                          </li>
+                          <li>
+                            <span>Retirer un objet de l’inventaire ou des pièces</span>
+                            <SearchExample prefix="r" entries={entries}>équipement</SearchExample>
+                            <SearchExample prefix="r">pieces 10 po</SearchExample>
                           </li>
                           <li>
                             <span>Accéder à une section</span>
@@ -906,7 +1213,7 @@ export default function SheetSearch({ open, onToggle }) {
                 <span className="search-command-error-icon" aria-hidden="true">!</span>
                 <span>
                   <strong>Commande inconnue</strong>
-                  <small>Utilisez &gt;t:, &gt;a:, &gt;g: ou &gt;o:.</small>
+                  <small>Utilisez &gt;t:, &gt;a:, &gt;r:, &gt;g: ou &gt;o:.</small>
                 </span>
               </p>
             )}
@@ -916,15 +1223,20 @@ export default function SheetSearch({ open, onToggle }) {
                   <div className="sheet-search-result-group" data-section="quick-actions" role="group" aria-label="Actions rapides">
                     <h3>Actions rapides</h3>
                     {quickSuggestions.map((action, index) => (
-                      <button type="button" role="option" data-option-index={index} aria-selected={activeResultIndex === index} className={activeResultIndex === index ? 'search-option-active' : undefined} key={`${action.type}-${action.skill?.key || action.ability?.key || action.buttonLabel || action.section || action.value || action.tool || action.coin}`} onClick={() => runQuickAction(action)}>
+                      <button type="button" role="option" data-option-index={index} aria-selected={activeResultIndex === index} className={activeResultIndex === index ? 'search-option-active' : undefined} key={`${action.type}-${action.skill?.key || action.ability?.key || action.buttonLabel || action.section || action.value || action.tool || action.coin || action.row}`} onClick={() => runQuickAction(action)}>
                         <strong>{action.title}</strong>
-                        <span>{action.detail}</span>
+                        <span>
+                          {action.detail}
+                          {' · Exemple : '}
+                          <QuickActionExample action={action} entries={entries} />
+                        </span>
                       </button>
                     ))}
                     {quickSuggestions.length === 0 && quickCommand?.command === 't' && (
                       <p className="search-empty-state" role="status">Saisissez une compétence, une caractéristique ou une formule de dés, comme d20+4.</p>
                     )}
                     {quickSuggestions.length === 0 && quickCommand?.command === 'a' && <p className="search-empty-state" role="status">Aucun élément à ajouter ne correspond à cette recherche.</p>}
+                    {quickSuggestions.length === 0 && quickCommand?.command === 'r' && <p className="search-empty-state" role="status">Aucune pièce ou aucun objet disponible ne correspond à cette recherche.</p>}
                     {quickSuggestions.length === 0 && quickCommand?.command === 'g' && <p className="search-empty-state" role="status">Aucune section ne correspond à cette recherche.</p>}
                     {quickSuggestions.length === 0 && quickCommand?.command === 'o' && <p className="search-empty-state" role="status">Aucun outil ne correspond à cette recherche.</p>}
                   </div>

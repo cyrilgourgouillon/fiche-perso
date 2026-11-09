@@ -14,6 +14,28 @@
   text-transform: uppercase;
   margin-bottom: 6px;
 }
+.skills-sort-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.skill-sort-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-light);
+  font: 600 11px var(--ui-font);
+}
+.skill-sort-select {
+  max-width: 190px;
+  min-height: 30px;
+  padding: 3px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--parch-dark);
+  font: 500 12px var(--ui-font);
+}
 .skills-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -63,4 +85,3 @@
   color: var(--gold);
   font-style: italic;
 }
-

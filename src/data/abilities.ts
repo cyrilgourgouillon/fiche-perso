@@ -27,3 +27,22 @@ export const SKILLS = [
   { key: 'representation', label: 'Représentation', ability: 'charisme' },
   { key: 'tromperie', label: 'Tromperie', ability: 'charisme' },
 ];
+
+export type SkillSortOrder = 'name' | 'ability';
+
+export const SKILL_SORT_OPTIONS: { value: SkillSortOrder; label: string }[] = [
+  { value: 'name', label: 'Nom' },
+  { value: 'ability', label: 'Caractéristique puis nom' },
+];
+
+export const sortSkills = (skills: typeof SKILLS, order: SkillSortOrder = 'name') => {
+  const abilityOrder = new Map(ABILITIES.map(({ key }, index) => [key, index]));
+  return [...skills].sort((left, right) => {
+    if (order === 'ability') {
+      const abilityDifference = (abilityOrder.get(left.ability) ?? Infinity)
+        - (abilityOrder.get(right.ability) ?? Infinity);
+      if (abilityDifference !== 0) return abilityDifference;
+    }
+    return left.label.localeCompare(right.label, 'fr', { sensitivity: 'base' });
+  });
+};

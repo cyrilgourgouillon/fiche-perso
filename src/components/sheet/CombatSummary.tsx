@@ -292,6 +292,7 @@ export default function CombatSummary({ onBack }) {
                   >
                     <span>
                       Niveau
+                      {' '}
                       {slot.spellLevel}
                     </span>
                     <div className="summary-slot-boxes">

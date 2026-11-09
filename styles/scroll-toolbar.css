@@ -4,9 +4,11 @@
 
 #save-status {
   position: fixed;
-  z-index: 1000;
+  top: auto;
+  right: auto;
   left: 50%;
   bottom: max(16px, env(safe-area-inset-bottom));
+  margin: 0;
   max-width: min(480px, calc(100vw - 24px));
   padding: 10px 16px;
   border: 1px solid var(--gold-light);

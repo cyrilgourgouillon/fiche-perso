@@ -151,6 +151,26 @@ export default function SettingsModal({
         </p>
       </section>
 
+      <section className="settings-section" aria-labelledby="settings-compact-title">
+        <h3 id="settings-compact-title">Affichage compact</h3>
+        <label className="settings-compact-toggle">
+          <input
+            type="checkbox"
+            checked={data.compact_weapons === 'true'}
+            onChange={(event) => update('compact_weapons', event.target.checked ? 'true' : 'false')}
+          />
+          <span>Armes</span>
+        </label>
+        <label className="settings-compact-toggle">
+          <input
+            type="checkbox"
+            checked={data.compact_spells === 'true'}
+            onChange={(event) => update('compact_spells', event.target.checked ? 'true' : 'false')}
+          />
+          <span>Sorts mineurs et sorts pr&eacute;par&eacute;s</span>
+        </label>
+      </section>
+
       <section className="settings-section" aria-labelledby="settings-order-title">
         <div className="settings-section-heading">
           <div>
