@@ -291,7 +291,9 @@ export default function CombatSummary({ onBack }) {
                     className="summary-slot-level"
                   >
                     <span>
-                      Niveau {slot.spellLevel}
+                      Niveau
+                      {' '}
+                      {slot.spellLevel}
                     </span>
                     <div className="summary-slot-boxes">
                       {range(slot.total).map((slotIndex) => (
