@@ -44,6 +44,10 @@ function SearchHelp({ expanded, onToggle, entries }: SearchHelpProps) {
               <i className="is-query" aria-hidden="true" />
               Texte recherché
             </span>
+            <span>
+              <i className="is-quantity" aria-hidden="true" />
+              Quantité comprise
+            </span>
           </div>
           <div id="search-help-content" className="search-help-groups">
             <section className="search-help-group" aria-labelledby="search-help-plain-title">

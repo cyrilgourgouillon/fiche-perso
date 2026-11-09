@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { SECTIONS } from '../../../data/sections';
 import { normalized, SECTION_FILTERS } from '../../../services/search';
 import {
-  parseCommand, recognizedValueLength, syntaxKeyword,
+  isPositiveAmount, parseCommand, recognizedValueLength, syntaxKeyword,
 } from '../../../services/searchCommands';
 import type { QuickAction } from '../../../services/searchCommands';
 import { withoutIcon } from '../../../services/searchIndex';
@@ -15,14 +15,34 @@ const NO_ENTRIES: Entries = [];
 /** `sort` keyword, then the part naming something on the sheet, then free text. */
 function KeywordArgument({ command, argument, entries }: { command: string; argument: string; entries: Entries }) {
   const keyword = useMemo(() => syntaxKeyword(command, argument), [command, argument]);
-  const recognizedLength = useMemo(() => (keyword ? recognizedValueLength(keyword, entries) : 0), [keyword, entries]);
   if (!keyword) return null;
-  const recognizedEnd = (keyword.remainder.match(/^\s*/u)?.[0].length || 0) + recognizedLength;
+
+  const leadingSpace = keyword.remainder.match(/^\s*/u)?.[0].length || 0;
+  const remainder = keyword.remainder.slice(leadingSpace);
+  const exactEntry = entries.some((entry) => (
+    entry.section === keyword.target.section && normalized(entry.title) === normalized(remainder.trimEnd())
+  ));
+  const quantityMatch = /^(.*?)\s+(\d+)$/u.exec(remainder.trimEnd());
+  const hasQuantity = Boolean(
+    !exactEntry && quantityMatch?.[1].trim() && isPositiveAmount(Number(quantityMatch[2])),
+  );
+  const value = hasQuantity ? quantityMatch?.[1].trimEnd() || '' : remainder;
+  const recognizedLength = recognizedValueLength({ ...keyword, remainder: value }, entries);
   return (
     <>
       <span className="search-token-argument is-valid">{keyword.label}</span>
-      {recognizedLength > 0 && <span className="search-token-argument is-recognized-value">{keyword.remainder.slice(0, recognizedEnd)}</span>}
-      {recognizedEnd < keyword.remainder.length && <span className="search-token-argument is-user-text">{keyword.remainder.slice(recognizedEnd)}</span>}
+      {remainder && (
+        <span className="search-token-keyword-remainder">
+          {recognizedLength > 0 && <span className="search-token-argument is-recognized-value">{value.slice(0, recognizedLength)}</span>}
+          {recognizedLength < value.length && <span className="search-token-argument is-user-text">{value.slice(recognizedLength)}</span>}
+          {hasQuantity && (
+            <>
+              <span> </span>
+              <span className="search-token-argument is-quantity">{quantityMatch?.[2]}</span>
+            </>
+          )}
+        </span>
+      )}
     </>
   );
 }

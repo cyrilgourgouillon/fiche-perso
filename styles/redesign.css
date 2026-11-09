@@ -2410,7 +2410,7 @@ select.ef {
 .app-modal--search .search-input-block { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .app-modal--shortcuts .app-modal-content { max-height: min(80dvh, calc(100dvh - 40px)); padding: 22px; }
 .app-modal-actions kbd, .keyboard-shortcut-list kbd, .shortcuts-note kbd { padding: 3px 7px; border: 1px solid var(--border); border-radius: 6px; color: var(--ink-light); background: color-mix(in srgb, var(--parch-dark) 60%, white); font: 600 11px var(--ui-font); white-space: nowrap; }
-.global-search-panel { --search-token-command: #174e82; --search-token-valid: #17623a; --search-token-invalid: #9a211d; --search-token-query: #433a86; }
+.global-search-panel { --search-token-command: #174e82; --search-token-valid: #17623a; --search-token-invalid: #9a211d; --search-token-query: #433a86; --search-token-quantity: #a45b0a; }
 .global-search-panel .sheet-search { gap: 0; }
 .search-help { margin-top: 12px; padding: 11px 13px; border: 1px solid color-mix(in srgb, var(--border) 78%, var(--gold)); border-radius: 10px; background: color-mix(in srgb, var(--parch-dark) 32%, var(--parch)); font: 400 12px/1.45 var(--ui-font); }
 .search-help-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 10px; border: 0; padding: 0; color: var(--ink); background: transparent; font: 700 12px/1.45 var(--ui-font); text-align: left; cursor: pointer; }
@@ -2423,6 +2423,7 @@ select.ef {
 .search-help-legend i.is-valid { background: var(--search-token-valid); }
 .search-help-legend i.is-invalid { background: var(--search-token-invalid); }
 .search-help-legend i.is-query { background: var(--search-token-query); }
+.search-help-legend i.is-quantity { background: var(--search-token-quantity); }
 .search-help-groups { display: grid; gap: 10px; margin-top: 10px; }
 .search-help-group { min-width: 0; padding: 9px 10px; border: 1px solid color-mix(in srgb, var(--border) 80%, white); border-radius: 8px; background: color-mix(in srgb, var(--parch) 78%, white); }
 .search-help-group h3 { margin: 0 0 7px; color: var(--ink); font: 750 13px/1.35 var(--ui-font); letter-spacing: 0.025em; }
@@ -2442,8 +2443,10 @@ select.ef {
 .search-token-separator { color: var(--search-token-command); }
 .search-token-argument.is-valid { color: var(--search-token-valid); font-weight: 650; }
 .search-token-argument.is-invalid { color: var(--search-token-invalid); text-decoration: underline wavy color-mix(in srgb, var(--search-token-invalid) 55%, transparent); text-underline-offset: 3px; }
-.search-token-argument.is-user-text { color: #20231f; font-weight: 500; }
+.search-token-argument.is-user-text { color: var(--search-token-query); font-weight: 600; }
 .search-token-argument.is-recognized-value { color: var(--search-token-query); font-weight: 650; }
+.search-token-keyword-remainder { margin-inline-start: 0.3em; }
+.search-token-argument.is-quantity { color: var(--search-token-quantity); font-weight: 650; }
 .search-token-argument.is-pending { color: var(--ink-light); }
 .search-token-argument.is-query,
 .search-token-query { color: var(--search-token-query); }
@@ -2455,9 +2458,10 @@ select.ef {
 }
 .global-search-panel .sheet-search-results button .search-token-argument.is-valid { color: var(--search-token-valid); }
 .global-search-panel .sheet-search-results button .search-token-argument.is-invalid { color: var(--search-token-invalid); }
-.global-search-panel .sheet-search-results button .search-token-argument.is-user-text { color: #20231f; }
+.global-search-panel .sheet-search-results button .search-token-argument.is-user-text { color: var(--search-token-query); font-weight: 600; }
 .global-search-panel .sheet-search-results button .search-token-argument.is-recognized-value,
 .global-search-panel .sheet-search-results button .search-token-argument.is-query { color: var(--search-token-query); }
+.global-search-panel .sheet-search-results button .search-token-argument.is-quantity { color: var(--search-token-quantity); }
 .global-search-panel .sheet-search-results button .search-token-argument.is-pending { color: var(--ink-light); }
 .search-command-error { display: flex; align-items: center; gap: 11px; margin: 0 4px; padding: 12px 14px; border: 1px solid #ad322d; border-left: 4px solid #ad322d; border-radius: 10px; color: #70211e; background: #fff0ed; box-shadow: 0 4px 12px rgba(112, 33, 30, 0.12); font: 500 13px/1.4 var(--ui-font); }
 .search-command-error-icon { width: 25px; height: 25px; flex: 0 0 25px; display: grid; place-items: center; border-radius: 50%; color: white; background: #ad322d; font: 800 16px/1 var(--ui-font); }
