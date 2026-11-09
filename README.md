@@ -31,13 +31,16 @@ ou importée au format JSON. L’interface est entièrement en français.
 npm install
 npm run dev      # http://localhost:5173/fiche-perso/
 npm run lint
+npm run typecheck
 npm test
 npm run build
 npm run preview
 ```
 
 Les dépendances sont React 19 et Vite. ESLint applique les règles Airbnb adaptées à TypeScript
-et React. Les tests utilisent le runner natif de Node.js.
+et React, et `npm run typecheck` vérifie les types avec `tsc` (la CI lance les deux). Les tests
+utilisent le runner natif de Node.js. Les polices sont embarquées via Fontsource, sans appel
+réseau, pour que l’application fonctionne hors ligne dès le premier lancement.
 
 ## Organisation du code
 
@@ -49,7 +52,8 @@ et React. Les tests utilisent le runner natif de Node.js.
 - `src/utils/` contient les utilitaires génériques sans dépendance au domaine de la fiche.
 - `styles/` contient les feuilles de style par zone. `style.css` est leur point d’entrée : l’ordre des imports
   définit la cascade et doit être conservé lors de changements CSS.
-- `src/services/*.test.js` contient les tests du runner natif Node.js. `npm test` les exécute.
+- les fichiers `*.test.ts` (dans `src/services/` et `src/data/`) contiennent les tests du runner natif
+  Node.js. `npm test` les exécute.
 - `public/` contient les ressources statiques copiées telles quelles dans la sortie de production.
 
 Gardez la logique métier hors des composants lorsque celle-ci peut être partagée ou testée seule, et
@@ -58,7 +62,9 @@ sont générés par Vite et ne doivent pas être modifiés à la main.
 
 ## Fonctionnement des données
 
-La fiche est enregistrée sous la clé `perso_sheet` du navigateur. Le format v2 regroupe les
+La fiche est enregistrée sous la clé `perso_sheet` du navigateur, quelques centaines de millisecondes
+après la dernière frappe (et immédiatement quand l’onglet est masqué ou fermé). Une fiche modifiée
+dans un autre onglet est reprise automatiquement. Le format v2 regroupe les
 attributs selon les modules de la fiche : `character`, `life`, `characteristics`, `combat`,
 `spells`, `spellSlots`, `weapons`, `classFeatures`, `equipment`, `proficiencies`, `quests`, `notes`
 et `settings`. Les collections liées à un module sont stockées dans ce module sous forme de tableaux.
@@ -93,7 +99,10 @@ et `settings`. Les collections liées à un module sont stockées dans ce module
 }
 ```
 
-Les cases à cocher restent enregistrées sous forme de chaînes `'true' / 'false'`. Les tableaux
+Les cases à cocher restent enregistrées sous forme de chaînes `'true' / 'false'`. À l’import, les
+nombres et booléens sont convertis en texte et les valeurs inutilisables (objets, `null`) ignorées.
+L’export téléchargé contient `metadata.generatedAt` ; la sauvegarde locale et le fichier lié n’en ont
+pas, pour ne changer que lorsque la fiche change. Les tableaux
 utilisent un objet par ligne pour conserver ensemble les champs d’une même entrée.
 
 L’import accepte ce format, l’ancien format de production `{ metadata, data }`, les anciennes maps
@@ -104,7 +113,8 @@ sont converties vers le modèle utilisé par l’interface ; les prochaines sauv
 Sur les navigateurs de bureau compatibles avec la File System Access API, « Lier un fichier »
 permet de lire et d’écrire directement la fiche liée. Les changements sont enregistrés après
 300 ms et les modifications faites ailleurs sont détectées toutes les 2 secondes ou au retour
-du focus. En cas de conflit, le fichier sur disque prévaut. Le lien est mémorisé dans IndexedDB ;
+du focus. À la liaison ou à la reconnexion, si la fiche du navigateur diffère du fichier, l’application demande
+laquelle garder. Pendant la liaison, si le fichier change ailleurs, le fichier sur disque prévaut. Le lien est mémorisé dans IndexedDB ;
 après redémarrage, utilisez « Reconnecter » si le navigateur redemande l’autorisation. Sur les
 autres navigateurs, l’import et l’export JSON habituels restent disponibles.
   

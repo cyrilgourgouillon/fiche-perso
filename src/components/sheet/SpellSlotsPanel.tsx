@@ -30,8 +30,7 @@ export default function SpellSlotsPanel() {
           <div className="slot-row" key={spellLevel}>
             <div className="slot-label">
               <label htmlFor={spellSlotOverrideField(spellLevel)}>
-                Niveau
-                {spellLevel}
+                {`Niveau ${spellLevel}`}
               </label>
               <span>
                 Dépensés :

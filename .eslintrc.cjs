@@ -66,6 +66,13 @@ module.exports = {
   },
   overrides: [
     {
+      // build configuration and tests only run with the dev dependencies installed
+      files: ['vite.config.ts', '**/*.test.ts'],
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      },
+    },
+    {
       files: ['**/*.{ts,tsx}'],
       rules: {
         'no-undef': 'off',

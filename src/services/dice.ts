@@ -1,7 +1,8 @@
 /** Dice rolling. Everything here is a plain value — no React, no storage. */
 
 const D20 = 20;
-const MAX_DICE_PER_ROLL = 20;
+/** More dice than this is a typo, not a roll — an expression asking for more is rejected. */
+export const MAX_DICE_PER_ROLL = 20;
 
 /** Uniform in 1..sides. */
 export const rollDie = (sides) => Math.floor(Math.random() * sides) + 1;
@@ -14,7 +15,7 @@ const total = (dice, modifier) => sum(dice) + modifier;
  * A plain roll of `count` dice, e.g. the tray's buttons.
  * Returns the shape every roll shares: `{ label, dice, kept, modifier, total }`.
  */
-export const rollDice = (sides, count = 1, { label } = {}) => {
+export const rollDice = (sides: number, count = 1, { label }: { label?: string } = {}) => {
   const dice = Array.from({ length: Math.min(count, MAX_DICE_PER_ROLL) }, () => rollDie(sides));
   return {
     label: label || `${dice.length}d${sides}`,
@@ -42,7 +43,10 @@ export const rollCheck = ({ label, bonus = 0, mode = 'normal' }) => {
 
 const DICE_EXPRESSION = /^\s*(\d*)\s*d\s*(\d+)\s*(?:([+-])\s*(\d+))?\s*$/i;
 
-/** Parses `2d6+3`, `d20`, `1d8 - 1`. Returns `null` when it is not a dice expression. */
+/**
+ * Parses `2d6+3`, `d20`, `1d8 - 1`. Returns `null` when it is not a dice expression,
+ * or when it asks for more than {@link MAX_DICE_PER_ROLL} dice.
+ */
 export const parseDiceExpression = (input) => {
   const match = DICE_EXPRESSION.exec(input || '');
   if (!match) return null;
@@ -53,7 +57,7 @@ export const parseDiceExpression = (input) => {
     sides: Number(sides),
     modifier: modifier ? Number(modifier) * (sign === '-' ? -1 : 1) : 0,
   };
-  return parsed.sides > 0 && parsed.count > 0 ? parsed : null;
+  return parsed.sides > 0 && parsed.count > 0 && parsed.count <= MAX_DICE_PER_ROLL ? parsed : null;
 };
 
 /** Rolls a typed expression such as the damage line of a weapon. */

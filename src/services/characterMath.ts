@@ -20,7 +20,13 @@ const override = (value) => {
   return value === '' || value === undefined || !Number.isFinite(parsed) ? null : parsed;
 };
 
-export const abilityModifier = (score) => Math.floor((Number(score || DEFAULT_ABILITY_SCORE) - DEFAULT_ABILITY_SCORE) / 2);
+/** A blank or unreadable score counts as the average 10 rather than showing NaN. */
+export const abilityScore = (score) => {
+  const parsed = Number(score);
+  return score === '' || score === undefined || score === null || !Number.isFinite(parsed) ? DEFAULT_ABILITY_SCORE : parsed;
+};
+
+export const abilityModifier = (score) => Math.floor((abilityScore(score) - DEFAULT_ABILITY_SCORE) / 2);
 
 export const formatModifier = (value) => `${value >= 0 ? '+' : ''}${value}`;
 
@@ -34,7 +40,10 @@ export const proficiencyBonus = (data) => override(data.bonus_maitrise) ?? deriv
 export const savingThrowBonus = (data, ability) => abilityModifier(data[ability]) + (isFlagged(data, `save_${ability}`) ? proficiencyBonus(data) : 0);
 
 /** Expertise / half-proficiency multiplier stored alongside each skill. */
-const skillMultiplier = (data, skill) => Number(data[`${skill}_particularite`] || 1);
+const skillMultiplier = (data, skill) => {
+  const multiplier = Number(data[`${skill}_particularite`]);
+  return Number.isFinite(multiplier) && multiplier >= 1 ? Math.floor(multiplier) : 1;
+};
 
 export const skillBonus = (data, { key, ability }) => abilityModifier(data[ability])
   + (isFlagged(data, key) ? proficiencyBonus(data) * skillMultiplier(data, key) : 0);

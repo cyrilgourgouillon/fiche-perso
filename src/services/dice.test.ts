@@ -71,7 +71,8 @@ describe('dice', () => {
     assert.deepEqual(parseDiceExpression(' 2d6 + 3 '), { count: 2, sides: 6, modifier: 3 });
     assert.deepEqual(parseDiceExpression('d20'), { count: 1, sides: 20, modifier: 0 });
     assert.deepEqual(parseDiceExpression('1d8 - 1'), { count: 1, sides: 8, modifier: -1 });
-    for (const expression of ['', '2d6+3d4', '0d6', 'd0', '2d6+-1', '1d6.5']) {
+    assert.deepEqual(parseDiceExpression('20d6'), { count: 20, sides: 6, modifier: 0 });
+    for (const expression of ['', '2d6+3d4', '0d6', 'd0', '2d6+-1', '1d6.5', '21d6', '100d6']) {
       assert.equal(parseDiceExpression(expression), null, expression);
     }
   });

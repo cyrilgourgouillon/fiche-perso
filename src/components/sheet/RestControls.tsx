@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Modal from '../common/Modal';
-import { afterLongRest, afterShortRest } from '../../services/rest';
+import { afterLongRest, afterShortRest, classFeatureUsedFields } from '../../services/rest';
 import { useSheet } from '../../context/SheetContext';
 import { spellSlotRows, usesPactMagic } from '../../services/spellSlots';
 
@@ -9,13 +9,13 @@ const RESTS = [
   {
     icon: '☕',
     name: 'Repos court',
-    effect: 'Efface les jets de sauvegarde contre la mort',
+    effect: 'Efface les jets de sauvegarde contre la mort et récupère les capacités « repos court »',
     transform: afterShortRest,
   },
   {
     icon: '🌙',
     name: 'Repos long',
-    effect: 'PV au maximum, PV temporaires effacés, emplacements de sorts récupérés',
+    effect: 'PV au maximum, PV temporaires effacés, dés de vie, emplacements de sorts et capacités récupérés',
     transform: afterLongRest,
   },
 ];
@@ -37,13 +37,11 @@ function restChanges(data, nextData, rest) {
     if (before !== after) changes.push({ label: `Jets de sauvegarde contre la mort, ${label.toLowerCase()}`, before, after });
   });
 
-  Object.keys(data).forEach((field) => {
-    const match = field.match(/^capacite(\d+)_repos_(court|long)$/);
-    if (!match || match[2] !== rest || !marked(data[field])) return;
-    const usedField = `capacite_utilisee${match[1]}`;
+  classFeatureUsedFields(data, rest).forEach((usedField) => {
     if (!marked(data[usedField]) || marked(nextData[usedField])) return;
+    const row = usedField.replace('capacite_utilisee', '');
     changes.push({
-      label: data[`capacite${match[1]}`] || `Capacité ${match[1]}`,
+      label: String(data[`capacite${row}`] || `Capacité ${row}`),
       before: 'Utilisée',
       after: 'Disponible',
     });

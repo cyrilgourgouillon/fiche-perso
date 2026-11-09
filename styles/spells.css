@@ -1,8 +1,6 @@
 /* ── SORTS ── */
 .spell-meta-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
   margin-bottom: 10px;
 }
 
@@ -15,14 +13,8 @@
 .spell-flags {
   white-space: nowrap;
 }
-.spell-flags label {
-  font-size: 12px;
-}
-.spell-flags .spell-cantrip { color: var(--gold-light); font-weight: 700; }
+.spell-flags .spell-cantrip { color: var(--gold-text); font-weight: 700; }
 .spell-flags input[type='checkbox'] {
-  accent-color: var(--red);
-  width: 15px;
-  height: 15px;
   margin: 0 2px;
 }
 .spell-filter-row {
@@ -52,13 +44,6 @@
 /* ── SORTS EMPLACEMENTS ── */
 .spell-slots {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-}
-.spell-slots-help {
-  margin: -4px 0 8px;
-  font-size: 15px;
-  color: var(--ink-light);
 }
 .spell-slots-pact {
   display: flex;
@@ -74,46 +59,27 @@
   height: 16px;
   accent-color: var(--red);
 }
-.slot-row {
-  background: var(--parch-dark);
-  border: 1px solid rgba(122, 92, 46, 0.4);
-  border-radius: 2px;
-  padding: 4px 6px;
-}
 .slot-label {
   display: flex;
   justify-content: space-between;
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
-  letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold);
 }
 .slot-label span {
-  font-family: Georgia, serif;
   letter-spacing: 0;
-  color: var(--ink-light);
 }
 .slot-override {
   display: flex;
   align-items: center;
-  gap: 5px;
   margin-top: 3px;
-  color: var(--ink-light);
-  font-size: 12px;
 }
 .slot-override input {
   width: 42px;
   padding: 1px 3px;
   border: 1px solid var(--border);
-  border-radius: 2px;
   color: var(--ink);
-  background: var(--parch);
-  font: inherit;
 }
 .slot-override button {
   border: 0;
-  color: var(--red);
   background: transparent;
   font: inherit;
   text-decoration: underline;
@@ -121,15 +87,7 @@
 }
 .slot-boxes {
   display: flex;
-  gap: 3px;
-  margin-top: 3px;
   flex-wrap: wrap;
-}
-/* the most-clicked boxes on the sheet: worth the extra pixels */
-.slot-boxes input[type='checkbox'] {
-  accent-color: var(--red);
-  width: 18px;
-  height: 18px;
 }
 .slot-none {
   color: var(--ink-light);

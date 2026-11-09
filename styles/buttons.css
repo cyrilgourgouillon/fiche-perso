@@ -7,32 +7,15 @@
  * what is actually about resting.
  */
 .sheet-button {
-  padding: 6px 8px;
-  background: var(--parch-mid);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  color: var(--red);
-  font-family: 'Cinzel', serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    border-color 0.2s,
-    color 0.2s;
 }
 .sheet-button:hover:not(:disabled) {
-  background: var(--parch-dark);
   border-color: var(--gold);
-  color: var(--gold);
 }
 .sheet-button:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 .sheet-button:disabled {
-  opacity: 0.45;
   cursor: not-allowed;
 }

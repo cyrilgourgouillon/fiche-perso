@@ -290,11 +290,10 @@
 .app-modal-content { max-height: min(820px, calc(100dvh - 32px)); overflow-y: auto; padding: 28px; font-family: var(--ui-font); font-size: 15px; line-height: 1.45; }
 .app-modal-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
 .app-modal-heading h2 { margin: 0; color: var(--red); font: 600 27px var(--display-font); }
-.app-modal-eyebrow { margin: 0 0 5px; color: var(--gold); font: 700 12px var(--ui-font); letter-spacing: .16em; text-transform: uppercase; }
+.app-modal-eyebrow { margin: 0 0 5px; color: var(--gold-text); font: 700 12px var(--ui-font); letter-spacing: .16em; text-transform: uppercase; }
 .app-modal-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
 .app-modal-close { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; padding: 0; border: 1px solid var(--border); border-radius: 10px; color: var(--red); background: var(--parch-mid); font: 27px/1 var(--ui-font); cursor: pointer; }
 .app-modal-close:hover { border-color: var(--gold); background: var(--parch-dark); }
-.app-modal-close:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .app-modal-popup--reference .quick-reference-panel { width: auto; max-height: none; overflow: visible; margin: 0; padding: 16px 0 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; font-family: var(--ui-font); }
 .app-modal-popup--appearance .appearance-panel-content { padding-top: 16px; }
 .app-modal-popup--navigation .sheet-nav { position: static; top: auto; display: flex; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 0; width: auto; min-height: 0; max-height: none; overflow: visible; margin: 0; padding: 16px 0 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; }
@@ -345,7 +344,7 @@
 }
 .settings-layout-block-fixed { background: color-mix(in srgb, var(--gold) 9%, var(--parch)); }
 .settings-tile-name { display: flex; min-width: 0; flex: 1; align-items: center; gap: 9px; color: var(--ink); font: 500 14px/1.35 var(--ui-font); }
-.settings-tile-name strong { min-width: 20px; color: var(--gold); font-size: 11px; letter-spacing: .06em; }
+.settings-tile-name strong { min-width: 20px; color: var(--gold-text); font-size: 11px; letter-spacing: .06em; }
 .settings-tile-name small { display: block; margin-top: 3px; color: var(--ink-light); font: 12px var(--ui-font); }
 .settings-layout-block .settings-tile-name { flex-wrap: wrap; }
 .settings-tile-name .settings-width-label { flex: 0 0 auto; margin: 0; padding: 3px 7px; border-radius: 999px; color: var(--red); background: color-mix(in srgb, var(--red) 9%, var(--parch)); font: 700 10px/1.2 var(--ui-font); white-space: nowrap; }

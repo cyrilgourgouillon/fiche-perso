@@ -72,7 +72,7 @@ function WeaponRow({
           name={WEAPONS.field(index, 'nom')}
           className="ef spell-name"
           placeholder="Nom de l'arme"
-          aria-label={`Nom de l&apos;arme ${index + 1}`}
+          aria-label={`Nom de l’arme ${index + 1}`}
         />
         <AideddSearchButton fieldName={WEAPONS.field(index, 'nom')} />
         <FoldButton

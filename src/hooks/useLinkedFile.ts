@@ -12,6 +12,10 @@ import {
   storeHandle,
   writeFile,
 } from '../services/linkedFile';
+import type { NotifyStatus } from './useStatusMessage';
+
+type IsCurrent = () => boolean;
+const always: IsCurrent = () => true;
 
 const WRITE_DELAY_MS = 300;
 const POLL_INTERVAL_MS = 2000;
@@ -25,7 +29,29 @@ const log = {
 
 const formatTime = (timestamp) => new Date(timestamp).toLocaleTimeString();
 
-export function useLinkedFile({ data, onLoad, notify }) {
+// eslint-disable-next-line no-alert -- the native dialog is enough for this rare, blocking choice
+const askBrowser = (message: string) => window.confirm(message);
+
+/** The sheet holds something worth keeping — an empty or untouched one never conflicts. */
+const hasContent = (sheet) => Object.entries(sheet).some(([key, value]) => (
+  !['theme', 'textarea_mode', 'reduce_motion'].includes(key) && value !== '' && value !== 'false'
+));
+
+interface UseLinkedFileOptions {
+  data: Record<string, any>;
+  onLoad: (sheet: Record<string, any>) => void;
+  notify: NotifyStatus;
+  /**
+   * When connecting, the browser copy and the file can disagree (edits made while the
+   * link waited for "Reconnecter"). Returns `true` to keep the browser copy and write
+   * it to the file, `false` to load the file. `window.confirm` by default.
+   */
+  confirmKeepLocal?: (message: string) => boolean;
+}
+
+export function useLinkedFile({
+  data, onLoad, notify, confirmKeepLocal = askBrowser,
+}: UseLinkedFileOptions) {
   const [handle, setHandle] = useState(null);
   const [status, setStatus] = useState('none');
   const baselineText = useRef(null);
@@ -33,8 +59,10 @@ export function useLinkedFile({ data, onLoad, notify }) {
   const busy = useRef(false);
   const restored = useRef(false);
   const connectionVersion = useRef(0);
+  const currentData = useRef(data);
+  currentData.current = data;
 
-  const load = useCallback(async (target, fileContents, isCurrent = () => true) => {
+  const load = useCallback(async (target, fileContents, isCurrent: IsCurrent = always) => {
     const { text, modifiedAt } = fileContents || await readFile(target);
     const sheet = parseSheet(text);
     if (!isCurrent()) return false;
@@ -49,11 +77,35 @@ export function useLinkedFile({ data, onLoad, notify }) {
     return true;
   }, [onLoad]);
 
+  /**
+   * Reads the file on connection. When it disagrees with the sheet in the browser the
+   * player chooses which one wins, instead of silently losing the browser edits.
+   */
+  const loadOrKeepLocal = useCallback(async (target, isCurrent) => {
+    const fileContents = await readFile(target);
+    const local = currentData.current;
+    const differs = hasContent(local)
+      && serializeSheet(parseSheet(fileContents.text)) !== serializeSheet(local);
+    if (differs && confirmKeepLocal(
+      `La fiche du navigateur diffère de ${target.name}.\n\n`
+      + `OK : garder la fiche du navigateur et l’écrire dans ${target.name}.\n`
+      + `Annuler : charger ${target.name} (les modifications du navigateur seront perdues).`,
+    )) {
+      if (!isCurrent()) return false;
+      baselineText.current = fileContents.text;
+      // `data` is not what the file holds: the write effect saves it on connection
+      loadedSheet.current = null;
+      log.info(`fiche du navigateur conservée, ${target.name} sera réécrit`);
+      return true;
+    }
+    return load(target, fileContents, isCurrent);
+  }, [load, confirmKeepLocal]);
+
   const connect = useCallback(async (target) => {
     connectionVersion.current += 1;
     const version = connectionVersion.current;
     try {
-      if (!(await load(target, undefined, () => version === connectionVersion.current))) return false;
+      if (!(await loadOrKeepLocal(target, () => version === connectionVersion.current))) return false;
     } catch (error) {
       log.error(`lecture de ${target.name} impossible`, error);
       notify(`⚠ ${target.name} illisible`, 'error');
@@ -64,9 +116,9 @@ export function useLinkedFile({ data, onLoad, notify }) {
     notify(`🔗 ${target.name} lié`, 'success');
     log.info(`lié à ${target.name} — vérification toutes les ${POLL_INTERVAL_MS / 1000} s et au focus`);
     return true;
-  }, [load, notify]);
+  }, [loadOrKeepLocal, notify]);
 
-  const refresh = useCallback(async (target, message, isCurrent = () => true) => {
+  const refresh = useCallback(async (target, message, isCurrent: IsCurrent = always) => {
     const fileContents = await readFile(target);
     if (!isCurrent() || fileContents.text === baselineText.current) return false;
     log.info(`${target.name} modifié ailleurs`, {

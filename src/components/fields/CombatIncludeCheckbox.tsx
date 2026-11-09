@@ -5,7 +5,7 @@ export default function CombatIncludeCheckbox({
   name, defaultChecked = false, defaultField, ...props
 }) {
   const { data, update } = useSheet();
-  const initialValue = defaultField ? data[defaultField]?.trim() : defaultChecked;
+  const initialValue = defaultField ? String(data[defaultField] ?? '').trim() : defaultChecked;
   const checked = data[name] === undefined ? Boolean(initialValue) : data[name] === 'true';
 
   return (

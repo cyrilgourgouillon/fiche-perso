@@ -16,6 +16,25 @@ html {
   }
 }
 
+/*
+ * Reduced motion, in one place for both triggers: the OS setting and the
+ * sheet's own toggle (App sets html[data-reduce-motion='true']). Keep the two
+ * declaration lists identical. Animations that carry timing the UI depends on
+ * (the dice toast and its animationend, the rest overlay) opt back out in
+ * dice.css and rest.css with more specific rules.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 html[data-reduce-motion='true'],
 html[data-reduce-motion='true'] *,
 html[data-reduce-motion='true'] *::before,
@@ -33,7 +52,4 @@ body {
     radial-gradient(ellipse at 20% 20%, #3d2410 0%, transparent 60%),
     radial-gradient(ellipse at 80% 80%, #1a0d05 0%, transparent 60%);
   min-height: 100vh;
-  font-family: 'Crimson Pro', serif;
-  color: var(--ink);
-  padding: 20px;
 }

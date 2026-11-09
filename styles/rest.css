@@ -1,8 +1,6 @@
 /* ── REST ── */
 .rest-row {
   display: flex;
-  gap: 6px;
-  margin-top: 10px;
 }
 /* the look comes from .sheet-button — this is just the two-up row */
 .rest-button {
@@ -60,10 +58,20 @@
   48%, 68% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; }
 }
+/*
+ * Reduced motion: no pop and no fade. The global rule in base.css would cut
+ * these 'both'-filled animations to 0.01ms and leave them on their last
+ * keyframe (opacity 0), so they are switched off instead: the overlay simply
+ * shows, static, until RestControls removes it after 2.2 s.
+ */
 @media (prefers-reduced-motion: reduce) {
+  .rest-success-overlay::before,
   .rest-success-emoji,
   .rest-success-label { animation: none; }
 }
+html[data-reduce-motion='true'] .rest-success-overlay::before,
+html[data-reduce-motion='true'] .rest-success-emoji,
+html[data-reduce-motion='true'] .rest-success-label { animation: none; }
 .rest-dialog-content { padding: 18px 0 0; font-family: var(--ui-font); font-size: 15px; line-height: 1.45; }
 .rest-dialog-description { margin: 8px 0 16px; color: var(--ink-light); }
 .rest-dialog-note { margin: 0 0 16px; padding: 10px 12px; border-left: 3px solid var(--gold); color: var(--ink-light); background: color-mix(in srgb, var(--gold) 9%, var(--parch)); }

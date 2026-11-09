@@ -8,9 +8,12 @@
   --section-bg: #eee8dc;
   --red: #9b442f;
   --red-light: #c5684f;
+  /* --gold is an accent for borders, icons and tints: about 3:1 on --parch, too
+     light for text. Gold text uses --gold-text, a darker shade of the same hue
+     that every theme keeps at 4.5:1 or more on --parch and --section-bg. */
   --gold: #9c7a3b;
   --yellow: #e3bc64;
-  --gold-light: #725a32;
+  --gold-text: #725a32; /* was --gold-light: it is the darker gold, not a lighter one */
   --border: #d2c7b5;
   --shadow: rgba(23, 31, 26, 0.11);
   --dark: #252b27;
@@ -27,3 +30,21 @@
   --display-font: 'Marcellus', Georgia, serif;
   --body-font: 'Literata', Georgia, serif;
 }
+
+/*
+ * Breakpoints. Custom properties cannot be used inside @media, so the scale is
+ * written out by hand in each file; keep new queries on these values.
+ *
+ *   min-width 1200px / max-width 1199px  desktop vs. single-column sheet
+ *   (orientation: landscape) and 768px-1199px  landscape tablets (tile layout)
+ *   max-width  900px  tablets: toolbar, nav, ability and summary grids reflow
+ *   max-width  700px  phones: sticky toolbar, stacked header, touch targets
+ *   max-width  600px  floating tool dock and its popups go full width
+ *   max-width  520px  compact avatar editor and HP / money quick-adjust
+ *   max-width  480px  small phones: search, quick reference, rest dialog
+ *   max-width  390px  narrow phones: toolbar, sheet and settings modal
+ *   max-width  380px  avatar race field only
+ *   The last two are close but not interchangeable: merging them would move
+ *   every width between 381 and 390px (iPhone 12-15 is 390) across a rule.
+ *   Container queries (max-width 780 / 500 / 360px) live in quick-controls.css.
+ */
