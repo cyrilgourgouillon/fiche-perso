@@ -398,7 +398,7 @@
 .history-diff-removed { color: var(--failure); background: color-mix(in srgb, var(--failure) 12%, transparent); text-decoration: line-through; }
 .history-diff-added { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); font-weight: 700; }
 .history-rollback { grid-column: 2; grid-row: 1; min-height: 36px; padding: 5px 10px; border: 1px solid color-mix(in srgb, var(--failure) 55%, var(--border)); border-radius: 7px; color: var(--failure); background: color-mix(in srgb, var(--failure) 8%, var(--parch)); font: 600 13px var(--ui-font); cursor: pointer; }
-.history-rollback { box-sizing: border-box; width: 220px; max-width: 100%; white-space: nowrap; }
+.history-rollback { box-sizing: border-box; width: 120px; max-width: 100%; white-space: nowrap; }
 .history-rollback:hover { background: color-mix(in srgb, var(--failure) 16%, var(--parch)); }
 .history-rollback.armed { border-color: var(--failure); color: white; background: var(--failure); }
 .history-rollback:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }

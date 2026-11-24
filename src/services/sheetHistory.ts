@@ -6,6 +6,7 @@ export interface SheetChange {
   after: unknown;
   beforePresent: boolean;
   afterPresent: boolean;
+  textArea?: boolean;
 }
 
 export interface SheetHistoryEntry<T> {
@@ -17,7 +18,11 @@ export interface SheetHistoryEntry<T> {
   changes: SheetChange[];
 }
 
-export function getSheetChanges<T extends Record<string, unknown>>(before: T, after: T): SheetChange[] {
+export function getSheetChanges<T extends Record<string, unknown>>(
+  before: T,
+  after: T,
+  textAreaFields: ReadonlySet<string> = new Set(),
+): SheetChange[] {
   const fields = new Set([...Object.keys(before), ...Object.keys(after)]);
   return [...fields]
     .filter((field) => (
@@ -30,6 +35,7 @@ export function getSheetChanges<T extends Record<string, unknown>>(before: T, af
       after: after[field],
       beforePresent: field in before,
       afterPresent: field in after,
+      ...(textAreaFields.has(field) ? { textArea: true } : {}),
     }));
 }
 

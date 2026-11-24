@@ -4,7 +4,7 @@ import type { SheetHistoryEntry } from '../services/sheetHistory';
 
 export interface SheetContextValue {
   data: SheetData;
-  update: (field: string, value: unknown) => void;
+  update: (field: string, value: unknown, options?: { textArea?: boolean }) => void;
   apply: (transform: (current: SheetData) => SheetData, actionKey?: string) => void;
   actionHistory: SheetHistoryEntry<SheetData>[];
   rollback: (id: string) => void;
@@ -20,10 +20,16 @@ export const useSheet = () => {
 };
 
 /** Controlled text binding for a single sheet field — always a string, whatever was stored. */
-export const useSheetField = (name: string): [string, (value: string) => void] => {
+export const useSheetField = (
+  name: string,
+  { textArea = false }: { textArea?: boolean } = {},
+): [string, (value: string) => void] => {
   const { data, update } = useSheet();
   const value = data[name];
-  return [value === undefined || value === null ? '' : String(value), (next) => update(name, next)];
+  return [
+    value === undefined || value === null ? '' : String(value),
+    (next) => update(name, next, { textArea }),
+  ];
 };
 
 /** Controlled checkbox binding — flags are persisted as the strings 'true' / 'false'. */

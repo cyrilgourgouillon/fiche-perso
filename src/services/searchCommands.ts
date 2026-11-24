@@ -62,6 +62,7 @@ export type InventoryRemoveAction = ActionBase & {
 };
 export type GotoAction = ActionBase & { type: 'goto'; section: string };
 export type ToolAction = ActionBase & { type: 'tool'; tool: string; names: string[] };
+export type RestAction = ActionBase & { type: 'rest'; rest: 'court' | 'long'; names: string[] };
 
 export type QuickAction =
   | ExpressionAction
@@ -72,6 +73,7 @@ export type QuickAction =
   | CoinAction
   | InventoryRemoveAction
   | GotoAction
+  | RestAction
   | ToolAction;
 
 export const ADD_TARGETS: AddTarget[] = [
@@ -126,6 +128,23 @@ export const TOOL_ACTIONS: ToolAction[] = [
   },
 ];
 
+const REST_ACTIONS: RestAction[] = [
+  {
+    type: 'rest',
+    rest: 'court',
+    names: ['repos court', 'repos courts'],
+    title: 'Repos court',
+    detail: 'Récupérer les capacités de repos court',
+  },
+  {
+    type: 'rest',
+    rest: 'long',
+    names: ['repos long', 'repos longs'],
+    title: 'Repos long',
+    detail: 'Récupérer les points de vie et capacités',
+  },
+];
+
 const coinAction = (direction: 'add' | 'remove', amount = 1, coin: Coin = 'po'): CoinAction => ({
   type: 'coin',
   direction,
@@ -167,6 +186,7 @@ export function quickActionKey(action: QuickAction): string {
     case 'coin': return `coin-${action.direction}-${action.coin}`;
     case 'inventory': return `inventory-${action.row}`;
     case 'goto': return `goto-${action.section}`;
+    case 'rest': return `rest-${action.rest}`;
     default: return `tool-${action.tool}`;
   }
 }
@@ -510,7 +530,8 @@ export function commandSuggestions(
       })));
   }
 
-  return pick(TOOL_ACTIONS.map((tool) => ({ ...tool, searchText: `${tool.title} ${tool.names.join(' ')}` })));
+  return pick([...REST_ACTIONS, ...TOOL_ACTIONS]
+    .map((action) => ({ ...action, searchText: `${action.title} ${action.names.join(' ')}` })));
 }
 
 /* ------------------------------------------------------------------ effects */

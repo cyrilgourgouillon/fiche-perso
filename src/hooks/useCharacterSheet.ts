@@ -47,7 +47,8 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
   const commit = useCallback((
     next: SheetData,
     label: string,
-    mergeKey: string | null = null,
+    mergeKey: string | null,
+    textAreaField?: string,
   ) => {
     const previous = latest.current;
     const changed = Object.keys(previous).length !== Object.keys(next).length
@@ -61,7 +62,7 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
       timestamp,
       mergeKey,
       before: previous,
-      changes: getSheetChanges(previous, next),
+      changes: getSheetChanges(previous, next, new Set(textAreaField ? [textAreaField] : [])),
     };
     const merge = Boolean(mergeKey && typingTimers.current.has(mergeKey));
     latest.current = next;
@@ -79,8 +80,13 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
   }, []);
 
   const update = useCallback(
-    (name: string, value: unknown) => {
-      commit({ ...latest.current, [name]: value }, `Modification : ${name.replaceAll('_', ' ')}`, name);
+    (name: string, value: unknown, options?: { textArea?: boolean }) => {
+      commit(
+        { ...latest.current, [name]: value },
+        `Modification : ${name.replaceAll('_', ' ')}`,
+        name,
+        options?.textArea ? name : undefined,
+      );
     },
     [commit],
   );
@@ -105,7 +111,7 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
   /** Swaps the whole sheet (import): the caller announces its own outcome instead. */
   const replace = useCallback((next: SheetData) => {
     silent.current = true;
-    if (!commit(next, 'Remplacement de la fiche')) silent.current = false;
+    if (!commit(next, 'Remplacement de la fiche', null)) silent.current = false;
   }, [commit]);
 
   const rollback = useCallback((id: string) => {

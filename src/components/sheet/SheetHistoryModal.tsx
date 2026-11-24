@@ -31,11 +31,11 @@ function HistoryEntry({
       </div>
       <ul className="history-changes">
         {entry.changes.map(({
-          field, before, after, beforePresent, afterPresent,
+          field, before, after, beforePresent, afterPresent, textArea,
         }) => (
           <li key={field}>
             <strong>{field.replaceAll('_', ' ')}</strong>
-            {typeof before === 'string' && typeof after === 'string' ? (
+            {textArea && typeof before === 'string' && typeof after === 'string' ? (
               <code className="history-text-diff">
                 {diffText(before, after).map((segment, index) => (
                   <span className={`history-diff-${segment.type}`} key={`${segment.type}-${index}`}>
@@ -68,7 +68,7 @@ function HistoryEntry({
         onBlur={disarm}
         onMouseLeave={disarm}
       >
-        {armed ? 'Confirmer ?' : 'Rollback à cette version'}
+        {armed ? 'Confirmer ?' : 'Rollback'}
       </button>
     </li>
   );

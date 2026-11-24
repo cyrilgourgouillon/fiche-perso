@@ -7,12 +7,14 @@ import { spellSlotRows, usesPactMagic } from '../../services/spellSlots';
 
 const RESTS = [
   {
+    rest: 'court',
     icon: '☕',
     name: 'Repos court',
     effect: 'Efface les jets de sauvegarde contre la mort et récupère les capacités « repos court »',
     transform: afterShortRest,
   },
   {
+    rest: 'long',
     icon: '🌙',
     name: 'Repos long',
     effect: 'PV au maximum, PV temporaires effacés, dés de vie, emplacements de sorts et capacités récupérés',
@@ -93,6 +95,15 @@ export default function RestControls() {
 
   useEffect(() => () => window.clearTimeout(statusTimerRef.current), []);
 
+  useEffect(() => {
+    const openRest = (event) => {
+      const rest = RESTS.find((option) => option.rest === event.detail?.rest);
+      if (rest) setSelectedRest(rest);
+    };
+    window.addEventListener('sheet-search-open-rest', openRest);
+    return () => window.removeEventListener('sheet-search-open-rest', openRest);
+  }, []);
+
   const preview = selectedRest ? restChanges(data, selectedRest.transform(data), selectedRest.rest) : [];
   const confirmRest = () => {
     if (!selectedRest) return;
@@ -109,7 +120,7 @@ export default function RestControls() {
     <>
       <div className="rest-row">
         {RESTS.map(({
-          icon, name, effect, transform,
+          icon, name, effect, transform, rest,
         }) => (
           <button
             key={name}
@@ -117,7 +128,7 @@ export default function RestControls() {
             className="sheet-button rest-button"
             title={`${name} : ${effect}`}
             onClick={() => setSelectedRest({
-              icon, name, effect, transform, rest: name === 'Repos court' ? 'court' : 'long',
+              icon, name, effect, transform, rest,
             })}
           >
             {icon}

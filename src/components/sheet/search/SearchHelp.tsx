@@ -96,9 +96,11 @@ function SearchHelp({ expanded, onToggle, entries }: SearchHelpProps) {
                   <SearchExample prefix="g">caractéristiques</SearchExample>
                 </li>
                 <li>
-                  <span>Ouvrir un outil</span>
+                  <span>Ouvrir un outil ou lancer un repos</span>
                   <SearchExample prefix="o">dés</SearchExample>
                   <SearchExample prefix="o">référence</SearchExample>
+                  <SearchExample prefix="o">repos court</SearchExample>
+                  <SearchExample prefix="o">repos long</SearchExample>
                 </li>
               </ul>
             </section>

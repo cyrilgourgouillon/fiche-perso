@@ -131,6 +131,33 @@ describe('sheet history', () => {
     );
   });
 
+  test('marks only explicitly designated textarea fields for inline diff display', () => {
+    assert.deepEqual(
+      getSheetChanges(
+        { name: 'Aria', notes: 'old note' },
+        { name: 'Ariana', notes: 'new note' },
+        new Set(['notes']),
+      ),
+      [
+        {
+          field: 'name',
+          before: 'Aria',
+          after: 'Ariana',
+          beforePresent: true,
+          afterPresent: true,
+        },
+        {
+          field: 'notes',
+          before: 'old note',
+          after: 'new note',
+          beforePresent: true,
+          afterPresent: true,
+          textArea: true,
+        },
+      ],
+    );
+  });
+
   test('uses the same merge key for repeated changes to the same fields', () => {
     const first = getSheetChanges(
       { points_vie_actuel: '20' },
