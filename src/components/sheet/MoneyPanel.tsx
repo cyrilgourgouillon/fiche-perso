@@ -20,7 +20,7 @@ export default function MoneyPanel() {
       const next = direction === 'add' ? current + quantity : Math.max(0, current - quantity);
       if (!Number.isSafeInteger(next)) return data;
       return { ...data, [coin]: String(next) };
-    });
+    }, `money:${coin}:${direction}`);
   };
 
   return (

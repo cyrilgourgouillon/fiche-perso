@@ -1,10 +1,13 @@
 import { createContext, useContext } from 'react';
 import type { SheetData } from '../hooks/useCharacterSheet';
+import type { SheetHistoryEntry } from '../services/sheetHistory';
 
 export interface SheetContextValue {
   data: SheetData;
   update: (field: string, value: unknown) => void;
-  apply: (transform: (current: SheetData) => SheetData) => void;
+  apply: (transform: (current: SheetData) => SheetData, actionKey?: string) => void;
+  actionHistory: SheetHistoryEntry<SheetData>[];
+  rollback: (id: string) => void;
 }
 
 export const SheetContext = createContext<SheetContextValue | null>(null);

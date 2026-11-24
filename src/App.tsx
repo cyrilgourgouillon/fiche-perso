@@ -9,6 +9,7 @@ import QuickReferencePanel from './components/sheet/QuickReferencePanel';
 import SheetSearch from './components/sheet/SheetSearch';
 import ShortcutsHelp from './components/sheet/ShortcutsHelp';
 import SettingsModal from './components/sheet/SettingsModal';
+import SheetHistoryModal from './components/sheet/SheetHistoryModal';
 import { KEYBOARD_SHORTCUTS } from './data/keyboardShortcuts';
 import DiceProvider from './context/DiceProvider';
 import SheetProvider from './context/SheetProvider';
@@ -27,7 +28,7 @@ export default function App() {
   const [status, notify] = useStatusMessage();
   const statusRef = useRef<HTMLSpanElement>(null);
   const {
-    data, update, apply, theme, setTheme, replace,
+    data, update, apply, theme, setTheme, replace, actionHistory, rollback,
   } = useCharacterSheet({ notify });
   const {
     inputRef, openPicker, importFile, exportFile,
@@ -65,7 +66,7 @@ export default function App() {
       if (tool === 'shortcuts') {
         setActiveTool(null);
         setShowShortcuts(true);
-      } else if (['sections', 'file', 'dice', 'quick-reference', 'appearance', 'settings'].includes(tool)) {
+      } else if (['sections', 'file', 'dice', 'quick-reference', 'appearance', 'settings', 'history'].includes(tool)) {
         setShowShortcuts(false);
         setActiveTool(tool);
       }
@@ -153,7 +154,7 @@ export default function App() {
   }, [activeTool, showCombatSummary, showShortcuts]);
 
   return (
-    <SheetProvider data={data} update={update} apply={apply}>
+    <SheetProvider data={data} update={update} apply={apply} actionHistory={actionHistory} rollback={rollback}>
       <DiceProvider>
         <main
           data-theme={theme}
@@ -162,6 +163,7 @@ export default function App() {
         >
           <Toolbar
             onOpenSettings={() => setActiveTool('settings')}
+            onOpenHistory={() => setActiveTool('history')}
             onToggleCombatSummary={() => setShowCombatSummary((current) => !current)}
             combatSummaryOpen={showCombatSummary}
             fileActions={!showCombatSummary ? {
@@ -214,6 +216,10 @@ export default function App() {
             onClose={() => setActiveTool(null)}
             theme={theme}
             onThemeChange={setTheme}
+          />
+          <SheetHistoryModal
+            isOpen={activeTool === 'history'}
+            onClose={() => setActiveTool(null)}
           />
           <DiceFlash reduceMotion={data.reduce_motion === 'true'} />
           <input ref={inputRef} type="file" accept=".json" hidden onChange={importFile} />

@@ -380,17 +380,40 @@
 .settings-hidden-actions-wide-only { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .settings-hidden-actions .settings-add-tile { width: 100%; min-width: 0; min-height: 36px; padding-inline: 3px; font-size: 11px; white-space: nowrap; }
 .settings-hidden-block > .settings-add-tile { justify-self: start; }
+.app-modal--history { width: min(760px, calc(100vw - 28px)); }
+.history-description,
+.history-empty { margin: 18px 0 0; color: var(--ink-light); font: 14px/1.5 var(--ui-font); }
+.history-list { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
+.history-entry { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 9px 14px; padding: 12px; border: 1px solid color-mix(in srgb, var(--border) 72%, white); border-radius: 9px; background: rgba(255, 255, 255, .55); }
+.history-entry-heading { display: grid; min-width: 0; gap: 3px; color: var(--ink); font: 500 14px/1.35 var(--ui-font); }
+.history-entry-title { font-weight: 700; overflow-wrap: anywhere; }
+.history-entry-heading time { color: var(--ink-light); font: 12px var(--ui-font); }
+.history-changes { display: grid; grid-column: 1 / -1; gap: 5px; margin: 0; padding: 0; list-style: none; }
+.history-changes li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; color: var(--ink-light); font: 13px/1.4 var(--ui-font); overflow-wrap: anywhere; }
+.history-changes strong { color: var(--ink); }
+.history-value-removed { color: var(--failure); text-decoration: line-through; }
+.history-value-added { color: var(--success); font-weight: 700; }
+.history-value-empty { color: var(--ink-light); font-style: italic; }
+.history-text-diff { grid-column: 1 / -1; display: block; min-width: 0; padding: 8px 10px; border-radius: 7px; color: var(--ink-light); background: color-mix(in srgb, var(--parch-dark) 45%, transparent); font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+.history-diff-removed { color: var(--failure); background: color-mix(in srgb, var(--failure) 12%, transparent); text-decoration: line-through; }
+.history-diff-added { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); font-weight: 700; }
+.history-rollback { grid-column: 2; grid-row: 1; min-height: 36px; padding: 5px 10px; border: 1px solid color-mix(in srgb, var(--failure) 55%, var(--border)); border-radius: 7px; color: var(--failure); background: color-mix(in srgb, var(--failure) 8%, var(--parch)); font: 600 13px var(--ui-font); cursor: pointer; }
+.history-rollback { box-sizing: border-box; width: 220px; max-width: 100%; white-space: nowrap; }
+.history-rollback:hover { background: color-mix(in srgb, var(--failure) 16%, var(--parch)); }
+.history-rollback.armed { border-color: var(--failure); color: white; background: var(--failure); }
+.history-rollback:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .settings-footer { padding-top: 18px; color: var(--ink-light); font: 13px/1.45 var(--ui-font); }
 .settings-done { min-height: 44px; padding: 9px 20px; border: 0; border-radius: 9px; color: white; background: var(--red); font: 700 14px var(--ui-font); cursor: pointer; }
 
 @media (max-width: 700px) {
   #toolbar {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-areas: 'brand brand brand status' 'settings combat file .';
+    grid-template-areas: 'brand brand brand status' 'file history settings combat';
   }
   #toolbar button { width: 100%; min-width: 0; box-sizing: border-box; }
   .brand-lockup { grid-area: brand; }
   #btn-settings { grid-area: settings; }
+  #btn-history { grid-area: history; }
   #btn-combat { grid-area: combat; }
   #toolbar .file-actions-widget { grid-area: file; width: 100%; }
   #toolbar .file-actions-launcher { width: 100%; }
@@ -404,6 +427,8 @@
 @media (max-width: 390px) {
   #toolbar #btn-settings { font-size: 0; }
   #toolbar #btn-settings span { font-size: 16px; }
+  #toolbar #btn-history { font-size: 0; }
+  #toolbar #btn-history span { font-size: 16px; }
   .app-modal-content { padding: 19px; }
   .app-modal-heading h2 { font-size: 24px; }
   .settings-theme-picker { grid-template-columns: 1fr; gap: 8px; }
