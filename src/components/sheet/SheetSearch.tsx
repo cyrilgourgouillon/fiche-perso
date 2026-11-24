@@ -256,6 +256,9 @@ export default function SheetSearch({ open, onToggle, notify }: SheetSearchProps
         revealSection(action.section);
         setPendingTarget({ selector: `#${sectionAnchor(action.section)}` });
         break;
+      case 'rest':
+        window.dispatchEvent(new CustomEvent('sheet-search-open-rest', { detail: { rest: action.rest } }));
+        break;
       default:
         window.dispatchEvent(new CustomEvent('sheet-search-open-tool', { detail: { tool: action.tool } }));
     }

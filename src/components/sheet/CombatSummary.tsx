@@ -94,6 +94,7 @@ export default function CombatSummary({ onBack }) {
     .map((row) => ({
       title: data[CLASS_FEATURES.field(row)],
       description: data[CLASS_FEATURES.field(row, 'description')],
+      usedField: CLASS_FEATURES_USED.field(row),
       used: flagged(data, CLASS_FEATURES_USED.field(row)),
       shortRest: flagged(data, CLASS_FEATURES.field(row, 'repos_court')),
       longRest: flagged(data, CLASS_FEATURES.field(row, 'repos_long')),
@@ -229,7 +230,13 @@ export default function CombatSummary({ onBack }) {
                 <li key={index} className={feature.used ? 'feature-used' : ''}>
                   <div className="summary-entry-top">
                     <strong>{text(feature.title)}</strong>
-                    <span>{feature.used ? 'Utilisée' : ''}</span>
+                    <label className="summary-feature-used">
+                      <Checkbox
+                        name={feature.usedField}
+                        aria-label={`Marquer ${text(feature.title)} comme utilisée`}
+                      />
+                      <span>{feature.used ? 'Utilisée' : 'Disponible'}</span>
+                    </label>
                   </div>
                   {text(feature.description) && <div className="summary-entry-detail">{text(feature.description)}</div>}
                   {(feature.shortRest || feature.longRest) && (

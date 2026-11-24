@@ -291,7 +291,28 @@ main[data-view='combat-summary'] .dice-flash {
   white-space: nowrap;
 }
 
-.summary-entry-list .feature-used .summary-entry-top > span {
+.summary-feature-used {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-light);
+  font-family: var(--ui-font);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.summary-feature-used input[type='checkbox'] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--red);
+  cursor: pointer;
+}
+
+.summary-entry-list .feature-used .summary-feature-used,
+.summary-entry-list .feature-used .summary-feature-used span {
   color: var(--failure);
   text-transform: uppercase;
 }

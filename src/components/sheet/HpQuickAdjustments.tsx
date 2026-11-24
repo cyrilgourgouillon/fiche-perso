@@ -25,7 +25,7 @@ export default function HpQuickAdjustments() {
         return { ...data, points_vie_actuel: String(Number.isFinite(maxHp) && maxHp >= 0 ? Math.min(maxHp, healed) : healed) };
       }
       return { ...data, points_vie_temp: String(Math.max(tempHp, points)) };
-    });
+    }, `hit-points:${action}`);
   };
 
   return (

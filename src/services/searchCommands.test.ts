@@ -169,4 +169,13 @@ describe('searchCommands', () => {
       assert.ok(resolve('>g:quêtes', {}, new Set(['combat'])).error);
     });
   });
+
+  describe('>o: tools and rests', () => {
+    test('should suggest both rest actions by their names', () => {
+      const shortRest = commandSuggestions(parseCommand('>o:repos court'), {}, ALL_SECTIONS);
+      const longRest = commandSuggestions(parseCommand('>o:repos long'), {}, ALL_SECTIONS);
+      assert.equal(shortRest[0]?.type === 'rest' && shortRest[0].rest, 'court');
+      assert.equal(longRest[0]?.type === 'rest' && longRest[0].rest, 'long');
+    });
+  });
 });

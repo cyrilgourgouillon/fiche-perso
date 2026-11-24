@@ -5,7 +5,7 @@ const MarkdownPreview = lazy(() => import('./MarkdownPreview'));
 
 export default function TextAreaField({ name, className = 'ef', ...props }) {
   const { data } = useSheet();
-  const [value, setValue] = useSheetField(name);
+  const [value, setValue] = useSheetField(name, { textArea: true });
   const [previewOverride, setPreviewOverride] = useState(null);
   const preview = previewOverride ?? (data.textarea_mode === 'visual');
   const fieldVariants = className.split(/\s+/).filter((classNamePart) => classNamePart && classNamePart !== 'ef').join(' ');

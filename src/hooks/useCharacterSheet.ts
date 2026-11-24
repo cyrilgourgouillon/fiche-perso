@@ -5,12 +5,20 @@ import { DEFAULT_THEME } from '../data/themes';
 import {
   STORAGE_KEY, parseStoredSheet, readStoredSheet, writeStoredSheet,
 } from '../services/sheetStorage';
+import {
+  getSheetActionMergeKey,
+  getSheetChanges,
+  recordSheetAction,
+  rollbackSheetHistory,
+  type SheetHistoryEntry,
+} from '../services/sheetHistory';
 import type { NotifyStatus } from './useStatusMessage';
 
 const FAILED_MESSAGE = '⚠ Sauvegarde impossible';
 const OTHER_TAB_MESSAGE = '↻ Fiche mise à jour depuis un autre onglet';
 /** Typing bursts are written once: serialising the whole sheet per keystroke is wasted work. */
 const SAVE_DELAY_MS = 250;
+const HISTORY_DEBOUNCE_MS = 1000;
 
 export type SheetData = Record<string, any>;
 
@@ -31,24 +39,96 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
   /** Set by `replace`: an import announces its own outcome. */
   const silent = useRef(false);
   const latest = useRef(data);
-  latest.current = data;
+  const historyRef = useRef<SheetHistoryEntry<SheetData>[]>([]);
+  const [history, setHistory] = useState(historyRef.current);
+  const nextActionId = useRef(0);
+  const typingTimers = useRef(new Map<string, number>());
+
+  const commit = useCallback((
+    next: SheetData,
+    label: string,
+    mergeKey: string | null,
+    textAreaField?: string,
+  ) => {
+    const previous = latest.current;
+    const changed = Object.keys(previous).length !== Object.keys(next).length
+      || Object.keys(previous).some((key) => !Object.is(previous[key], next[key]));
+    if (!changed) return false;
+
+    const timestamp = Date.now();
+    const entry: SheetHistoryEntry<SheetData> = {
+      id: `${timestamp}-${nextActionId.current += 1}`,
+      label,
+      timestamp,
+      mergeKey,
+      before: previous,
+      changes: getSheetChanges(previous, next, new Set(textAreaField ? [textAreaField] : [])),
+    };
+    const merge = Boolean(mergeKey && typingTimers.current.has(mergeKey));
+    latest.current = next;
+    historyRef.current = recordSheetAction(historyRef.current, entry, merge);
+    setHistory(historyRef.current);
+    setData(next);
+    if (mergeKey) {
+      const currentTimer = typingTimers.current.get(mergeKey);
+      if (currentTimer) window.clearTimeout(currentTimer);
+      typingTimers.current.set(mergeKey, window.setTimeout(() => {
+        typingTimers.current.delete(mergeKey);
+      }, HISTORY_DEBOUNCE_MS));
+    }
+    return true;
+  }, []);
 
   const update = useCallback(
-    (name: string, value: unknown) => setData((current) => ({ ...current, [name]: value })),
-    [],
+    (name: string, value: unknown, options?: { textArea?: boolean }) => {
+      commit(
+        { ...latest.current, [name]: value },
+        `Modification : ${name.replaceAll('_', ' ')}`,
+        name,
+        options?.textArea ? name : undefined,
+      );
+    },
+    [commit],
   );
   const setTheme = useCallback((value: string) => update('theme', value), [update]);
 
   /** Rewrites the sheet through a pure transform — row shuffling, rests, … */
   const apply = useCallback(
-    (transform: (current: SheetData) => SheetData) => setData((current) => transform(current)),
-    [],
+    (transform: (current: SheetData) => SheetData, actionKey?: string) => {
+      const previous = latest.current;
+      const next = transform(previous);
+      const changes = getSheetChanges(previous, next);
+      const mergeKey = getSheetActionMergeKey(changes, actionKey);
+      commit(
+        next,
+        changes.length > 1 ? `Action sur ${changes.length} champs` : 'Modification de la fiche',
+        mergeKey,
+      );
+    },
+    [commit],
   );
 
   /** Swaps the whole sheet (import): the caller announces its own outcome instead. */
   const replace = useCallback((next: SheetData) => {
     silent.current = true;
-    setData(next);
+    if (!commit(next, 'Remplacement de la fiche', null)) silent.current = false;
+  }, [commit]);
+
+  const rollback = useCallback((id: string) => {
+    typingTimers.current.forEach((timer) => window.clearTimeout(timer));
+    typingTimers.current.clear();
+    const result = rollbackSheetHistory(historyRef.current, id);
+    if (!result.data) return;
+    silent.current = false;
+    latest.current = result.data;
+    historyRef.current = result.history;
+    setHistory(result.history);
+    setData(result.data);
+  }, []);
+
+  useEffect(() => () => {
+    typingTimers.current.forEach((timer) => window.clearTimeout(timer));
+    typingTimers.current.clear();
   }, []);
 
   const flush = useCallback(() => {
@@ -85,7 +165,12 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
     const followOtherTab = (event: StorageEvent) => {
       if (event.storageArea !== localStorage || event.key !== STORAGE_KEY || event.newValue === null) return;
       const next = parseStoredSheet(event.newValue);
+      typingTimers.current.forEach((timer) => window.clearTimeout(timer));
+      typingTimers.current.clear();
       stored.current = next;
+      latest.current = next;
+      historyRef.current = [];
+      setHistory([]);
       setData(next);
       notify?.(OTHER_TAB_MESSAGE, 'info');
     };
@@ -100,6 +185,6 @@ export function useCharacterSheet({ notify }: UseCharacterSheetOptions = {}) {
   }, [theme]);
 
   return {
-    data, update, apply, theme, setTheme, replace,
+    data, update, apply, theme, setTheme, replace, actionHistory: history, rollback,
   };
 }

@@ -2,6 +2,7 @@ import FileActionsPanel from '../sheet/FileActionsPanel';
 
 export default function Toolbar({
   onOpenSettings,
+  onOpenHistory,
   onToggleCombatSummary,
   combatSummaryOpen,
   fileActions,
@@ -16,6 +17,11 @@ export default function Toolbar({
         </h1>
       </div>
       {fileActions && <FileActionsPanel {...fileActions} />}
+      <button id="btn-history" type="button" onClick={onOpenHistory}>
+        <span aria-hidden="true">↶</span>
+        {' '}
+        Historique
+      </button>
       <button id="btn-settings" type="button" onClick={onOpenSettings}>
         <span aria-hidden="true">⚙</span>
         {' '}
