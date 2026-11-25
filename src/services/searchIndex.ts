@@ -9,6 +9,7 @@ import { ABILITIES, SKILLS } from '../data/abilities';
 import { QUEST_STATUSES } from '../data/questStatuses';
 import { SECTIONS, sectionAnchor } from '../data/sections';
 import { listRowCount } from './sheetRows';
+import { weaponAttackBonus, weaponDetails } from './weaponMath';
 import { range } from '../utils/range';
 import {
   abilityModifier, formatModifier, savingThrowBonus, skillBonus,
@@ -186,10 +187,11 @@ export function buildSearchIndex(data: SheetValues): SearchEntry[] {
     largeTextFields: ['notes'],
     hideDetail: true,
     badges: (row) => {
-      const bonus = cell(data, WEAPONS.field(row, 'bonus'));
-      const damage = cell(data, WEAPONS.field(row, 'degats'));
+      const weapon = weaponDetails(data, row);
+      const bonus = formatModifier(weaponAttackBonus(data, row));
+      const damage = [weapon.damageDice, weapon.damageType].filter(Boolean).join(' ');
       return [
-        ...(bonus ? [badge('Attaque', bonus, 'modifier')] : []),
+        ...(weapon.bonus || weapon.proficient ? [badge('Attaque', bonus, 'modifier')] : []),
         ...(damage ? [badge('Dégâts', damage, 'score')] : []),
       ];
     },

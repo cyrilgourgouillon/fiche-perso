@@ -23,7 +23,18 @@ const multiFieldList = (key, defaultRows, prefix, fields) => ({
   rowFields: (row) => fields.map((name) => `${prefix}${row + 1}_${name}`),
 });
 
-export const WEAPONS = multiFieldList('armes', 6, 'arme', ['nom', 'bonus', 'degats', 'notes', 'combat', 'replie']);
+export const WEAPONS = multiFieldList('armes', 6, 'arme', [
+  'nom',
+  'bonus',
+  'degats',
+  'degats_de',
+  'type_degats',
+  'maitrise',
+  'caracteristique',
+  'notes',
+  'combat',
+  'replie',
+]);
 
 // Keep the original `capaciteN` and `capacite_utiliseeN` keys so old sheets
 // retain their titles and used state. New fields simply default to blank/false.

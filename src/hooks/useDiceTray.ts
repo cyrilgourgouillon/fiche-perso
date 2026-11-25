@@ -27,7 +27,7 @@ export function useDiceTray() {
 
   const rollDice = useCallback((sides, count) => record(rollPlainDice(sides, count)), [record]);
 
-  const rollExpression = useCallback((input) => record(rollTyped(input)), [record]);
+  const rollExpression = useCallback((input, label) => record(rollTyped(input, label)), [record]);
 
   const clear = useCallback(() => setLog([]), []);
 

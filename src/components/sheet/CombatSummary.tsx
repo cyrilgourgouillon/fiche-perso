@@ -23,6 +23,7 @@ import Checkbox from '../fields/Checkbox';
 import PixelAvatar from './PixelAvatar';
 import HpQuickAdjustments from './HpQuickAdjustments';
 import { isCantrip } from '../../services/spells';
+import { weaponAttackBonus, weaponDetails } from '../../services/weaponMath';
 
 /** Field text, trimmed. Imported sheets may hold numbers (kept) or objects (ignored). */
 const text = (value: unknown) => {
@@ -81,13 +82,15 @@ function DeathMarks({ name, label, tone }) {
 export default function CombatSummary({ onBack }) {
   const { data } = useSheet();
   const weapons = range(listRowCount(data, WEAPONS))
-    .map((row) => ({
-      name: data[WEAPONS.field(row, 'nom')],
-      bonus: data[WEAPONS.field(row, 'bonus')],
-      damage: data[WEAPONS.field(row, 'degats')],
-      notes: data[WEAPONS.field(row, 'notes')],
-      included: included(data, WEAPONS.field(row, 'combat'), WEAPONS.field(row, 'nom')),
-    }))
+    .map((row) => {
+      const weapon = weaponDetails(data, row);
+      return {
+        ...weapon,
+        bonus: weapon.bonus || weapon.proficient ? weaponAttackBonus(data, row) : null,
+        damage: [weapon.damageDice, weapon.damageType].filter(Boolean).join(' '),
+        included: included(data, WEAPONS.field(row, 'combat'), WEAPONS.field(row, 'nom')),
+      };
+    })
     .filter((weapon) => text(weapon.name) && weapon.included);
 
   const features = range(listRowCount(data, CLASS_FEATURES))
