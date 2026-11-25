@@ -8,7 +8,7 @@ ou importée au format JSON. L’interface est entièrement en français.
 
 ## Fonctionnalités
 
-- Fiche complète : stats, compétences, armes, sorts, équipement, quêtes et notes.
+- Fiche complète : stats, compétences, armes (maîtrise et jets d’attaque/dégâts), sorts, équipement, quêtes et notes.
 - Portrait pixel-art personnalisable.
 - Calculs automatiques pour bonus et emplacements de sorts, y compris la magie de pacte de l’occultiste.
 - Dés, jets et historique des derniers lancers.

@@ -61,14 +61,14 @@ export const parseDiceExpression = (input) => {
 };
 
 /** Rolls a typed expression such as the damage line of a weapon. */
-export const rollExpression = (input) => {
+export const rollExpression = (input, label = input.trim()) => {
   const parsed = parseDiceExpression(input);
   if (!parsed) return null;
 
   const { count, sides, modifier } = parsed;
   const dice = Array.from({ length: Math.min(count, MAX_DICE_PER_ROLL) }, () => rollDie(sides));
   return {
-    label: input.trim(),
+    label,
     sides,
     dice,
     kept: dice,

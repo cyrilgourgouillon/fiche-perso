@@ -1712,28 +1712,37 @@ select.ef {
 .weapon-content { display: grid; gap: 9px; }
 .weapon-title-line {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto 30px;
+  grid-template-columns: minmax(0, 1fr) auto auto auto auto;
   align-items: center;
-  gap: 9px;
+  gap: 5px;
 }
 .weapon-title-line .spell-name { margin: 0; }
+.weapon-title-line .aidedd-search-button { width: 32px; height: 34px; min-height: 34px; }
+.weapon-content > .combat-include-toggle { min-width: 0; gap: 5px; white-space: nowrap; font-size: 11px; }
+.weapon-content > .combat-include-toggle input { width: 17px; height: 17px; }
 .weapon-facts {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 8px 12px;
 }
-.weapon-facts label,
-.weapon-notes-field > label {
-  display: block;
-  margin-bottom: 4px;
+.weapon-facts > div { display: grid; min-width: 0; gap: 3px; }
+.weapon-facts label {
   color: var(--ink-light);
-  font-family: var(--ui-font);
-  font-size: 10px;
-  font-weight: 700;
+  font: 700 10px var(--ui-font);
 }
-.weapon-facts .ef { width: 100%; min-width: 0; }
-.weapon-notes-field .markdown-field { min-height: 72px; }
-.weapon-notes-field textarea.weapon-notes-input { min-height: 72px; resize: vertical; }
+.weapon-facts .ef { box-sizing: border-box; width: 100%; min-width: 0; min-height: 36px; padding: 6px 8px; font-size: 13px; }
+.weapon-proficiency-field > div { display: flex; min-width: 0; min-height: 36px; align-items: center; gap: 7px; color: var(--ink-light); font: 500 12px var(--ui-font); }
+.weapon-proficiency-field input[type='checkbox'] { width: 17px; height: 17px; flex: 0 0 17px; margin: 0; accent-color: var(--red); }
+.weapon-proficiency-field strong { margin-left: auto; color: var(--ink); font-size: 11px; white-space: nowrap; }
+.weapon-roll-button { margin-left: 0; }
+.weapon-notes-row { display: grid; min-width: 0; gap: 4px; grid-column: 1 / -1; }
+.weapon-notes-row > label {
+  color: var(--ink-light);
+  font: 700 10px var(--ui-font);
+}
+.weapon-notes-row .markdown-field { width: 100%; height: 60px; min-height: 60px; resize: vertical; }
+.weapon-notes-row textarea.weapon-notes-input { height: 60px; min-height: 60px; resize: none; }
 .class-feature-title-line {
   display: flex;
   min-width: 0;

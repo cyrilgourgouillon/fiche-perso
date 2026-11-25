@@ -87,6 +87,7 @@ describe('dice', () => {
         modifier: 3,
         total: 10,
       });
+      assert.equal(rollExpression('1d8', 'Épée · dégâts').label, 'Épée · dégâts');
       assert.equal(rollExpression('invalid'), null);
       assert.equal(randomTotalLike({ sides: 6, kept: [1, 6], modifier: 3 }), 10);
     });

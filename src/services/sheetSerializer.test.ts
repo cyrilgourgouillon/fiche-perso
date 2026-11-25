@@ -102,6 +102,32 @@ describe('sheetSerializer', () => {
     assert.equal(serialized.notes.notes, 'Notes de campagne');
   });
 
+  test('should preserve expanded weapon fields while retaining the legacy combined damage value', () => {
+    const data = {
+      ...sampleSheet,
+      arme1_degats_de: '2d8',
+      arme1_type_degats: 'perforant',
+      arme1_maitrise: 'true',
+      arme1_caracteristique: 'force',
+    };
+    const serialized = asObject(data);
+    const parsed = parseSheet(JSON.stringify(serialized));
+
+    assert.deepEqual(serialized.weapons[0], {
+      nom: 'Pique',
+      degats: '1d10 perforant',
+      degats_de: '2d8',
+      type_degats: 'perforant',
+      maitrise: 'true',
+      caracteristique: 'force',
+      replie: 'true',
+    });
+    assert.equal(parsed.arme1_degats_de, '2d8');
+    assert.equal(parsed.arme1_type_degats, 'perforant');
+    assert.equal(parsed.arme1_maitrise, 'true');
+    assert.equal(parsed.arme1_caracteristique, 'force');
+  });
+
   test('should preserve the flat sheet model when round-tripping through v2', () => {
     assert.deepEqual(parseSheet(serializeSheet(sampleSheet)), sampleSheet);
   });

@@ -63,8 +63,9 @@ export default function DiceTray({ open, onToggle }) {
               {' '}
               <DieIcon className="die-icon inline" />
               {' '}
-              d’une compétence, d’une sauvegarde ou d’une
-              caractéristique sur la fiche pour la lancer.
+              d’une compétence, d’une sauvegarde ou d’une caractéristique
+              pour lancer un d20. Le dé d’une arme lance ses dégâts et ajoute
+              ses bonus.
             </p>
 
             <div className="dice-tray">
