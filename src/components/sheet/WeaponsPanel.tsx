@@ -10,6 +10,7 @@ import CharacteristicSelect from '../fields/CharacteristicSelect';
 import WeaponRollButton, { WeaponDamageRollButton } from '../dice/WeaponRollButton';
 import FoldButton from '../fields/FoldButton';
 import ListFoldControls from '../common/ListFoldControls';
+import ListOrderItem from '../common/ListOrderItem';
 import { WEAPONS } from '../../data/sheetLists';
 import { useSheet, useSheetFlag } from '../../context/SheetContext';
 import { useListRows } from '../../hooks/useListRows';
@@ -26,37 +27,78 @@ import { formatModifier } from '../../services/characterMath';
 export default function WeaponsPanel() {
   const { data } = useSheet();
   const {
-    rowCount, removable, isRowEmpty, addRow, removeRow,
+    rowCount,
+    removable,
+    isRowEmpty,
+    addRow,
+    removeRow,
+    isOrdering,
+    order,
+    startOrdering,
+    cancelOrdering,
+    saveOrdering,
+    moveRow,
   } = useListRows(WEAPONS);
   const { foldedCount, foldAll, unfoldAll } = useListFolding(WEAPONS, rowCount);
 
   return (
     <Panel id="armes" title="Armes">
       <p className="combat-include-help">Cochez &quot;R&eacute;sum&eacute; combat&quot; pour ajouter une arme au r&eacute;sum&eacute; de combat.</p>
-      <ListFoldControls foldedCount={foldedCount} rowCount={rowCount} foldAll={foldAll} unfoldAll={unfoldAll} />
+      <ListFoldControls
+        foldedCount={foldedCount}
+        rowCount={rowCount}
+        foldAll={foldAll}
+        unfoldAll={unfoldAll}
+        isOrdering={isOrdering}
+        onStartOrdering={startOrdering}
+        onSaveOrdering={saveOrdering}
+        onCancelOrdering={cancelOrdering}
+      />
       <ul className={`capacite-list weapon-list${data.compact_weapons === 'true' ? ' compact-list' : ''}`}>
-        {range(rowCount).map((index) => (
+        {(isOrdering ? order : range(rowCount)).map((index, position) => (
           <WeaponRow
             key={index}
             index={index}
+            position={position}
+            rowCount={rowCount}
+            isOrdering={isOrdering}
+            moveRow={moveRow}
             removable={removable}
             isRowEmpty={isRowEmpty}
             removeRow={removeRow}
           />
         ))}
       </ul>
-      <AddRowButton label="Ajouter une arme" onClick={addRow} />
+      {!isOrdering && <AddRowButton label="Ajouter une arme" onClick={addRow} />}
     </Panel>
   );
 }
 
 function WeaponRow({
-  index, removable, isRowEmpty, removeRow,
+  index,
+  position,
+  rowCount,
+  isOrdering,
+  moveRow,
+  removable,
+  isRowEmpty,
+  removeRow,
 }) {
   const { data, update } = useSheet();
   const [folded, setFolded] = useSheetFlag(WEAPONS.field(index, 'replie'));
   const weapon = weaponDetails(data, index);
   const damageRoll = weaponDamageRoll(data, index);
+  if (isOrdering) {
+    return (
+      <ListOrderItem
+        title={weapon.name}
+        position={position}
+        rowCount={rowCount}
+        onMove={moveRow}
+      />
+    );
+  }
+
   const updateDamage = (field, value) => {
     const next = {
       damageDice: field === 'degats_de' ? value : weapon.damageDice,

@@ -11,6 +11,7 @@ import TextField from '../fields/TextField';
 import TextAreaField from '../fields/TextAreaField';
 import FoldButton from '../fields/FoldButton';
 import ListFoldControls from '../common/ListFoldControls';
+import ListOrderItem from '../common/ListOrderItem';
 import { SPELLS } from '../../data/sheetLists';
 import { useListRows } from '../../hooks/useListRows';
 import { useListFolding } from '../../hooks/useListFolding';
@@ -50,7 +51,17 @@ const SPELL_FLAGS = [
 
 export default function SpellsPanel() {
   const {
-    rowCount, removable, isRowEmpty, addRow, removeRow,
+    rowCount,
+    removable,
+    isRowEmpty,
+    addRow,
+    removeRow,
+    isOrdering,
+    order,
+    startOrdering,
+    cancelOrdering,
+    saveOrdering,
+    moveRow,
   } = useListRows(SPELLS);
   const { foldedCount, foldAll, unfoldAll } = useListFolding(SPELLS, rowCount);
   const { data, update } = useSheet();
@@ -106,65 +117,99 @@ export default function SpellsPanel() {
         ))}
       </div>
       <p className="combat-include-help">Cochez &quot;Résumé combat&quot; pour ajouter un sort au résumé de combat.</p>
-      <div className="spell-filter-row" role="group" aria-label="Filtres de sorts">
-        <label className="spell-filter-search">
-          <span>Rechercher</span>
-          <input className="ef" type="search" value={nameFilter} onChange={(event) => setNameFilter(event.target.value)} placeholder="Nom du sort" />
-        </label>
-        <label className="spell-filter-level">
-          <span>Niveau</span>
-          <select className="ef" value={levelFilter} onChange={(event) => setLevelFilter(event.target.value)}>
-            <option value="all">Tous</option>
-            <option value="cantrip">Cantrips / sorts mineurs</option>
-            {range(9).map((level) => <option value={String(level + 1)} key={level}>{level + 1}</option>)}
-          </select>
-        </label>
-        <label>
-          <input type="checkbox" checked={ritualOnly} onChange={(event) => setRitualOnly(event.target.checked)} />
-          {' '}
-          Rituel
-        </label>
-        <label>
-          <input type="checkbox" checked={concentrationOnly} onChange={(event) => setConcentrationOnly(event.target.checked)} />
-          {' '}
-          Concentration
-        </label>
-        <label>
-          <input type="checkbox" checked={combatOnly} onChange={(event) => setCombatOnly(event.target.checked)} />
-          {' '}
-          Combat
-        </label>
-        <span className="spell-filter-count">
-          {visibleSpells.length}
-          {' '}
-          /
-          {' '}
-          {rowCount}
-        </span>
-      </div>
-      <ListFoldControls foldedCount={foldedCount} rowCount={rowCount} foldAll={foldAll} unfoldAll={unfoldAll} />
+      {!isOrdering && (
+        <div className="spell-filter-row" role="group" aria-label="Filtres de sorts">
+          <label className="spell-filter-search">
+            <span>Rechercher</span>
+            <input className="ef" type="search" value={nameFilter} onChange={(event) => setNameFilter(event.target.value)} placeholder="Nom du sort" />
+          </label>
+          <label className="spell-filter-level">
+            <span>Niveau</span>
+            <select className="ef" value={levelFilter} onChange={(event) => setLevelFilter(event.target.value)}>
+              <option value="all">Tous</option>
+              <option value="cantrip">Cantrips / sorts mineurs</option>
+              {range(9).map((level) => <option value={String(level + 1)} key={level}>{level + 1}</option>)}
+            </select>
+          </label>
+          <label>
+            <input type="checkbox" checked={ritualOnly} onChange={(event) => setRitualOnly(event.target.checked)} />
+            {' '}
+            Rituel
+          </label>
+          <label>
+            <input type="checkbox" checked={concentrationOnly} onChange={(event) => setConcentrationOnly(event.target.checked)} />
+            {' '}
+            Concentration
+          </label>
+          <label>
+            <input type="checkbox" checked={combatOnly} onChange={(event) => setCombatOnly(event.target.checked)} />
+            {' '}
+            Combat
+          </label>
+          <span className="spell-filter-count">
+            {visibleSpells.length}
+            {' '}
+            /
+            {' '}
+            {rowCount}
+          </span>
+        </div>
+      )}
+      <ListFoldControls
+        foldedCount={foldedCount}
+        rowCount={rowCount}
+        foldAll={foldAll}
+        unfoldAll={unfoldAll}
+        isOrdering={isOrdering}
+        orderingDisabled={visibleSpells.length !== rowCount}
+        onStartOrdering={startOrdering}
+        onSaveOrdering={saveOrdering}
+        onCancelOrdering={cancelOrdering}
+      />
       <ul className={`capacite-list spell-list${data.compact_spells === 'true' ? ' compact-list' : ''}`}>
-        {visibleSpells.map((index) => (
+        {(isOrdering ? order : visibleSpells).map((index, position) => (
           <SpellRow
             key={index}
             index={index}
+            position={position}
+            rowCount={rowCount}
+            isOrdering={isOrdering}
+            moveRow={moveRow}
             removable={removable}
             isRowEmpty={isRowEmpty}
             removeRow={removeRow}
           />
         ))}
       </ul>
-      {visibleSpells.length === 0 && <p className="filter-empty">Aucun sort ne correspond à ces filtres.</p>}
-      <AddRowButton label="Ajouter un sort" onClick={addRow} />
+      {!isOrdering && visibleSpells.length === 0 && <p className="filter-empty">Aucun sort ne correspond à ces filtres.</p>}
+      {!isOrdering && <AddRowButton label="Ajouter un sort" onClick={addRow} />}
     </Panel>
   );
 }
 
 function SpellRow({
-  index, removable, isRowEmpty, removeRow,
+  index,
+  position,
+  rowCount,
+  isOrdering,
+  moveRow,
+  removable,
+  isRowEmpty,
+  removeRow,
 }) {
   const { data, update } = useSheet();
   const [folded, setFolded] = useSheetFlag(SPELLS.field(index, 'replie'));
+  if (isOrdering) {
+    return (
+      <ListOrderItem
+        title={data[SPELLS.field(index, 'nom')]}
+        position={position}
+        rowCount={rowCount}
+        onMove={moveRow}
+      />
+    );
+  }
+
   return (
     <ListItem
       className={

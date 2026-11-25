@@ -40,3 +40,26 @@ export const withRowRemoved = (data, list, row) => {
   next[rowCountField(list)] = String(Math.max(MIN_ROWS, rowCount - 1));
   return next;
 };
+
+/** Reorders whole rows according to their source row indexes. */
+export const withRowsReordered = (data, list, order) => {
+  const rowCount = listRowCount(data, list);
+  if (
+    order.length !== rowCount
+    || new Set(order).size !== rowCount
+    || order.some((row) => !Number.isInteger(row) || row < 0 || row >= rowCount)
+  ) {
+    throw new Error('Row order must be a permutation of the list rows');
+  }
+
+  const next = { ...data };
+  order.forEach((sourceRow, targetRow) => {
+    const sourceFields = list.rowFields(sourceRow);
+    list.rowFields(targetRow).forEach((key, fieldIndex) => {
+      const source = sourceFields[fieldIndex];
+      if (source in data) next[key] = data[source];
+      else delete next[key];
+    });
+  });
+  return next;
+};

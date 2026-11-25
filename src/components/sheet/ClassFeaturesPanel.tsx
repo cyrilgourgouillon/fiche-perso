@@ -9,43 +9,88 @@ import CombatIncludeToggle from '../fields/CombatIncludeToggle';
 import TextAreaField from '../fields/TextAreaField';
 import FoldButton from '../fields/FoldButton';
 import ListFoldControls from '../common/ListFoldControls';
+import ListOrderItem from '../common/ListOrderItem';
 import { CLASS_FEATURES, CLASS_FEATURES_USED } from '../../data/sheetLists';
 import { useListRows } from '../../hooks/useListRows';
 import { useListFolding } from '../../hooks/useListFolding';
-import { useSheetFlag } from '../../context/SheetContext';
+import { useSheet, useSheetFlag } from '../../context/SheetContext';
 import { range } from '../../utils/range';
 
 export default function ClassFeaturesPanel() {
+  const { data } = useSheet();
   const {
-    rowCount, removable, isRowEmpty, addRow, removeRow,
+    rowCount,
+    removable,
+    isRowEmpty,
+    addRow,
+    removeRow,
+    isOrdering,
+    order,
+    startOrdering,
+    cancelOrdering,
+    saveOrdering,
+    moveRow,
   } = useListRows(CLASS_FEATURES);
   const { foldedCount, foldAll, unfoldAll } = useListFolding(CLASS_FEATURES, rowCount);
 
   return (
     <Panel id="capacites" title="Capacités de Classe">
-      <ListFoldControls foldedCount={foldedCount} rowCount={rowCount} foldAll={foldAll} unfoldAll={unfoldAll} />
+      <ListFoldControls
+        foldedCount={foldedCount}
+        rowCount={rowCount}
+        foldAll={foldAll}
+        unfoldAll={unfoldAll}
+        isOrdering={isOrdering}
+        onStartOrdering={startOrdering}
+        onSaveOrdering={saveOrdering}
+        onCancelOrdering={cancelOrdering}
+      />
       <ul className="capacite-list">
-        {range(rowCount).map((index) => (
+        {(isOrdering ? order : range(rowCount)).map((index, position) => (
           <ClassFeatureRow
             key={index}
             index={index}
+            title={data[CLASS_FEATURES.field(index)]}
+            isOrdering={isOrdering}
+            position={position}
+            rowCount={rowCount}
+            moveRow={moveRow}
             removable={removable}
             isRowEmpty={isRowEmpty}
             removeRow={removeRow}
           />
         ))}
       </ul>
-      <AddRowButton label="Ajouter une capacité" onClick={addRow} />
+      {!isOrdering && <AddRowButton label="Ajouter une capacité" onClick={addRow} />}
     </Panel>
   );
 }
 
 function ClassFeatureRow({
-  index, removable, isRowEmpty, removeRow,
+  index,
+  title,
+  isOrdering,
+  position,
+  rowCount,
+  moveRow,
+  removable,
+  isRowEmpty,
+  removeRow,
 }) {
   const [folded, setFolded] = useSheetFlag(CLASS_FEATURES.field(index, 'replie'));
   const [innate] = useSheetFlag(CLASS_FEATURES.field(index, 'innee'));
   const featureTypeField = CLASS_FEATURES.field(index, 'innee');
+  if (isOrdering) {
+    return (
+      <ListOrderItem
+        title={title}
+        position={position}
+        rowCount={rowCount}
+        onMove={moveRow}
+      />
+    );
+  }
+
   return (
     <ListItem
       className={
