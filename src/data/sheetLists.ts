@@ -26,6 +26,7 @@ const multiFieldList = (key, defaultRows, prefix, fields) => ({
 export const WEAPONS = multiFieldList('armes', 6, 'arme', [
   'nom',
   'bonus',
+  'bonus_degats',
   'degats',
   'degats_de',
   'type_degats',
@@ -45,6 +46,7 @@ export const CLASS_FEATURES = {
   rowFields: (row) => [
     `capacite${row + 1}`,
     `capacite${row + 1}_description`,
+    `capacite${row + 1}_innee`,
     `capacite${row + 1}_repos_court`,
     `capacite${row + 1}_repos_long`,
     `capacite_utilisee${row + 1}`,

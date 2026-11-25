@@ -23,7 +23,9 @@ import Checkbox from '../fields/Checkbox';
 import PixelAvatar from './PixelAvatar';
 import HpQuickAdjustments from './HpQuickAdjustments';
 import { isCantrip } from '../../services/spells';
-import { weaponAttackBonus, weaponDetails } from '../../services/weaponMath';
+import {
+  weaponAttackBonus, weaponDamageBonus, weaponDetails,
+} from '../../services/weaponMath';
 
 /** Field text, trimmed. Imported sheets may hold numbers (kept) or objects (ignored). */
 const text = (value: unknown) => {
@@ -86,7 +88,8 @@ export default function CombatSummary({ onBack }) {
       const weapon = weaponDetails(data, row);
       return {
         ...weapon,
-        bonus: weapon.bonus || weapon.proficient ? weaponAttackBonus(data, row) : null,
+        attackBonus: weaponAttackBonus(data, row),
+        damageBonus: weaponDamageBonus(data, row),
         damage: [weapon.damageDice, weapon.damageType].filter(Boolean).join(' '),
         included: included(data, WEAPONS.field(row, 'combat'), WEAPONS.field(row, 'nom')),
       };
@@ -97,6 +100,7 @@ export default function CombatSummary({ onBack }) {
     .map((row) => ({
       title: data[CLASS_FEATURES.field(row)],
       description: data[CLASS_FEATURES.field(row, 'description')],
+      innate: flagged(data, CLASS_FEATURES.field(row, 'innee')),
       usedField: CLASS_FEATURES_USED.field(row),
       used: flagged(data, CLASS_FEATURES_USED.field(row)),
       shortRest: flagged(data, CLASS_FEATURES.field(row, 'repos_court')),
@@ -233,16 +237,20 @@ export default function CombatSummary({ onBack }) {
                 <li key={index} className={feature.used ? 'feature-used' : ''}>
                   <div className="summary-entry-top">
                     <strong>{text(feature.title)}</strong>
-                    <label className="summary-feature-used">
-                      <Checkbox
-                        name={feature.usedField}
-                        aria-label={`Marquer ${text(feature.title)} comme utilisée`}
-                      />
-                      <span>{feature.used ? 'Utilisée' : 'Disponible'}</span>
-                    </label>
+                    {feature.innate ? (
+                      <span className="summary-feature-innate">Innée</span>
+                    ) : (
+                      <label className="summary-feature-used">
+                        <Checkbox
+                          name={feature.usedField}
+                          aria-label={`Marquer ${text(feature.title)} comme utilisée`}
+                        />
+                        <span>{feature.used ? 'Utilisée' : 'Disponible'}</span>
+                      </label>
+                    )}
                   </div>
                   {text(feature.description) && <div className="summary-entry-detail">{text(feature.description)}</div>}
-                  {(feature.shortRest || feature.longRest) && (
+                  {!feature.innate && (feature.shortRest || feature.longRest) && (
                     <small>
                       {`Récupération\u00a0: ${[feature.shortRest && 'repos court', feature.longRest && 'repos long'].filter(Boolean).join(' / ')}`}
                     </small>
@@ -264,7 +272,14 @@ export default function CombatSummary({ onBack }) {
                   <div className="summary-entry-top">
                     <strong>{text(weapon.name)}</strong>
                     <span className="summary-attack-actions">
-                      <b>{displayModifier(weapon.bonus, null)}</b>
+                      <span>
+                        <span>Attaque</span>
+                        <b>{formatModifier(weapon.attackBonus)}</b>
+                      </span>
+                      <span>
+                        <span>Dégâts</span>
+                        <b>{formatModifier(weapon.damageBonus)}</b>
+                      </span>
                     </span>
                   </div>
                   <div className="summary-entry-detail">

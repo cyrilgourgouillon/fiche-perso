@@ -34,6 +34,18 @@
 }
 .list-fold-controls .sheet-button { min-height: 32px; padding: 6px 10px; font-size: 11px; }
 .list-fold-controls .sheet-button:disabled { opacity: 0.55; cursor: default; }
+.list-fold-controls .list-order-save { border-color: var(--success); background: var(--success); color: white; }
+.list-fold-controls .list-order-save:hover:not(:disabled) { border-color: color-mix(in srgb, var(--success) 80%, black); background: color-mix(in srgb, var(--success) 80%, black); }
+.list-fold-controls .list-order-cancel { border-color: var(--red); background: var(--red); color: white; }
+.list-fold-controls .list-order-cancel:hover:not(:disabled) { border-color: color-mix(in srgb, var(--red) 80%, black); background: color-mix(in srgb, var(--red) 80%, black); }
+.list-ordering-item { align-items: center !important; }
+.list-order-content { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.list-order-title { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.list-order-actions { display: flex; flex-shrink: 0; gap: 6px; }
+.list-order-move { display: grid; width: 32px; height: 32px; place-items: center; padding: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--parch); color: var(--ink); font-size: 18px; cursor: pointer; }
+.list-order-move:hover:not(:disabled) { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 12%, var(--parch)); }
+.list-order-move:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.list-order-move:disabled { opacity: 0.4; cursor: default; }
 
 .money-quick-adjust {
   display: grid;

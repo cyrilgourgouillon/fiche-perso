@@ -20,7 +20,8 @@ describe('rest', () => {
       capacite_utilisee2: 'true',
       capacite2_repos_long: 'true',
       capacite_utilisee3: 'true',
-      capacite3_repos_court: 'false',
+      capacite3_repos_court: 'true',
+      capacite3_innee: 'true',
       points_vie_temp: '4',
       emplacement_sort_1_1: 'true',
     };
@@ -47,6 +48,9 @@ describe('rest', () => {
       capacite1_repos_long: 'true',
       capacite_utilisee2: 'true',
       capacite2_repos_court: 'true',
+      capacite_utilisee3: 'true',
+      capacite3_repos_long: 'true',
+      capacite3_innee: 'true',
       emplacement_sort_1_1: 'true',
       emplacement_sort_9_3: 'true',
     };
@@ -58,6 +62,7 @@ describe('rest', () => {
     assert.equal(rested.capacite_utilisee1, undefined);
     // a long rest includes the benefits of a short one
     assert.equal(rested.capacite_utilisee2, undefined);
+    assert.equal(rested.capacite_utilisee3, 'true');
     assert.equal(rested.emplacement_sort_1_1, undefined);
     assert.equal(rested.emplacement_sort_9_3, undefined);
     for (const field of Object.keys(deathSaves)) assert.equal(field in rested, false);

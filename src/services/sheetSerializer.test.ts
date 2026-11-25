@@ -105,6 +105,7 @@ describe('sheetSerializer', () => {
   test('should preserve expanded weapon fields while retaining the legacy combined damage value', () => {
     const data = {
       ...sampleSheet,
+      arme1_bonus_degats: '3',
       arme1_degats_de: '2d8',
       arme1_type_degats: 'perforant',
       arme1_maitrise: 'true',
@@ -115,6 +116,7 @@ describe('sheetSerializer', () => {
 
     assert.deepEqual(serialized.weapons[0], {
       nom: 'Pique',
+      bonus_degats: '3',
       degats: '1d10 perforant',
       degats_de: '2d8',
       type_degats: 'perforant',
@@ -123,6 +125,7 @@ describe('sheetSerializer', () => {
       replie: 'true',
     });
     assert.equal(parsed.arme1_degats_de, '2d8');
+    assert.equal(parsed.arme1_bonus_degats, '3');
     assert.equal(parsed.arme1_type_degats, 'perforant');
     assert.equal(parsed.arme1_maitrise, 'true');
     assert.equal(parsed.arme1_caracteristique, 'force');
@@ -130,6 +133,20 @@ describe('sheetSerializer', () => {
 
   test('should preserve the flat sheet model when round-tripping through v2', () => {
     assert.deepEqual(parseSheet(serializeSheet(sampleSheet)), sampleSheet);
+  });
+
+  test('should serialize and restore innate class features', () => {
+    const data = { ...sampleSheet, capacite1_innee: 'true' };
+    const serialized = asObject(data);
+
+    assert.deepEqual(serialized.classFeatures[0], {
+      titre: 'Second souffle',
+      innee: 'true',
+      repos_court: 'true',
+      utilisee: 'false',
+      replie: 'true',
+    });
+    assert.deepEqual(parseSheet(serializeSheet(data)), data);
   });
 
   test('should import legacy envelopes and bare field maps when parsing old sheet data', () => {

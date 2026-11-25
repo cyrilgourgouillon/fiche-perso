@@ -303,6 +303,14 @@ main[data-view='combat-summary'] .dice-flash {
   cursor: pointer;
 }
 
+.summary-feature-innate {
+  flex: 0 0 auto;
+  color: var(--ink-light);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .summary-feature-used input[type='checkbox'] {
   width: 14px;
   height: 14px;
@@ -548,6 +556,7 @@ main[data-view='combat-summary'] .dice-flash {
 }
 
 .summary-attack-actions { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 5px; }
+.summary-attack-actions > span { display: inline-flex; align-items: baseline; gap: 3px; }
 
 @media print { .summary-hit-points .hp-quick-adjust { display: none !important; } }
 .summary-hit-points .hp-quick-adjust > label { display: none; }

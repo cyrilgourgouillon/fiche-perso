@@ -5,6 +5,7 @@ import {
   legacyWeaponDamage,
   parseLegacyWeaponDamage,
   weaponAttackBonus,
+  weaponDamageBonus,
   weaponDamageRoll,
   weaponDetails,
 } from './weaponMath';
@@ -34,6 +35,7 @@ test('weapon details prefer explicit new damage fields, including cleared values
   assert.deepEqual(weaponDetails(data, 0), {
     name: '',
     bonus: '',
+    damageBonus: '',
     damageDice: '2d6',
     damageType: '',
     proficient: false,
@@ -47,6 +49,7 @@ test('weapon attack bonus adds proficiency only when the weapon is marked profic
   const data = {
     niveau: '5',
     [WEAPONS.field(0, 'bonus')]: '2',
+    [WEAPONS.field(0, 'bonus_degats')]: '3',
     [WEAPONS.field(0, 'maitrise')]: 'true',
   };
 
@@ -74,25 +77,37 @@ test('weapon attack bonus adds the selected ability modifier', () => {
   }, 0), 2);
 });
 
-test('weapon damage roll adds the manual attack bonus and proficiency to the damage die', () => {
+test('weapon damage roll adds the damage bonus and ability modifier but excludes attack bonus and proficiency', () => {
   const data = {
     niveau: '5',
     force: '18',
     [WEAPONS.field(0, 'bonus')]: '2',
+    [WEAPONS.field(0, 'bonus_degats')]: '3',
     [WEAPONS.field(0, 'degats_de')]: '2d8+1',
     [WEAPONS.field(0, 'maitrise')]: 'true',
     [WEAPONS.field(0, 'caracteristique')]: 'force',
   };
 
   assert.deepEqual(weaponDamageRoll(data, 0), {
-    expression: '2d8+10',
-    modifier: 10,
+    expression: '2d8+8',
+    modifier: 8,
   });
+  assert.equal(weaponDamageBonus(data, 0), 7);
   assert.deepEqual(weaponDamageRoll({
     ...data,
     [WEAPONS.field(0, 'maitrise')]: 'false',
   }, 0), {
-    expression: '2d8+7',
-    modifier: 7,
+    expression: '2d8+8',
+    modifier: 8,
   });
+});
+
+test('weapon damage bonus defaults safely when the manual value is invalid', () => {
+  const data = {
+    force: '18',
+    [WEAPONS.field(0, 'bonus_degats')]: 'invalid',
+    [WEAPONS.field(0, 'caracteristique')]: 'force',
+  };
+
+  assert.equal(weaponDamageBonus(data, 0), 4);
 });

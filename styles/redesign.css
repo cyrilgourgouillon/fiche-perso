@@ -1722,19 +1722,42 @@ select.ef {
 .weapon-content > .combat-include-toggle input { width: 17px; height: 17px; }
 .weapon-facts {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.weapon-facts > .weapon-damage-fields {
+  display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: center;
   gap: 8px 12px;
 }
+.weapon-damage-fields > div { display: grid; min-width: 0; gap: 3px; }
 .weapon-facts > div { display: grid; min-width: 0; gap: 3px; }
+.weapon-facts > .weapon-control-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px 12px;
+}
+.weapon-control-fields > div:not(.weapon-proficiency-field) { display: grid; min-width: 0; gap: 3px; }
+.weapon-facts > .weapon-total-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
 .weapon-facts label {
   color: var(--ink-light);
   font: 700 10px var(--ui-font);
 }
 .weapon-facts .ef { box-sizing: border-box; width: 100%; min-width: 0; min-height: 36px; padding: 6px 8px; font-size: 13px; }
+.weapon-control-fields > .weapon-proficiency-field { display: flex; min-width: 0; min-height: 36px; align-items: center; }
 .weapon-proficiency-field > div { display: flex; min-width: 0; min-height: 36px; align-items: center; gap: 7px; color: var(--ink-light); font: 500 12px var(--ui-font); }
 .weapon-proficiency-field input[type='checkbox'] { width: 17px; height: 17px; flex: 0 0 17px; margin: 0; accent-color: var(--red); }
-.weapon-proficiency-field strong { margin-left: auto; color: var(--ink); font-size: 11px; white-space: nowrap; }
+.weapon-total { display: grid; min-width: 0; min-height: 54px; align-content: center; gap: 1px; padding: 5px 9px; border: 1px solid color-mix(in srgb, var(--gold) 28%, var(--border)); border-radius: 9px; background: color-mix(in srgb, var(--gold) 6%, var(--parch)); }
+.weapon-total-heading { display: flex; align-items: center; gap: 5px; color: var(--ink-light); font: 700 9px var(--ui-font); letter-spacing: .04em; text-transform: uppercase; }
+.weapon-total > strong { color: var(--ink); font: 700 15px var(--ui-font); white-space: nowrap; }
+.weapon-total .roll-button { flex: 0 0 auto; margin: 0; padding: 0 2px; opacity: 1; }
+.weapon-total .die-icon { width: 16px; height: 16px; }
+.weapon-damage-total { border-color: color-mix(in srgb, var(--red) 24%, var(--border)); background: color-mix(in srgb, var(--red) 5%, var(--parch)); }
 .weapon-roll-button { margin-left: 0; }
 .weapon-notes-row { display: grid; min-width: 0; gap: 4px; grid-column: 1 / -1; }
 .weapon-notes-row > label {
@@ -1743,13 +1766,26 @@ select.ef {
 }
 .weapon-notes-row .markdown-field { width: 100%; height: 60px; min-height: 60px; resize: vertical; }
 .weapon-notes-row textarea.weapon-notes-input { height: 60px; min-height: 60px; resize: none; }
+@media (max-width: 760px) {
+  .weapon-facts > .weapon-damage-fields,
+  .weapon-facts > .weapon-control-fields { gap: 8px; }
+}
+@media (max-width: 480px) {
+  .weapon-facts > .weapon-damage-fields,
+  .weapon-facts > .weapon-control-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .weapon-facts > .weapon-total-fields { gap: 6px; }
+}
 .class-feature-title-line {
   display: flex;
+  flex-wrap: wrap;
   min-width: 0;
   align-items: center;
   gap: 7px;
 }
-.class-feature-title-line > .ef { min-width: 0; }
+.class-feature-title-line > .ef:not(.class-feature-type-select) {
+  flex: 1 1 110px;
+  min-width: 90px;
+}
 .aidedd-search-button {
   display: inline-flex;
   width: 38px;
@@ -2193,14 +2229,25 @@ select.ef {
   .quick-skill-bonus { font-size: 14px; }
 }
 /* Keep ability colors consistent between the full sheet and quick reference. */
-.stat-card[data-ability='force'], .quick-ability-card[data-ability='force'] { --ability-accent: #a3472f; }
-.stat-card[data-ability='dexterite'], .quick-ability-card[data-ability='dexterite'] { --ability-accent: #356b95; }
-.stat-card[data-ability='constitution'], .quick-ability-card[data-ability='constitution'] { --ability-accent: #3f7556; }
-.stat-card[data-ability='intelligence'], .quick-ability-card[data-ability='intelligence'] { --ability-accent: #7653a6; }
-.stat-card[data-ability='sagesse'], .quick-ability-card[data-ability='sagesse'] { --ability-accent: #946c20; }
-.stat-card[data-ability='charisme'], .quick-ability-card[data-ability='charisme'] { --ability-accent: #a04263; }
+.stat-card[data-ability='force'], .quick-ability-card[data-ability='force'], .characteristic-select[data-ability='force'], .characteristic-select option[data-ability='force'] { --ability-accent: #a3472f; }
+.stat-card[data-ability='dexterite'], .quick-ability-card[data-ability='dexterite'], .characteristic-select[data-ability='dexterite'], .characteristic-select option[data-ability='dexterite'] { --ability-accent: #356b95; }
+.stat-card[data-ability='constitution'], .quick-ability-card[data-ability='constitution'], .characteristic-select[data-ability='constitution'], .characteristic-select option[data-ability='constitution'] { --ability-accent: #3f7556; }
+.stat-card[data-ability='intelligence'], .quick-ability-card[data-ability='intelligence'], .characteristic-select[data-ability='intelligence'], .characteristic-select option[data-ability='intelligence'] { --ability-accent: #7653a6; }
+.stat-card[data-ability='sagesse'], .quick-ability-card[data-ability='sagesse'], .characteristic-select[data-ability='sagesse'], .characteristic-select option[data-ability='sagesse'] { --ability-accent: #946c20; }
+.stat-card[data-ability='charisme'], .quick-ability-card[data-ability='charisme'], .characteristic-select[data-ability='charisme'], .characteristic-select option[data-ability='charisme'] { --ability-accent: #a04263; }
 .stat-card[data-ability] { border-top: 3px solid var(--ability-accent); }
 .stat-card[data-ability] .stat-mod { color: var(--ability-accent); }
+.characteristic-select[data-ability],
+.characteristic-select option[data-ability] { color: var(--ability-accent); }
+.characteristic-select[data-ability] {
+  border: 1px solid color-mix(in srgb, var(--ability-accent) 32%, transparent);
+  background: color-mix(in srgb, var(--ability-accent) 10%, white);
+  font-family: var(--ui-font);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+}
 .quick-ability-card[data-ability] { border-top: 3px solid var(--ability-accent); }
 .quick-ability-card[data-ability] .quick-ability-name,
 .quick-ability-card[data-ability] .quick-ability-modifier strong,
