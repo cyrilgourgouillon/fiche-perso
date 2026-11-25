@@ -4,6 +4,7 @@ import AideddSearchButton from '../common/AideddSearchButton';
 import ListItem from '../common/ListItem';
 import TextField from '../fields/TextField';
 import Checkbox from '../fields/Checkbox';
+import SelectField from '../fields/SelectField';
 import CombatIncludeToggle from '../fields/CombatIncludeToggle';
 import TextAreaField from '../fields/TextAreaField';
 import FoldButton from '../fields/FoldButton';
@@ -43,6 +44,8 @@ function ClassFeatureRow({
   index, removable, isRowEmpty, removeRow,
 }) {
   const [folded, setFolded] = useSheetFlag(CLASS_FEATURES.field(index, 'replie'));
+  const [innate] = useSheetFlag(CLASS_FEATURES.field(index, 'innee'));
+  const featureTypeField = CLASS_FEATURES.field(index, 'innee');
   return (
     <ListItem
       className={
@@ -67,6 +70,16 @@ function ClassFeatureRow({
     >
       <div className="class-feature-title-line">
         <TextField name={CLASS_FEATURES.field(index)} placeholder="Titre" aria-label={`Titre de la capacité ${index + 1}`} />
+        <SelectField
+          name={featureTypeField}
+          className="ef class-feature-type-select"
+          fallback="false"
+          aria-label={`Type de capacité ${index + 1}`}
+          options={[
+            { value: 'false', label: "🔋 Suivi d'usage" },
+            { value: 'true', label: '✨ Innée' },
+          ]}
+        />
         <AideddSearchButton fieldName={CLASS_FEATURES.field(index)} />
         <FoldButton
           folded={folded}
@@ -78,22 +91,26 @@ function ClassFeatureRow({
         <>
           <TextAreaField name={CLASS_FEATURES.field(index, 'description')} placeholder="Description" aria-label={`Description de la capacité ${index + 1}`} />
           <div className="capacite-options">
-            <label className="capacite-used">
-              <Checkbox name={CLASS_FEATURES_USED.field(index)} />
-              {' '}
-              Utilisée
-            </label>
-            <span>Réinitialiser après :</span>
-            <label>
-              <Checkbox name={CLASS_FEATURES.field(index, 'repos_court')} />
-              {' '}
-              Repos court
-            </label>
-            <label>
-              <Checkbox name={CLASS_FEATURES.field(index, 'repos_long')} />
-              {' '}
-              Repos long
-            </label>
+            {!innate && (
+              <>
+                <label className="capacite-used">
+                  <Checkbox name={CLASS_FEATURES_USED.field(index)} />
+                  {' '}
+                  Utilisée
+                </label>
+                <span>Réinitialiser après :</span>
+                <label>
+                  <Checkbox name={CLASS_FEATURES.field(index, 'repos_court')} />
+                  {' '}
+                  Repos court
+                </label>
+                <label>
+                  <Checkbox name={CLASS_FEATURES.field(index, 'repos_long')} />
+                  {' '}
+                  Repos long
+                </label>
+              </>
+            )}
           </div>
         </>
       )}

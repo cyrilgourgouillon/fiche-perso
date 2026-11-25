@@ -22,7 +22,10 @@ const RECOVERED_BY = {
 /** `capacite_utiliseeN` fields freed by a rest, given each feature's reset flags. */
 export const classFeatureUsedFields = (data, rest: 'court' | 'long') => [...new Set(Object.keys(data)
   .map((field) => field.match(/^capacite(\d+)_repos_(court|long)$/))
-  .filter((match) => match && RECOVERED_BY[rest].includes(match[2]) && data[match[0]] === 'true')
+  .filter((match) => match
+    && data[`capacite${match[1]}_innee`] !== 'true'
+    && RECOVERED_BY[rest].includes(match[2])
+    && data[match[0]] === 'true')
   .map((match) => `capacite_utilisee${match[1]}`))];
 
 /**

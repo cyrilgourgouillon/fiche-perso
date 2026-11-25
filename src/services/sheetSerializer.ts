@@ -25,7 +25,7 @@ const ARRAY_LISTS = [
     key: 'classFeatures',
     path: ['classFeatures'],
     list: CLASS_FEATURES,
-    fields: ['titre', 'description', 'repos_court', 'repos_long', 'utilisee', 'combat', 'replie'],
+    fields: ['titre', 'description', 'innee', 'repos_court', 'repos_long', 'utilisee', 'combat', 'replie'],
     rowPattern: /^capacite(?:_utilisee)?(\d+)/,
     field: (row, name) => {
       if (name === 'titre') return CLASS_FEATURES.field(row);

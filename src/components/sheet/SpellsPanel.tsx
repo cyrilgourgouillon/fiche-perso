@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AddRowButton from '../fields/AddRowButton';
 import CombatIncludeToggle from '../fields/CombatIncludeToggle';
 import Checkbox from '../fields/Checkbox';
+import CharacteristicSelect from '../fields/CharacteristicSelect';
 import Panel from './Panel';
 import AideddSearchButton from '../common/AideddSearchButton';
 import ListItem from '../common/ListItem';
@@ -10,7 +11,6 @@ import TextField from '../fields/TextField';
 import TextAreaField from '../fields/TextAreaField';
 import FoldButton from '../fields/FoldButton';
 import ListFoldControls from '../common/ListFoldControls';
-import { ABILITIES } from '../../data/abilities';
 import { SPELLS } from '../../data/sheetLists';
 import { useListRows } from '../../hooks/useListRows';
 import { useListFolding } from '../../hooks/useListFolding';
@@ -25,7 +25,6 @@ import {
   formatModifier,
 } from '../../services/characterMath';
 
-const SPELLCASTING_ABILITIES = ABILITIES.map(({ key, label }) => ({ value: key, label }));
 const SPELL_META_FIELDS = [
   {
     label: "Modificateur d'incantation",
@@ -87,9 +86,8 @@ export default function SpellsPanel() {
       <div className="spell-meta-grid">
         <div>
           <div className="meta-label">Caractéristique d&apos;incantation</div>
-          <SelectField
+          <CharacteristicSelect
             name="caracteristique_incantation"
-            options={SPELLCASTING_ABILITIES}
             fallback={DEFAULT_SPELLCASTING_ABILITY}
             className="ef center"
             aria-label="Caractéristique d’incantation"

@@ -28,6 +28,7 @@ export function weaponDetails(data: Record<string, unknown>, row: number) {
   return {
     name: text(data[WEAPONS.field(row, 'nom')]),
     bonus: text(data[WEAPONS.field(row, 'bonus')]),
+    damageBonus: text(data[WEAPONS.field(row, 'bonus_degats')]),
     damageDice: data[diceField] === undefined ? legacy.dice : text(data[diceField]),
     damageType: data[typeField] === undefined ? legacy.type : text(data[typeField]),
     proficient: isFlagged(data, WEAPONS.field(row, 'maitrise')),
@@ -46,12 +47,19 @@ export function weaponAttackBonus(data: Record<string, unknown>, row: number) {
     + (details.proficient ? proficiencyBonus(data) : 0);
 }
 
+export function weaponDamageBonus(data: Record<string, unknown>, row: number) {
+  const { ability, damageBonus } = weaponDetails(data, row);
+  const manualBonus = Number(damageBonus);
+  return (Number.isFinite(manualBonus) ? manualBonus : 0)
+    + (ability ? abilityModifier(data[ability]) : 0);
+}
+
 export function weaponDamageRoll(data: Record<string, unknown>, row: number) {
   const { damageDice } = weaponDetails(data, row);
   const parsed = parseDiceExpression(damageDice);
   if (!parsed) return null;
 
-  const modifier = parsed.modifier + weaponAttackBonus(data, row);
+  const modifier = parsed.modifier + weaponDamageBonus(data, row);
   const expression = `${parsed.count}d${parsed.sides}${modifier === 0 ? '' : `${modifier > 0 ? '+' : ''}${modifier}`}`;
   return { expression, modifier };
 }

@@ -2,14 +2,15 @@ import DieIcon from './DieIcon';
 import { weaponDamageRoll, weaponDetails } from '../../services/weaponMath';
 import { useDice } from '../../context/DiceContext';
 import { useSheet } from '../../context/SheetContext';
+import RollButton from './RollButton';
 
-export default function WeaponRollButton({ row }) {
+export function WeaponDamageRollButton({ row }) {
   const { data } = useSheet();
   const { rollExpression } = useDice();
   const weapon = weaponDetails(data, row);
   const damageRoll = weaponDamageRoll(data, row);
   const label = damageRoll
-    ? `Lancer les dégâts de ${weapon.name} avec le bonus d’attaque`
+    ? `Lancer les dégâts de ${weapon.name}`
     : `Saisir un dé de dégâts valide pour ${weapon.name}`;
 
   const rollWeapon = () => {
@@ -28,4 +29,10 @@ export default function WeaponRollButton({ row }) {
       <DieIcon />
     </button>
   );
+}
+
+export default function WeaponRollButton({ row, bonus }) {
+  const { data } = useSheet();
+  const { name } = weaponDetails(data, row);
+  return <RollButton label={`${name} · attaque`} bonus={bonus} />;
 }
