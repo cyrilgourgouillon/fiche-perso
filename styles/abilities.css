@@ -54,6 +54,7 @@
   grid-template-areas: 'name mod' 'save score';
   column-gap: 5px;
   align-items: center;
+  container-type: inline-size;
 }
 .stat-name {
   text-transform: uppercase;
@@ -75,6 +76,11 @@
 }
 .saves-list {
   grid-area: save;
+}
+/* The save row does not wrap and needs ~135px: in a narrower card it ran under the score box. */
+@container (max-width: 199px) {
+  .saves-list { grid-column: 1 / -1; grid-row: 2; }
+  .stat-val { grid-column: 1 / -1; grid-row: 3; }
 }
 .save-item {
   display: flex;

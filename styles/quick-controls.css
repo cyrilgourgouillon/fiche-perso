@@ -227,8 +227,12 @@
 .sheet-custom-order > .ornament { display: block; margin-bottom: 12px; text-align: center; }
 
 @container (max-width: 780px) {
-  #section-caracteristiques .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  #section-caracteristiques .abilities-layout { grid-template-columns: 105px minmax(0, 1fr); gap: 10px; }
+  /* phones keep the redesign.css layout (controls above, one ability card per row):
+     a third of the width cannot fit the touch-sized save row, and the 105px side column overflows */
+  @media (min-width: 701px) {
+    #section-caracteristiques .stats-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    #section-caracteristiques .abilities-layout { grid-template-columns: 105px minmax(0, 1fr); gap: 10px; }
+  }
   #section-caracteristiques .skills-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
   #section-caracteristiques .skill-item { gap: 5px; font-size: 12px; }
   #section-caracteristiques .skill-note { width: 38px; }
