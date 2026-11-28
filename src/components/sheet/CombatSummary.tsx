@@ -35,6 +35,9 @@ const text = (value: unknown) => {
 };
 /** `'💪 Force'` → `'Force'`. */
 const withoutIcon = (label: string) => label.replace(/^\S+\s*/, '');
+const SAVES_BY_NAME = [...ABILITIES].sort((left, right) => (
+  withoutIcon(left.label).localeCompare(withoutIcon(right.label), 'fr', { sensitivity: 'base' })
+));
 const valueOr = (value, fallback = '—') => text(value) || fallback;
 const displayModifier = (value, fallback) => {
   const raw = text(value);
@@ -200,7 +203,7 @@ export default function CombatSummary({ onBack }) {
         <div className="summary-column">
           <SummarySection title="Jets de sauvegarde" className="summary-saves">
             <div className="summary-abilities">
-              {ABILITIES.map((ability) => (
+              {SAVES_BY_NAME.map((ability) => (
                 <div key={ability.key}>
                   <span>{withoutIcon(ability.label)}</span>
                   <strong>{formatModifier(savingThrowBonus(data, ability.key))}</strong>
