@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ABILITIES, SKILLS } from '../../data/abilities';
+import { ABILITIES, SKILLS, sortSkills } from '../../data/abilities';
 import {
   CLASS_FEATURES, CLASS_FEATURES_USED, SPELLS, WEAPONS,
 } from '../../data/sheetLists';
@@ -215,7 +215,7 @@ export default function CombatSummary({ onBack }) {
 
           <SummarySection title="Compétences" className="summary-skill-card">
             <div className="summary-skills">
-              {SKILLS.map((skill) => (
+              {sortSkills(SKILLS).map((skill) => (
                 <div key={skill.key}>
                   <span>{skill.label}</span>
                   <strong>{formatModifier(skillBonus(data, skill))}</strong>
